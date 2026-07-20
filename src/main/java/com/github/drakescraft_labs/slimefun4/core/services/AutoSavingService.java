@@ -3,6 +3,7 @@ package com.github.drakescraft_labs.slimefun4.core.services;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 
 import javax.annotation.Nonnull;
@@ -36,6 +37,8 @@ public class AutoSavingService implements Listener {
     private int dynamicIntervalSeconds;
     private int dynamicThreshold;
     private int dynamicBatchSize;
+    private final AtomicBoolean playerPersistenceRunning = new AtomicBoolean();
+    private final AtomicBoolean blockPersistenceRunning = new AtomicBoolean();
 
     /**
      * This method starts the {@link AutoSavingService} with the given interval.
@@ -66,6 +69,18 @@ public class AutoSavingService implements Listener {
      * that were marked for deletion.
      */
     private void saveAllPlayers() {
+        if (!playerPersistenceRunning.compareAndSet(false, true)) {
+            return;
+        }
+
+        try {
+            saveAllPlayersNow();
+        } finally {
+            playerPersistenceRunning.set(false);
+        }
+    }
+
+    private void saveAllPlayersNow() {
         Iterator<PlayerProfile> iterator = PlayerProfile.iterator();
         int players = 0;
 
@@ -109,6 +124,18 @@ public class AutoSavingService implements Listener {
      * This method saves the data of every {@link Block} marked dirty by {@link BlockStorage}.
      */
     private void saveAllBlocks() {
+        if (!blockPersistenceRunning.compareAndSet(false, true)) {
+            return;
+        }
+
+        try {
+            saveAllBlocksNow();
+        } finally {
+            blockPersistenceRunning.set(false);
+        }
+    }
+
+    private void saveAllBlocksNow() {
         Set<BlockStorage> worlds = new HashSet<>();
 
         for (World world : Bukkit.getWorlds()) {
@@ -152,6 +179,18 @@ public class AutoSavingService implements Listener {
      * also avoiding one huge disk I/O spike when busy Slimefun worlds are active.
      */
     private void saveDirtyBlocksBatch() {
+        if (!blockPersistenceRunning.compareAndSet(false, true)) {
+            return;
+        }
+
+        try {
+            saveDirtyBlocksBatchNow();
+        } finally {
+            blockPersistenceRunning.set(false);
+        }
+    }
+
+    private void saveDirtyBlocksBatchNow() {
         for (World world : Bukkit.getWorlds()) {
             try {
                 BlockStorage storage = BlockStorage.getStorage(world);
@@ -188,6 +227,10 @@ public class AutoSavingService implements Listener {
         }
 
         Runnable saveTask = () -> {
+            if (!blockPersistenceRunning.compareAndSet(false, true)) {
+                return;
+            }
+
             try {
                 storage.computeChanges();
                 if (storage.getChanges() > 0) {
@@ -196,6 +239,8 @@ public class AutoSavingService implements Listener {
                 }
             } catch (Throwable t) {
                 Slimefun.logger().log(Level.SEVERE, "Error saving block data for world " + world.getName() + " on WorldSaveEvent", t);
+            } finally {
+                blockPersistenceRunning.set(false);
             }
         };
 
