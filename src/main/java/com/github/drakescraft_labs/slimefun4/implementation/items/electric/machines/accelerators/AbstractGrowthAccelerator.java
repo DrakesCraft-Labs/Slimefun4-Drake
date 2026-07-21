@@ -15,6 +15,7 @@ import com.github.drakescraft_labs.slimefun4.api.recipes.RecipeType;
 import com.github.drakescraft_labs.slimefun4.core.attributes.EnergyNetComponent;
 import com.github.drakescraft_labs.slimefun4.core.handlers.BlockBreakHandler;
 import com.github.drakescraft_labs.slimefun4.core.networks.energy.EnergyNetComponentType;
+import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
 import com.github.drakescraft_labs.slimefun4.implementation.handlers.SimpleBlockBreakHandler;
 import com.github.drakescraft_labs.slimefun4.utils.ChestMenuUtils;
 
@@ -28,10 +29,16 @@ import com.github.drakescraft_labs.slimefun4.legacy.api.inventory.BlockMenuPrese
 public abstract class AbstractGrowthAccelerator extends SlimefunItem implements InventoryBlock, EnergyNetComponent {
 
     private static final int[] BORDER = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26 };
+    private static final int DEFAULT_TICK_INTERVAL = 4;
+
+    private final int tickInterval;
 
     @ParametersAreNonnullByDefault
     protected AbstractGrowthAccelerator(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(itemGroup, item, recipeType, recipe);
+
+        int configuredInterval = Slimefun.getCfg().getInt("performance.growth-accelerators.tick-interval");
+        this.tickInterval = Math.max(1, Math.min(20, configuredInterval > 0 ? configuredInterval : DEFAULT_TICK_INTERVAL));
 
         addItemHandler(onBreak());
         createPreset(this, this::constructMenu);
@@ -80,7 +87,9 @@ public abstract class AbstractGrowthAccelerator extends SlimefunItem implements 
 
             @Override
             public void tick(Block b, SlimefunItem sf, Config data) {
-                AbstractGrowthAccelerator.this.tick(b);
+                if (GrowthAcceleratorTickGate.shouldTick(b.getWorld().getFullTime(), b.getX(), b.getY(), b.getZ(), tickInterval)) {
+                    AbstractGrowthAccelerator.this.tick(b);
+                }
             }
 
             @Override

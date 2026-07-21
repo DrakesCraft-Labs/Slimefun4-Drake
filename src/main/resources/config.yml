@@ -101,6 +101,10 @@ performance:
     interval-seconds: 10
     threshold: 200
     batch-size: 256
+  growth-accelerators:
+    # Run each growth accelerator on a stable phase instead of running every
+    # loaded accelerator in the same server tick. Set to 1 to disable throttling.
+    tick-interval: 4
 
 research-ranks:
 - Chicken
