@@ -64,6 +64,7 @@ public class BlockStorage {
 
     private final World world;
     private final Map<Location, Config> storage = new ConcurrentHashMap<>();
+    private final ChunkLocationIndex locationsByChunk = new ChunkLocationIndex();
     private final Map<Location, BlockMenu> inventories = new ConcurrentHashMap<>();
     private final Map<String, Config> blocksCache = new ConcurrentHashMap<>();
     private final Map<Location, LoadedBlockSource> blockSources = new HashMap<>();
@@ -217,6 +218,8 @@ public class BlockStorage {
                     resolveDuplicateBlock(l, file, cfg, key, blockInfo, existing);
                     return;
                 }
+
+                indexLocation(l);
 
                 blockSources.put(l, new LoadedBlockSource(file, cfg, key));
 
@@ -588,6 +591,27 @@ public class BlockStorage {
         return ImmutableMap.copyOf(this.storage);
     }
 
+    /** Returns a stable snapshot of persisted Slimefun locations in one chunk. */
+    @Nonnull
+    public static Set<Location> getLocations(@Nonnull Chunk chunk) {
+        Validate.notNull(chunk, "Chunk cannot be null!");
+
+        BlockStorage storage = getStorage(chunk.getWorld());
+        if (storage == null) {
+            return Set.of();
+        }
+
+        return storage.locationsByChunk.get(chunk.getX(), chunk.getZ());
+    }
+
+    private void indexLocation(@Nonnull Location location) {
+        locationsByChunk.add(location);
+    }
+
+    private void unindexLocation(@Nonnull Location location) {
+        locationsByChunk.remove(location);
+    }
+
     @Nonnull
     public World getWorld() {
         return this.world;
@@ -768,6 +792,11 @@ public class BlockStorage {
 
         storage.storage.put(l, cfg);
         String id = cfg.getString("id");
+        if (id == null) {
+            storage.unindexLocation(l);
+        } else {
+            storage.indexLocation(l);
+        }
         BlockMenuPreset preset = BlockMenuPreset.getPreset(id);
 
         if (preset != null) {
@@ -828,11 +857,8 @@ public class BlockStorage {
             return;
         }
         Map<Location, Boolean> toClear = new HashMap<>();
-        // Unsafe: get raw storage for this world
-        for (Location location : blockStorage.storage.keySet()) {
-            if (location.getBlockX() >> 4 == chunkX && location.getBlockZ() >> 4 == chunkZ) {
-                toClear.put(location, destroy);
-            }
+        for (Location location : blockStorage.locationsByChunk.get(chunkX, chunkZ)) {
+            toClear.put(location, destroy);
         }
         Slimefun.getTickerTask().queueDelete(toClear);
     }
@@ -856,6 +882,7 @@ public class BlockStorage {
         if (hasBlockInfo(l)) {
             refreshCache(storage, l, getLocationInfo(l).getString("id"), null, destroy);
             storage.storage.remove(l);
+            storage.unindexLocation(l);
         }
 
         if (destroy) {
@@ -907,6 +934,7 @@ public class BlockStorage {
 
         refreshCache(storage, from, previousData.getString("id"), null, true);
         storage.storage.remove(from);
+        storage.unindexLocation(from);
 
         Slimefun.getTickerTask().disableTicker(from);
     }

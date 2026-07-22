@@ -1,7 +1,5 @@
 package com.github.drakescraft_labs.slimefun4.core.commands.subcommands;
 
-import java.util.Map;
-
 import javax.annotation.Nonnull;
 
 import org.bukkit.Chunk;
@@ -50,16 +48,8 @@ class RepairCommand extends SubCommand {
 
     /** Re-enables safe runtime services only; unknown or stale records remain untouched for recovery. */
     private RepairSummary repairChunk(@Nonnull Chunk chunk) {
-        Map<Location, me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config> storage = BlockStorage.getRawStorage(chunk.getWorld());
-        if (storage == null) {
-            return new RepairSummary();
-        }
-
         RepairSummary summary = new RepairSummary();
-        for (Location location : storage.keySet()) {
-            if ((location.getBlockX() >> 4) != chunk.getX() || (location.getBlockZ() >> 4) != chunk.getZ()) {
-                continue;
-            }
+        for (Location location : BlockStorage.getLocations(chunk)) {
             if (location.getBlock().getType().isAir()) {
                 summary.staleBlocks++;
                 continue;
