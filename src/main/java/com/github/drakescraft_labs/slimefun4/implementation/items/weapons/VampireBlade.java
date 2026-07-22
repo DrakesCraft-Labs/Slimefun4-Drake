@@ -5,7 +5,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -45,7 +44,7 @@ public class VampireBlade extends SimpleSlimefunItem<WeaponUseHandler> {
             if (ThreadLocalRandom.current().nextInt(100) < getChance()) {
                 SoundEffect.VAMPIRE_BLADE_HEALING_SOUND.playFor(p);
                 double health = p.getHealth() + HEALING_AMOUNT;
-                double maxHealth = p.getAttribute(Attribute.MAX_HEALTH).getValue();
+                double maxHealth = p.getMaxHealth();
                 p.setHealth(Math.min(health, maxHealth));
             }
         };

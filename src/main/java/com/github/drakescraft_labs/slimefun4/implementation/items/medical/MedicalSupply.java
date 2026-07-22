@@ -7,7 +7,6 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -73,7 +72,7 @@ public abstract class MedicalSupply<T extends ItemHandler> extends SimpleSlimefu
      */
     public void heal(@Nonnull LivingEntity n) {
         double health = n.getHealth() + healAmount;
-        double maxHealth = n.getAttribute(Attribute.MAX_HEALTH).getValue();
+        double maxHealth = n.getMaxHealth();
         n.setHealth(Math.min(health, maxHealth));
     }
 
