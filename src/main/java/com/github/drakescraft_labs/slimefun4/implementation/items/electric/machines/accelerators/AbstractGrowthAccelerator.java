@@ -101,4 +101,12 @@ public abstract class AbstractGrowthAccelerator extends SlimefunItem implements 
 
     protected abstract void tick(Block b);
 
+    /**
+     * Exposes the configured cadence to addons that split expensive area scans
+     * across multiple accelerator activations.
+     */
+    protected final int getTickInterval() {
+        return tickInterval;
+    }
+
 }
