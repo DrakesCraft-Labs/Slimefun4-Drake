@@ -12,9 +12,9 @@
     </parent>
 
     <artifactId>slimefun-core</artifactId>
-    <version>${slimefun.drake.version}</version>
+    <version>11.0-Drake-1.21.11-SNAPSHOT</version>
     <name>Slimefun-1.2.DEV</name>
-    <description>The core of the DrakesCraft experience. A modernized, Java 21-powered version of Slimefun 4 with integrated fixes and optimizations for the 1.21.1 environment.</description>
+    <description>The core of the DrakesCraft experience. A modernized, Java 21-powered version of Slimefun 4 with integrated fixes and optimizations for the 1.21.11 environment.</description>
     <inceptionYear>2013</inceptionYear>
     <packaging>jar</packaging>
 
@@ -377,9 +377,9 @@
         </dependency>
         <!-- This needs to be before Spigot because MockBukkit will fail otherwise. -->
                         <dependency>
-            <groupId>com.github.seeseemelk</groupId>
-            <artifactId>MockBukkit-v1.21</artifactId>
-            <version>3.133.2</version>
+            <groupId>org.mockbukkit.mockbukkit</groupId>
+            <artifactId>mockbukkit-v1.21</artifactId>
+            <version>4.110.0</version>
             <scope>test</scope>
         </dependency>
 
