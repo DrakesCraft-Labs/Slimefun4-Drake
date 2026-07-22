@@ -12,9 +12,9 @@
     </parent>
 
     <artifactId>slimefun-core</artifactId>
-    <version>${slimefun.drake.version}</version>
+    <version>11.0-Drake-1.21.11-SNAPSHOT</version>
     <name>Slimefun-1.2.DEV</name>
-    <description>The core of the DrakesCraft experience. A modernized, Java 21-powered version of Slimefun 4 with integrated fixes and optimizations for the 1.21.1 environment.</description>
+    <description>The core of the DrakesCraft experience. A modernized, Java 21-powered version of Slimefun 4 with integrated fixes and optimizations for the 1.21.11 environment.</description>
     <inceptionYear>2013</inceptionYear>
     <packaging>jar</packaging>
 
@@ -369,14 +369,8 @@
             <version>5.10.0</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>2.0.18</version>
-            <scope>test</scope>
-        </dependency>
         <!-- This needs to be before Spigot because MockBukkit will fail otherwise. -->
-                        <dependency>
+        <dependency>
             <groupId>com.github.seeseemelk</groupId>
             <artifactId>MockBukkit-v1.21</artifactId>
             <version>3.133.2</version>
@@ -495,4 +489,19 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>legacy-mockbukkit-tests</id>
+            <activation>
+                <property>
+                    <name>legacyMockBukkitTests</name>
+                </property>
+            </activation>
+            <properties>
+                <!-- MockBukkit 3.133.2 models Paper 1.21.1, independently of the production target. -->
+                <paper.version>1.21.1-R0.1-SNAPSHOT</paper.version>
+            </properties>
+        </profile>
+    </profiles>
 </project>

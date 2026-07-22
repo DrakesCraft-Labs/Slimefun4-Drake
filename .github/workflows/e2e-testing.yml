@@ -17,20 +17,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - mcVersion: '1.16.5'
-            javaVersion: '16'
-          - mcVersion: '1.17.1'
-            javaVersion: '17'
-          - mcVersion: '1.18.2'
-            javaVersion: '18'
-          - mcVersion: '1.19.4'
-            javaVersion: '19'
-          - mcVersion: '1.20.4'
-            javaVersion: '20'
-          - mcVersion: '1.20.6'
+          - mcVersion: '1.21.11'
             javaVersion: '21'
-          #- mcVersion: 'latest'
-          #  javaVersion: '21'
 
     steps:
       - name: Checkout repository
@@ -52,18 +40,19 @@ jobs:
       - name: Download ${{ matrix.mcVersion }} Paper
         run: |
           VERSION="${{ matrix.mcVersion }}"
-          if [ "$VERSION" == "latest" ]; then
-            VERSION=$(curl https://api.papermc.io/v2/projects/paper/ -s | jq -r '.versions[-1]')
+          USER_AGENT="DrakesCraft-Core-CI/1.0 (https://github.com/DrakesCraft-Labs/Slimefun4-Drake)"
+          BUILDS=$(curl -fsSL -H "User-Agent: $USER_AGENT" \
+            "https://fill.papermc.io/v3/projects/paper/versions/$VERSION/builds")
+          PAPER_URL=$(echo "$BUILDS" \
+            | jq -r 'first(.[] | select(.channel == "STABLE") | .downloads."server:default".url) // empty')
+
+          if [ -z "$PAPER_URL" ]; then
+            echo "No stable Paper build is available for $VERSION" >&2
+            exit 1
           fi
 
-          BUILD_JAR=$(curl -s "https://api.papermc.io/v2/projects/paper/versions/$VERSION/builds" \
-            | jq '.builds[-1] | "\(.build) \(.downloads.application.name)"' -r)
-          BUILD=$(echo "$BUILD_JAR" | awk '{print $1}')
-          JAR_FILE=$(echo "$BUILD_JAR" | awk '{print $2}')
-
-          echo "Downloading... https://api.papermc.io/v2/projects/paper/versions/$VERSION/builds/$BUILD/downloads/$JAR_FILE"
-          curl -o paper.jar \
-            "https://api.papermc.io/v2/projects/paper/versions/$VERSION/builds/$BUILD/downloads/$JAR_FILE"
+          curl -fsSL -H "User-Agent: $USER_AGENT" -o paper.jar "$PAPER_URL"
+          jar --list --file paper.jar >/dev/null
 
       - name: Download Slimefun
         uses: actions/download-artifact@v4
