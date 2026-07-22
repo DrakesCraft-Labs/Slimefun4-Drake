@@ -22,7 +22,7 @@ import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
 
 import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockbukkit.mockbukkit.ServerMock;
-import org.mockbukkit.mockbukkit.WorldMock;
+import org.mockbukkit.mockbukkit.world.WorldMock;
 
 class TestInfiniteBlockGenerators {
 
