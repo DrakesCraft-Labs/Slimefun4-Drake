@@ -12,7 +12,7 @@ import com.github.drakescraft_labs.slimefun4.api.items.SlimefunItem;
 import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
 import com.github.drakescraft_labs.slimefun4.test.TestUtilities;
 
-import org.mockbukkit.mockbukkit.MockBukkit;
+import be.seeseemelk.mockbukkit.MockBukkit;
 
 class TestIntRangeSetting {
 

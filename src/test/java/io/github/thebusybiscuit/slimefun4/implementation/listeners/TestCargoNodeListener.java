@@ -24,8 +24,8 @@ import com.github.drakescraft_labs.slimefun4.implementation.items.cargo.CargoInp
 import com.github.drakescraft_labs.slimefun4.test.TestUtilities;
 import com.github.drakescraft_labs.slimefun4.test.providers.SlimefunItemsSource;
 
-import org.mockbukkit.mockbukkit.MockBukkit;
-import org.mockbukkit.mockbukkit.ServerMock;
+import be.seeseemelk.mockbukkit.MockBukkit;
+import be.seeseemelk.mockbukkit.ServerMock;
 
 class TestCargoNodeListener {
 

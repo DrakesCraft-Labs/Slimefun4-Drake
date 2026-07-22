@@ -17,7 +17,7 @@ import com.google.gson.JsonElement;
 import com.github.drakescraft_labs.slimefun4.api.exceptions.BiomeMapException;
 import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
 
-import org.mockbukkit.mockbukkit.MockBukkit;
+import be.seeseemelk.mockbukkit.MockBukkit;
 
 class TestBiomeMapParser {
 

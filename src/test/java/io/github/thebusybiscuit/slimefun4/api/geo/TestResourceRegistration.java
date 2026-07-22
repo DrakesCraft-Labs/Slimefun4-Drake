@@ -23,7 +23,7 @@ import com.github.drakescraft_labs.slimefun4.implementation.SlimefunItems;
 import com.github.drakescraft_labs.slimefun4.implementation.resources.GEOResourcesSetup;
 import com.github.drakescraft_labs.slimefun4.utils.SlimefunUtils;
 
-import org.mockbukkit.mockbukkit.MockBukkit;
+import be.seeseemelk.mockbukkit.MockBukkit;
 
 @TestMethodOrder(value = OrderAnnotation.class)
 class TestResourceRegistration {

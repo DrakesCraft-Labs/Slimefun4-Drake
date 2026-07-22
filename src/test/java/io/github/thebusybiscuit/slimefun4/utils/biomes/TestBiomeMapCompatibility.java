@@ -29,7 +29,7 @@ import com.github.drakescraft_labs.slimefun4.api.MinecraftVersion;
 import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
 import com.github.drakescraft_labs.slimefun4.utils.JsonUtils;
 
-import org.mockbukkit.mockbukkit.MockBukkit;
+import be.seeseemelk.mockbukkit.MockBukkit;
 
 /**
  * This test checks if biome maps work across multiple versions of Minecraft.

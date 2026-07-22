@@ -371,9 +371,9 @@
         </dependency>
         <!-- This needs to be before Spigot because MockBukkit will fail otherwise. -->
         <dependency>
-            <groupId>org.mockbukkit.mockbukkit</groupId>
-            <artifactId>mockbukkit-v1.21</artifactId>
-            <version>4.110.0</version>
+            <groupId>com.github.seeseemelk</groupId>
+            <artifactId>MockBukkit-v1.21</artifactId>
+            <version>3.133.2</version>
             <scope>test</scope>
         </dependency>
 
@@ -489,4 +489,19 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>legacy-mockbukkit-tests</id>
+            <activation>
+                <property>
+                    <name>legacyMockBukkitTests</name>
+                </property>
+            </activation>
+            <properties>
+                <!-- MockBukkit 3.133.2 models Paper 1.21.1, independently of the production target. -->
+                <paper.version>1.21.1-R0.1-SNAPSHOT</paper.version>
+            </properties>
+        </profile>
+    </profiles>
 </project>

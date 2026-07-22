@@ -1,7 +1,7 @@
 package com.github.drakescraft_labs.slimefun4.implementation.listeners;
 
-import org.mockbukkit.mockbukkit.MockBukkit;
-import org.mockbukkit.mockbukkit.ServerMock;
+import be.seeseemelk.mockbukkit.MockBukkit;
+import be.seeseemelk.mockbukkit.ServerMock;
 
 import org.apache.commons.lang3.mutable.MutableObject;
 import org.bukkit.Material;

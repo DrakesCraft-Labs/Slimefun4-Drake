@@ -17,7 +17,7 @@ import com.github.drakescraft_labs.slimefun4.api.recipes.RecipeType;
 import com.github.drakescraft_labs.slimefun4.core.attributes.Soulbound;
 import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
 
-import org.mockbukkit.mockbukkit.MockBukkit;
+import be.seeseemelk.mockbukkit.MockBukkit;
 
 class TestSoulboundItem {
 

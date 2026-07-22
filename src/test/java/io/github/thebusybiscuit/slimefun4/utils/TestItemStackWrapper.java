@@ -17,7 +17,7 @@ import dev.drake.dough.items.CustomItemStack;
 import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
 import com.github.drakescraft_labs.slimefun4.utils.itemstack.ItemStackWrapper;
 
-import org.mockbukkit.mockbukkit.MockBukkit;
+import be.seeseemelk.mockbukkit.MockBukkit;
 
 class TestItemStackWrapper {
 

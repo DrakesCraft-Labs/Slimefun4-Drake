@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import com.github.drakescraft_labs.slimefun4.api.SlimefunBranch;
 import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
 
-import org.mockbukkit.mockbukkit.MockBukkit;
+import be.seeseemelk.mockbukkit.MockBukkit;
 
 class TestUpdaterService {
 

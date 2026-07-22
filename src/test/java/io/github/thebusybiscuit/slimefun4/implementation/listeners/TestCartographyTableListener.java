@@ -23,8 +23,8 @@ import com.github.drakescraft_labs.slimefun4.implementation.items.VanillaItem;
 import com.github.drakescraft_labs.slimefun4.implementation.listeners.crafting.CartographyTableListener;
 import com.github.drakescraft_labs.slimefun4.test.TestUtilities;
 
-import org.mockbukkit.mockbukkit.MockBukkit;
-import org.mockbukkit.mockbukkit.ServerMock;
+import be.seeseemelk.mockbukkit.MockBukkit;
+import be.seeseemelk.mockbukkit.ServerMock;
 
 class TestCartographyTableListener {
 

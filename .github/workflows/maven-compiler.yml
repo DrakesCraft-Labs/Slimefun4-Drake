@@ -3,12 +3,15 @@ name: Java CI
 on:
   push:
     branches:
-    - master
+    - main
     paths:
+    - 'build-parent/**'
+    - '.github/workflows/**'
     - 'src/**'
     - 'pom.xml'
   pull_request:
     paths:
+    - 'build-parent/**'
     - '.github/workflows/**'
     - 'src/**'
     - 'pom.xml'
@@ -42,5 +45,14 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
 
-    - name: Build with Maven
-      run: mvn package --file pom.xml
+    - name: Build production JAR for Paper 1.21.11
+      run: mvn package --file pom.xml -DskipTests
+
+    - name: Run legacy MockBukkit tests
+      run: mvn test --file pom.xml -DlegacyMockBukkitTests
+
+    - name: Upload production artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: slimefun-core-${{ github.sha }}
+        path: 'target/Slimefun-1.2.DEV v11.0-Drake-1.21.11-SNAPSHOT.jar'

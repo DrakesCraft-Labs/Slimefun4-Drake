@@ -32,7 +32,7 @@ import com.github.drakescraft_labs.slimefun4.implementation.setup.PostSetup;
 import com.github.drakescraft_labs.slimefun4.implementation.setup.ResearchSetup;
 import com.github.drakescraft_labs.slimefun4.implementation.setup.SlimefunItemSetup;
 
-import org.mockbukkit.mockbukkit.MockBukkit;
+import be.seeseemelk.mockbukkit.MockBukkit;
 
 @TestMethodOrder(value = OrderAnnotation.class)
 class TestRegistration {

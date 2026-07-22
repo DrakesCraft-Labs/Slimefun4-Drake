@@ -15,8 +15,8 @@ import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
 import com.github.drakescraft_labs.slimefun4.implementation.listeners.entity.FireworksListener;
 import com.github.drakescraft_labs.slimefun4.utils.FireworkUtils;
 
-import org.mockbukkit.mockbukkit.MockBukkit;
-import org.mockbukkit.mockbukkit.ServerMock;
+import be.seeseemelk.mockbukkit.MockBukkit;
+import be.seeseemelk.mockbukkit.ServerMock;
 
 class TestFireworksListener {
 

@@ -3,6 +3,7 @@ name: Pull Request
 on:
   pull_request:
     paths:
+    - 'build-parent/**'
     - '.github/workflows/**'
     - 'src/**'
     - 'pom.xml'
@@ -36,24 +37,23 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
 
-    # Setup for the preview build
     - id: env-setup
       run: |
         SHORT_COMMIT_HASH=$(git rev-parse --short=8 ${{ github.sha }})
-        JAR_VERSION="Preview Build #${{ github.event.number }}-$SHORT_COMMIT_HASH"
         echo "SHORT_COMMIT_HASH=$SHORT_COMMIT_HASH" >> "$GITHUB_ENV"
         echo "SHORT_COMMIT_HASH=$SHORT_COMMIT_HASH" >> "$GITHUB_OUTPUT"
-        echo "JAR_VERSION=$JAR_VERSION" >> "$GITHUB_ENV"
-        sed -i "s/<version>4.9-UNOFFICIAL<\/version>/<version>$JAR_VERSION<\/version>/g" pom.xml
 
-    - name: Build with Maven
-      run: mvn package
+    - name: Build production JAR for Paper 1.21.11
+      run: mvn package -DskipTests
+
+    - name: Run legacy MockBukkit tests
+      run: mvn test -DlegacyMockBukkitTests
 
     - name: Upload the artifact
       uses: actions/upload-artifact@v4
       with:
         name: slimefun-${{ github.event.number }}-${{ env.SHORT_COMMIT_HASH }}
-        path: 'target/Slimefun v${{ env.JAR_VERSION }}.jar'
+        path: 'target/Slimefun-1.2.DEV v11.0-Drake-1.21.11-SNAPSHOT.jar'
 
   call-workflows:
     needs: [setup-preview-build]
