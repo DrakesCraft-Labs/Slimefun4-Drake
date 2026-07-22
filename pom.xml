@@ -370,7 +370,7 @@
             <scope>test</scope>
         </dependency>
         <!-- This needs to be before Spigot because MockBukkit will fail otherwise. -->
-                        <dependency>
+        <dependency>
             <groupId>org.mockbukkit.mockbukkit</groupId>
             <artifactId>mockbukkit-v1.21</artifactId>
             <version>4.110.0</version>
