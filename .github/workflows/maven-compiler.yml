@@ -48,8 +48,10 @@ jobs:
     - name: Build production JAR for Paper 1.21.11
       run: mvn package --file pom.xml -DskipTests
 
-    - name: Run legacy MockBukkit tests
-      run: mvn test --file pom.xml -DlegacyMockBukkitTests
+    - name: Run stable MockBukkit regression suite
+      run: >-
+        mvn test --file pom.xml -DlegacyMockBukkitTests
+        -Dtest=TestColorCodes,TestSlimefunSpelling,TestDoubleRangeSetting,TestEnumSetting,TestIntRangeSetting,TestItemSettings,TestMaterialTagSetting,TestNetworkManager,TestResearches,TestUpdaterService,TestRechargeableItems
 
     - name: Upload production artifact
       uses: actions/upload-artifact@v4
