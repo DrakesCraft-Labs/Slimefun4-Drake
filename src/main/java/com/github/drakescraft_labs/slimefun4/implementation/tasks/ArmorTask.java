@@ -2,6 +2,7 @@ package com.github.drakescraft_labs.slimefun4.implementation.tasks;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -9,11 +10,19 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -30,43 +39,34 @@ import com.github.drakescraft_labs.slimefun4.utils.compatibility.VersionedPotion
 import com.github.drakescraft_labs.slimefun4.utils.itemstack.ItemStackWrapper;
 
 /**
- * The {@link ArmorTask} is responsible for handling {@link PotionEffect PotionEffects} for
- * {@link Radioactive} items or any {@link SlimefunArmorPiece}.
- * It also handles the prevention of radiation through a Hazmat Suit
- * 
- * @author TheBusyBiscuit
- *
+ * Handles {@link SlimefunArmorPiece} potion effects and lethal Radiation contact.
+ * Includes Geiger Counter audio feedback, immediate lethal damage, and custom death messages.
  */
-public class ArmorTask implements Runnable {
+public class ArmorTask implements Runnable, Listener {
 
     private final Set<PotionEffect> radiationEffects;
     private final boolean radioactiveFire;
+    private final Random random = new Random();
 
-    /**
-     * This creates a new {@link ArmorTask}.
-     * 
-     * @param radioactiveFire
-     *            Whether radiation also causes a {@link Player} to burn
-     */
+    public static final String RAD_META_KEY = "sf_rad_item_name";
+
     public ArmorTask(boolean radioactiveFire) {
         this.radioactiveFire = radioactiveFire;
 
         Set<PotionEffect> effects = new HashSet<>();
-        effects.add(new PotionEffect(PotionEffectType.WITHER, 400, 2));
+        effects.add(new PotionEffect(PotionEffectType.WITHER, 400, 3));
         effects.add(new PotionEffect(PotionEffectType.BLINDNESS, 400, 3));
         effects.add(new PotionEffect(VersionedPotionEffectType.NAUSEA, 400, 3));
         effects.add(new PotionEffect(PotionEffectType.WEAKNESS, 400, 2));
-        effects.add(new PotionEffect(VersionedPotionEffectType.SLOWNESS, 400, 1));
-        effects.add(new PotionEffect(VersionedPotionEffectType.MINING_FATIGUE, 400, 1));
+        effects.add(new PotionEffect(VersionedPotionEffectType.SLOWNESS, 400, 2));
+        effects.add(new PotionEffect(VersionedPotionEffectType.MINING_FATIGUE, 400, 2));
+        effects.add(new PotionEffect(PotionEffectType.HUNGER, 400, 2));
         radiationEffects = Collections.unmodifiableSet(effects);
+
+        // Registrar listener de eventos de muerte por radiación
+        Bukkit.getPluginManager().registerEvents(this, Slimefun.instance());
     }
 
-    /**
-     * This returns a {@link Set} of {@link PotionEffect PotionEffects} which get applied to
-     * a {@link Player} when they are exposed to deadly radiation.
-     * 
-     * @return The {@link Set} of {@link PotionEffect PotionEffects} applied upon radioactive contact
-     */
     @Nonnull
     public Set<PotionEffect> getRadiationEffects() {
         return radiationEffects;
@@ -104,7 +104,6 @@ public class ArmorTask implements Runnable {
                 SlimefunItem sfItem = SlimefunItem.getByItem(item);
 
                 if (!(sfItem instanceof SlimefunArmorPiece)) {
-                    // If it isn't actually Armor, then we won't care about it.
                     sfItem = null;
                 }
 
@@ -139,7 +138,6 @@ public class ArmorTask implements Runnable {
         World world = p.getWorld();
 
         if (world.getEnvironment() != Environment.NORMAL) {
-            // The End and Nether have no sunlight
             return false;
         }
 
@@ -165,22 +163,38 @@ public class ArmorTask implements Runnable {
         ItemStack itemStack = item;
 
         if (!(item instanceof SlimefunItemStack) && radioactiveItems.size() > 1) {
-            // Performance optimization to reduce ItemMeta calls
             itemStack = ItemStackWrapper.wrap(item);
         }
 
         for (SlimefunItem radioactiveItem : radioactiveItems) {
             if (radioactiveItem.isItem(itemStack) && !radioactiveItem.isDisabledIn(p.getWorld())) {
-                // If the item is enabled in the world, then make radioactivity do its job
+                String itemName = radioactiveItem.getItemName();
+                p.setMetadata(RAD_META_KEY, new FixedMetadataValue(Slimefun.instance(), itemName));
+
                 Slimefun.getLocalization().sendMessage(p, "messages.radiation");
 
                 Slimefun.runSync(() -> {
+                    // 1. Efectos sonoros de Contador Geiger (Ticks acelerados)
+                    float randomPitch = 1.4f + (random.nextFloat() * 0.6f);
+                    p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1.2f, randomPitch);
+                    if (random.nextBoolean()) {
+                        p.playSound(p.getLocation(), Sound.ENTITY_ITEM_BREAK, 0.8f, 1.8f);
+                    }
+
+                    // 2. Partículas de chispa e indicador de daño por radiación
+                    p.getWorld().spawnParticle(Particle.ELECTRIC_SPARK, p.getLocation().add(0, 1, 0), 12, 0.4, 0.6, 0.4, 0.1);
+                    p.getWorld().spawnParticle(Particle.ASH, p.getEyeLocation(), 15, 0.5, 0.5, 0.5, 0.05);
+
+                    // 3. Efectos letales de poción
                     p.addPotionEffects(radiationEffects);
 
-                    // if radioactive fire is enabled, set them on fire
+                    // 4. Fuego radioactivo directo
                     if (radioactiveFire) {
                         p.setFireTicks(400);
                     }
+
+                    // 5. Daño letal directo (4.0 HP = 2 corazones por tick de chequeo)
+                    p.damage(4.0);
                 });
 
                 return true;
@@ -188,5 +202,21 @@ public class ArmorTask implements Runnable {
         }
 
         return false;
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        Player player = event.getEntity();
+        if (player.hasMetadata(RAD_META_KEY)) {
+            String radioactiveItemName = player.getMetadata(RAD_META_KEY).get(0).asString();
+            player.removeMetadata(RAD_META_KEY, Slimefun.instance());
+
+            // Mensaje de muerte personalizado por radiación letal
+            String customDeathMsg = ChatColor.RED + "☢ " + ChatColor.YELLOW + player.getName()
+                    + ChatColor.RED + " fue desintegrado por radiación letal al manipular "
+                    + ChatColor.GOLD + ChatColor.BOLD + radioactiveItemName;
+
+            event.setDeathMessage(customDeathMsg);
+        }
     }
 }

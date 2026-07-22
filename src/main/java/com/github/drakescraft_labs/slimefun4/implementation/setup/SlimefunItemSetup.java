@@ -983,20 +983,22 @@ public final class SlimefunItemSetup {
 
         new HazmatArmorPiece(itemGroups.armor, SlimefunItems.SCUBA_HELMET, RecipeType.ARMOR_FORGE,
         new ItemStack[] {new ItemStack(Material.ORANGE_WOOL), SlimefunItems.REINFORCED_CLOTH, new ItemStack(Material.ORANGE_WOOL), SlimefunItems.REINFORCED_CLOTH, new ItemStack(Material.GLASS_PANE), SlimefunItems.REINFORCED_CLOTH, null, null, null},
-        new PotionEffect[] {new PotionEffect(PotionEffectType.WATER_BREATHING, 300, 1)})
+        new PotionEffect[] {new PotionEffect(PotionEffectType.WATER_BREATHING, 300, 1), new PotionEffect(PotionEffectType.NIGHT_VISION, 300, 0)})
         .register(plugin);
 
         new HazmatArmorPiece(itemGroups.armor, SlimefunItems.HAZMAT_CHESTPLATE, RecipeType.ARMOR_FORGE,
         new ItemStack[] {new ItemStack(Material.ORANGE_WOOL), null, new ItemStack(Material.ORANGE_WOOL), SlimefunItems.REINFORCED_CLOTH, SlimefunItems.REINFORCED_CLOTH, SlimefunItems.REINFORCED_CLOTH, new ItemStack(Material.BLACK_WOOL), SlimefunItems.REINFORCED_CLOTH, new ItemStack(Material.BLACK_WOOL)},
-        new PotionEffect[] {new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 300, 1)})
+        new PotionEffect[] {new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 300, 1), new PotionEffect(PotionEffectType.RESISTANCE, 300, 0)})
         .register(plugin);
 
         new HazmatArmorPiece(itemGroups.armor, SlimefunItems.HAZMAT_LEGGINGS, RecipeType.ARMOR_FORGE,
-        new ItemStack[] {new ItemStack(Material.BLACK_WOOL), SlimefunItems.REINFORCED_CLOTH, new ItemStack(Material.BLACK_WOOL), SlimefunItems.REINFORCED_CLOTH, null, SlimefunItems.REINFORCED_CLOTH, SlimefunItems.REINFORCED_CLOTH, null, SlimefunItems.REINFORCED_CLOTH}, new PotionEffect[0])
+        new ItemStack[] {new ItemStack(Material.BLACK_WOOL), SlimefunItems.REINFORCED_CLOTH, new ItemStack(Material.BLACK_WOOL), SlimefunItems.REINFORCED_CLOTH, null, SlimefunItems.REINFORCED_CLOTH, SlimefunItems.REINFORCED_CLOTH, null, SlimefunItems.REINFORCED_CLOTH},
+        new PotionEffect[] {new PotionEffect(PotionEffectType.RESISTANCE, 300, 0)})
         .register(plugin);
 
         new HazmatArmorPiece(itemGroups.armor, SlimefunItems.HAZMAT_BOOTS, RecipeType.ARMOR_FORGE,
-        new ItemStack[] {SlimefunItems.REINFORCED_CLOTH, null, SlimefunItems.REINFORCED_CLOTH, SlimefunItems.REINFORCED_CLOTH, null, SlimefunItems.REINFORCED_CLOTH, new ItemStack(Material.BLACK_WOOL), null, new ItemStack(Material.BLACK_WOOL)}, new PotionEffect[0])
+        new ItemStack[] {SlimefunItems.REINFORCED_CLOTH, null, SlimefunItems.REINFORCED_CLOTH, SlimefunItems.REINFORCED_CLOTH, null, SlimefunItems.REINFORCED_CLOTH, new ItemStack(Material.BLACK_WOOL), null, new ItemStack(Material.BLACK_WOOL)},
+        new PotionEffect[] {new PotionEffect(PotionEffectType.SPEED, 300, 0)})
         .register(plugin);
 
         new SlimefunItem(itemGroups.misc, SlimefunItems.CRUSHED_ORE, RecipeType.ORE_CRUSHER,
