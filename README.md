@@ -41,7 +41,7 @@ Conecta el motor de Slimefun4 Core directamente al binario/librería `Slimefun-R
 mvn clean package
 ```
 
-Ubica el archivo `Slimefun4-Drake.jar` en la folder `plugins/` de tu servidor Minecraft.
+Ubica el archivo `Slimefun4-Drake.jar` en la carpeta `plugins/` de tu servidor Minecraft.
 
 ---
 
