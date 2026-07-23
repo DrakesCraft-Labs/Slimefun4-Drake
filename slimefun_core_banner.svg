@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 300" width="920" height="300">
+  <defs>
+    <linearGradient id="sfCoreBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#021B0B" />
+      <stop offset="50%" stop-color="#053B18" />
+      <stop offset="100%" stop-color="#011407" />
+    </linearGradient>
+
+    <linearGradient id="neonSlime" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00FF66" />
+      <stop offset="50%" stop-color="#10B981" />
+      <stop offset="100%" stop-color="#34D399" />
+    </linearGradient>
+
+    <filter id="sfCoreGlow">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <style>
+    @keyframes sfPulse {
+      0%, 100% { opacity: 0.85; filter: drop-shadow(0 0 15px rgba(0, 255, 102, 0.7)); }
+      50% { opacity: 1; filter: drop-shadow(0 0 30px rgba(52, 211, 153, 1)); }
+    }
+    @keyframes lineFlow {
+      0% { stroke-dashoffset: 200; }
+      100% { stroke-dashoffset: 0; }
+    }
+
+    .bg-sfcore { fill: url(#sfCoreBg); }
+    .title-sfcore { font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 44px; fill: url(#neonSlime); animation: sfPulse 3.5s infinite ease-in-out; }
+    .sub-sfcore { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 14px; fill: #A7F3D0; letter-spacing: 3px; }
+    .wire-sfcore { stroke: url(#neonSlime); stroke-width: 2; fill: none; stroke-dasharray: 14 7; animation: lineFlow 14s linear infinite; opacity: 0.5; }
+    .badge-sfcore { fill: #042E13; stroke: #00FF66; stroke-width: 1.5; rx: 6px; }
+    .btext-sfcore { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; fill: #00FF66; }
+  </style>
+
+  <rect class="bg-sfcore" width="920" height="300" rx="14" stroke="#00FF66" stroke-width="1.5" />
+  <path class="wire-sfcore" d="M 50,40 H 870 M 50,260 H 870 M 100,0 V 300 M 820,0 V 300 M 50,150 H 870" />
+
+  <g transform="translate(460, 95)">
+    <polygon points="0,-42 34,-20 34,20 0,42 -34,20 -34,-20" fill="#042E13" stroke="url(#neonSlime)" stroke-width="3" filter="url(#sfCoreGlow)" />
+    <circle cx="0" cy="0" r="10" fill="#00FF66" />
+  </g>
+
+  <text x="460" y="185" text-anchor="middle" class="title-sfcore">SLIMEFUN4 DRAKE CORE</text>
+  <text x="460" y="215" text-anchor="middle" class="sub-sfcore">PRIMARY ADDONS LOADER · RUST 2021 FFM HYBRID ACCELERATED</text>
+
+  <g transform="translate(230, 245)">
+    <rect x="0" y="0" width="145" height="30" class="badge-sfcore" />
+    <text x="12" y="20" class="btext-sfcore">SLIMEFUN CORE</text>
+
+    <rect x="165" y="0" width="150" height="30" class="badge-sfcore" stroke="#FF4500" />
+    <text x="177" y="20" class="btext-sfcore" fill="#FF7300">RUST FFM HYBRID</text>
+
+    <rect x="335" y="0" width="135" height="30" class="badge-sfcore" stroke="#00F2FE" />
+    <text x="347" y="20" class="btext-sfcore" fill="#00F2FE">PAPER 1.21.11</text>
+  </g>
+</svg>
