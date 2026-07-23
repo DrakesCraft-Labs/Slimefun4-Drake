@@ -4,7 +4,7 @@
 
 # 🧪 Slimefun4-Drake Core
 
-**Núcleo Principal de Slimefun4 Adapted for Paper/Purpur 1.21.11 con Carga de Addons y Aceleración Nativa en Rust**
+**Núcleo Principal de Slimefun4 Adaptado para Paper/Purpur 1.21.11 con Carga de Addons y Aceleración Nativa en Rust**
 
 <p>
   <a href="https://github.com/DrakesCraft-Labs/Slimefun4-Drake"><img src="https://img.shields.io/badge/GitHub-Slimefun4--Drake-181717?style=for-the-badge&logo=github" alt="GitHub"/></a>
@@ -41,12 +41,12 @@ Conecta el motor de Slimefun4 Core directamente al binario/librería `Slimefun-R
 mvn clean package
 ```
 
-Ubica el archivo `Slimefun4-Drake.jar` en la carpeta `plugins/` de tu servidor Minecraft.
+Ubica el archivo `Slimefun4-Drake.jar` en la folder `plugins/` de tu servidor Minecraft.
 
 ---
 
 <div align="center">
 
-**DrakesCraft Labs** · Maintained by [**JackStar6677-1**](https://github.com/JackStar6677-1)
+**DrakesCraft Labs** · Mantenido por [**JackStar6677-1**](https://github.com/JackStar6677-1)
 
 </div>
