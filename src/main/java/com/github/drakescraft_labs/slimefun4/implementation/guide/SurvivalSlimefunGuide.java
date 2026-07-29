@@ -305,19 +305,11 @@ public class SurvivalSlimefunGuide implements SlimefunGuideImplementation {
                 try {
                     if (isSurvivalMode()) {
                         displayItem(profile, sfitem, true);
-                    } else if (pl.hasPermission("slimefun.cheat.items")) {
+                    } else if (CheatPolicy.canUseCheat(pl)) {
                         if (sfitem instanceof MultiBlockMachine) {
                             Slimefun.getLocalization().sendMessage(pl, "guide.cheat.no-multiblocks");
-                        } else if (!CheatPolicy.canClaim(pl, sfitem)) {
-                            CheatPolicy.deny(pl);
                         } else {
-                            ItemStack clonedItem = sfitem.getItem().clone();
-
-                            if (action.isShiftClicked()) {
-                                clonedItem.setAmount(clonedItem.getMaxStackSize());
-                            }
-
-                            pl.getInventory().addItem(clonedItem);
+                            CheatPolicy.claim(pl, sfitem, action.isShiftClicked());
                         }
                     } else {
                         /*
@@ -374,7 +366,11 @@ public class SurvivalSlimefunGuide implements SlimefunGuideImplementation {
                 menu.addMenuClickHandler(index, (pl, slot, itm, action) -> {
                     try {
                         if (!isSurvivalMode()) {
-                            pl.getInventory().addItem(slimefunItem.getItem().clone());
+                            if (slimefunItem instanceof MultiBlockMachine) {
+                                Slimefun.getLocalization().sendMessage(pl, "guide.cheat.no-multiblocks");
+                            } else {
+                                CheatPolicy.claim(pl, slimefunItem, action.isShiftClicked());
+                            }
                         } else {
                             displayItem(profile, slimefunItem, true);
                         }

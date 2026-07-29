@@ -22,6 +22,20 @@ The production runtime is Java. A short-lived Rust/FFM proof of concept was remo
 - Addons: addons load through the public Slimefun API; the core does not silently rewrite their data or recipes.
 - Native libraries: no `slimefun_ffi` library is required or loaded by the current supported core.
 
+## Controlled SFMaster path
+
+The guide delivery path has one authority: `CheatPolicy` in this Java core.
+Category pages and search results both pass through the same checks.
+
+- Staff with the bypass remains unrestricted.
+- A player with `odysseia.sfmaster.active` receives one item per claim.
+- The rolling quota is persisted in the player's PDC and survives restarts.
+- Every delivered item is marked with its owner before inventory insertion.
+- Addons are default-deny. Only configured addons or exact item IDs are eligible,
+  and equipment/endgame blocklists still apply afterward.
+- `/sf give` remains a staff operation. Odysseia blocks paid pass holders from
+  using it and owns guide expiry, transfer prevention, and legacy audits.
+
 ## Build and validation
 
 ```bash
@@ -31,6 +45,10 @@ mvn test -DlegacyMockBukkitTests \
 ```
 
 GitHub Actions publishes the exact production JAR from a successful Java CI run and performs a Paper 1.21.11 end-to-end boot check for pull requests. Prefer that artifact to an unverified local build.
+
+The isolated `ClaimWindowTest` does not require MockBukkit. The legacy MockBukkit
+suite currently requires registry fixtures compatible with Paper 1.21.11; a
+registry bootstrap failure is infrastructure debt, not a valid SFMaster result.
 
 ## Deployment discipline
 

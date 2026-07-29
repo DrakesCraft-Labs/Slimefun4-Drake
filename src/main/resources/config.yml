@@ -31,6 +31,16 @@ sfmaster-guard:
   enabled: true
   limited-permission: "odysseia.sfmaster.active"
   bypass-permission: "slimefun.cheat.items.bypass"
+  # Persistent rolling window. Restarting Slimefun or the server does not reset it.
+  max-claims: 12
+  window-minutes: 60
+  # Default-deny for addons. Expand only after auditing their complete catalog.
+  allowed-addons:
+    - "SLIMEFUN"
+    - "CULTIVATION"
+    - "NETWORKS"
+  allowed-item-ids: []
+  allowed-id-prefixes: []
   blocked-addons:
     - "SUPREME"
     - "INFINITYEXPANSION"

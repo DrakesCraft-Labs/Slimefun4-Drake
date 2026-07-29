@@ -17,7 +17,6 @@ import com.github.drakescraft_labs.slimefun4.api.items.SlimefunItem;
 import com.github.drakescraft_labs.slimefun4.core.commands.SlimefunCommand;
 import com.github.drakescraft_labs.slimefun4.core.commands.SubCommand;
 import com.github.drakescraft_labs.slimefun4.core.multiblocks.MultiBlockMachine;
-import com.github.drakescraft_labs.slimefun4.core.services.CheatPolicy;
 import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
 
 class GiveCommand extends SubCommand {
@@ -61,8 +60,6 @@ class GiveCommand extends SubCommand {
     private void giveItem(CommandSender sender, Player p, SlimefunItem sfItem, String[] args) {
         if (sfItem instanceof MultiBlockMachine) {
             Slimefun.getLocalization().sendMessage(sender, "guide.cheat.no-multiblocks");
-        } else if (!CheatPolicy.canClaim(p, sfItem)) {
-            CheatPolicy.deny(p);
         } else {
             int amount = parseAmount(args);
 
