@@ -1,5 +1,6 @@
 package com.github.drakescraft_labs.slimefun4.core.networks.energy;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -159,7 +160,8 @@ public class EnergyNet extends Network implements HologramOwner {
         } else {
             int generatorsSupply = tickAllGenerators(timestamp::getAndAdd);
             int capacitorsSupply = tickAllCapacitors();
-            int supply = NumberUtils.flowSafeAddition(generatorsSupply, capacitorsSupply);
+            int supply = Slimefun.getNativeAccelerationService()
+                .sumSaturating(new int[] {generatorsSupply, capacitorsSupply});
             int remainingEnergy = supply;
             int demand = 0;
 
@@ -234,7 +236,8 @@ public class EnergyNet extends Network implements HologramOwner {
 
     private int tickAllGenerators(@Nonnull LongConsumer timings) {
         Set<Location> explodedBlocks = new HashSet<>();
-        int supply = 0;
+        int[] generated = new int[generators.size()];
+        int generatedCount = 0;
 
         for (Map.Entry<Location, EnergyNetProvider> entry : generators.entrySet()) {
             long timestamp = Slimefun.getProfiler().newEntry();
@@ -259,7 +262,7 @@ public class EnergyNet extends Network implements HologramOwner {
                         loc.getWorld().createExplosion(loc, 0F, false);
                     });
                 } else {
-                    supply = NumberUtils.flowSafeAddition(supply, energy);
+                    generated[generatedCount++] = energy;
                 }
             } catch (Exception | LinkageError throwable) {
                 explodedBlocks.add(loc);
@@ -275,17 +278,20 @@ public class EnergyNet extends Network implements HologramOwner {
             generators.keySet().removeAll(explodedBlocks);
         }
 
-        return supply;
+        return Slimefun.getNativeAccelerationService()
+            .sumSaturating(Arrays.copyOf(generated, generatedCount));
     }
 
     private int tickAllCapacitors() {
-        int supply = 0;
+        int[] stored = new int[capacitors.size()];
+        int storedCount = 0;
 
         for (Map.Entry<Location, EnergyNetComponent> entry : capacitors.entrySet()) {
-            supply = NumberUtils.flowSafeAddition(supply, entry.getValue().getCharge(entry.getKey()));
+            stored[storedCount++] = entry.getValue().getCharge(entry.getKey());
         }
 
-        return supply;
+        return Slimefun.getNativeAccelerationService()
+            .sumSaturating(Arrays.copyOf(stored, storedCount));
     }
 
     private void updateHologram(@Nonnull Block b, double supply, double demand) {

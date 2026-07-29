@@ -130,6 +130,8 @@ import com.github.drakescraft_labs.slimefun4.integrations.IntegrationsManager;
 import com.github.drakescraft_labs.slimefun4.utils.NumberUtils;
 import com.github.drakescraft_labs.slimefun4.utils.tags.SlimefunTag;
 import io.papermc.lib.PaperLib;
+import io.github.thebusybiscuit.slimefun4.api.services.NativeAccelerationService;
+import io.github.thebusybiscuit.slimefun4.core.services.nativeengine.RustNativeEngine;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.MenuListener;
 import com.github.drakescraft_labs.slimefun4.legacy.api.BlockStorage;
 import com.github.drakescraft_labs.slimefun4.legacy.api.inventory.UniversalBlockMenu;
@@ -185,6 +187,7 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
     private final SoundService soundService = new SoundService(this);
     private final ThreadService threadService = new ThreadService(this);
     private final AnalyticsService analyticsService = new AnalyticsService(this);
+    private final RustNativeEngine nativeAccelerationService = new RustNativeEngine();
 
     // Some other things we need
     private final IntegrationsManager integrations = new IntegrationsManager(this);
@@ -249,6 +252,7 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
         networkManager = new NetworkManager(200);
         command.register();
         registry.load(this, config);
+        nativeAccelerationService.start(this, config);
         loadTags();
         soundService.reload(false);
         // TODO: What do we do if tests want to use another storage backend (e.g. testing new feature on legacy + sql)?
@@ -450,6 +454,7 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
 
         // Close and unload any resources from our Metrics Service
         metricsService.cleanUp();
+        nativeAccelerationService.stop(this);
 
         // Terminate our Plugin instance
         setInstance(null);
@@ -474,6 +479,14 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
      */
     private static void setInstance(@Nullable Slimefun pluginInstance) {
         instance = pluginInstance;
+    }
+
+    public static @Nonnull NativeAccelerationService getNativeAccelerationService() {
+        Slimefun plugin = instance();
+        if (plugin == null) {
+            throw new IllegalStateException("Slimefun instance is not available");
+        }
+        return plugin.nativeAccelerationService;
     }
 
     /**

@@ -116,6 +116,12 @@ performance:
     # loaded accelerator in the same server tick. Set to 1 to disable throttling.
     tick-interval: 4
 
+# Shared Linux acceleration engine for EnergyNet and compatible addons.
+native-engine:
+  enabled: true
+  library: "native/libslimefun_ffi.so"
+  minimum-batch-size: 2
+
 research-ranks:
 - Chicken
 - Cow

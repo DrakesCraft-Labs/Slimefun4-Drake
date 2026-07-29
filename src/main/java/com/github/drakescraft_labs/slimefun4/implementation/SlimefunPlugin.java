@@ -4,6 +4,7 @@ import com.github.drakescraft_labs.slimefun4.core.SlimefunRegistry;
 import com.github.drakescraft_labs.slimefun4.core.services.LocalizationService;
 import com.github.drakescraft_labs.slimefun4.core.services.MinecraftRecipeService;
 import dev.drake.dough.protection.ProtectionManager;
+import io.github.thebusybiscuit.slimefun4.api.services.NativeAccelerationService;
 
 /**
  * Compatibility class for legacy addons.
@@ -29,5 +30,9 @@ public final class SlimefunPlugin {
 
     public static ProtectionManager getProtectionManager() {
         return Slimefun.instance().getProtectionManager();
+    }
+
+    public static NativeAccelerationService getNativeAccelerationService() {
+        return Slimefun.getNativeAccelerationService();
     }
 }

@@ -68,6 +68,9 @@ permissions:
   slimefun.command.debug:
     description: Allows you to do /sf debug
     default: op
+  slimefun.command.native:
+    description: Allows you to inspect the Slimefun-Rust runtime
+    default: op
   slimefun.android.bypass:
     description: Allows you to edit other Players Androids
     default: op
