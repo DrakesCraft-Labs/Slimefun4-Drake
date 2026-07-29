@@ -12,7 +12,10 @@
 
 Slimefun4-Drake owns the reliable base layer for recipes, categories, guides, research, block storage, cargo networks, energy networks and addon loading. It is the compatibility boundary for the DrakesCraft Slimefun ecosystem.
 
-The production runtime is Java. A short-lived Rust/FFM proof of concept was removed because it was not used by the supported runtime and had not earned the trust required to touch persistent BlockStorage, EnergyNet or CargoNet state. The core must remain boring, predictable and recoverable.
+The active production runtime is currently Java. `Slimefun-Rust` is the planned
+shared acceleration layer for expensive, deterministic work across this core,
+addons and DrakesCraft-owned plugins. Java remains authoritative while the
+native bridge is completed and validated in shadow mode.
 
 ## Runtime contract
 
@@ -20,7 +23,9 @@ The production runtime is Java. A short-lived Rust/FFM proof of concept was remo
 - Artifact: `Slimefun-1.2.DEV v11.0-Drake-1.21.11-SNAPSHOT.jar`.
 - Storage: the normal Slimefun storage contract remains authoritative.
 - Addons: addons load through the public Slimefun API; the core does not silently rewrite their data or recipes.
-- Native libraries: no `slimefun_ffi` library is required or loaded by the current supported core.
+- Native acceleration: not loaded by the current production build. The future
+  Linux bridge will use `libslimefun_ffi.so`, preserve a Java fallback and never
+  expose Bukkit objects to native worker threads.
 
 ## Controlled SFMaster path
 
