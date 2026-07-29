@@ -296,6 +296,7 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
 
         // Load various config settings into our cache
         registry.load(this, config);
+        nativeAccelerationService.start(this, config);
 
         // Set up localization
         logger.log(Level.INFO, "Loading language files...");
