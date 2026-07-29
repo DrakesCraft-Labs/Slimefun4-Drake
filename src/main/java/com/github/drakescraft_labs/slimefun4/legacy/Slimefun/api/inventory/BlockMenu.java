@@ -3,8 +3,12 @@ package com.github.drakescraft_labs.slimefun4.legacy.api.inventory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
@@ -49,24 +53,77 @@ public class BlockMenu extends DirtyChestMenu {
     }
 
     public void save(Location l) {
-        if (!isDirty()) {
+        MenuSnapshot snapshot = captureSnapshot(l);
+
+        if (snapshot == null) {
             return;
         }
 
-        // To force CS-CoreLib to build the Inventory
-        this.getContents();
+        snapshot.save();
+    }
 
-        File file = new File("data-storage/Slimefun/stored-inventories/" + serializeLocation(l) + ".sfi");
-        Config cfg = new Config(file);
-        cfg.setValue("preset", preset.getID());
-
-        for (int slot : preset.getInventorySlots()) {
-            cfg.setValue(String.valueOf(slot), getItemInSlot(slot));
+    /**
+     * Bukkit inventories are main-thread state. Async autosaves must only write an
+     * immutable copy, otherwise machines can persist a partial inventory during a restart.
+     */
+    private MenuSnapshot captureSnapshot(Location l) {
+        if (Bukkit.isPrimaryThread() || Slimefun.instance() == null) {
+            return captureSnapshotOnPrimaryThread(l);
         }
 
-        cfg.save();
+        try {
+            return Bukkit.getScheduler().callSyncMethod(Slimefun.instance(), () -> captureSnapshotOnPrimaryThread(l)).get();
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Interrupted while snapshotting Slimefun inventory", ex);
+        } catch (ExecutionException ex) {
+            throw new IllegalStateException("Could not snapshot Slimefun inventory", ex.getCause());
+        }
+    }
+
+    private MenuSnapshot captureSnapshotOnPrimaryThread(Location l) {
+        if (!isDirty()) {
+            return null;
+        }
+
+        // Force the legacy menu to materialize before taking independent ItemStack copies.
+        ItemStack[] liveContents = this.getContents();
+        ItemStack[] contents = new ItemStack[liveContents.length];
+
+        for (int slot : preset.getInventorySlots()) {
+            ItemStack item = super.getItemInSlot(slot);
+            contents[slot] = item == null ? null : item.clone();
+        }
 
         changes = 0;
+        return new MenuSnapshot(l, preset.getID(), new HashSet<>(preset.getInventorySlots()), contents);
+    }
+
+    private static final class MenuSnapshot {
+
+        private final Location location;
+        private final String presetId;
+        private final Set<Integer> slots;
+        private final ItemStack[] contents;
+
+        private MenuSnapshot(Location location, String presetId, Set<Integer> slots, ItemStack[] contents) {
+            this.location = location;
+            this.presetId = presetId;
+            this.slots = slots;
+            this.contents = contents;
+        }
+
+        private void save() {
+            File file = new File("data-storage/Slimefun/stored-inventories/" + serializeLocation(location) + ".sfi");
+            Config cfg = new Config(file);
+            cfg.setValue("preset", presetId);
+
+            for (int slot : slots) {
+                cfg.setValue(String.valueOf(slot), contents[slot]);
+            }
+
+            cfg.save();
+        }
     }
 
     public void move(Location l) {
