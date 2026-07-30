@@ -179,7 +179,9 @@ public class AncientAltarListener implements Listener {
             return;
         }
 
-        ItemStack catalyst = new CustomItemStack(p.getInventory().getItemInMainHand(), 1);
+        ItemStack hand = p.getInventory().getItemInMainHand();
+        ItemStack catalyst = hand == null ? new ItemStack(Material.AIR) : hand.clone();
+        catalyst.setAmount(1);
         List<Block> pedestals = getPedestals(altar);
 
         if (!altars.contains(altar)) {
