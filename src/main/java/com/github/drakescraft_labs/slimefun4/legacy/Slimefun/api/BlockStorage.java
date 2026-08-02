@@ -565,7 +565,8 @@ public class BlockStorage {
     public static synchronized void saveChunks() {
         if (chunkChanges > 0) {
             File chunks = new File(PATH_CHUNKS + "chunks.sfc");
-            Config cfg = new Config(PATH_CHUNKS + "chunks.temp");
+            File temporary = new File(PATH_CHUNKS + "chunks.sfc.tmp");
+            Config cfg = new Config(temporary.getPath());
 
             for (Map.Entry<String, BlockInfoConfig> entry : Slimefun.getRegistry().getChunks().entrySet()) {
                 // Saving empty chunk data is pointless
@@ -574,9 +575,23 @@ public class BlockStorage {
                 }
             }
 
-            cfg.save(chunks);
-
-            chunkChanges = 0;
+            try {
+                cfg.save(temporary);
+                try {
+                    Files.move(temporary.toPath(), chunks.toPath(), StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException atomicMoveFailure) {
+                    // Networked filesystems may not support atomic replacement.
+                    Files.move(temporary.toPath(), chunks.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                }
+                chunkChanges = 0;
+            } catch (IOException ex) {
+                // Keep the dirty marker so the next persistence pass retries safely.
+                Slimefun.logger().log(Level.SEVERE, ex, () -> "Could not persist BlockStorage chunk index");
+            } finally {
+                if (temporary.exists() && !temporary.delete()) {
+                    Slimefun.logger().log(Level.WARNING, "Could not remove temporary BlockStorage chunk file \"{0}\"", temporary.getName());
+                }
+            }
         }
     }
 
