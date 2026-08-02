@@ -94,14 +94,11 @@ public final class PostSetup {
         sender.sendMessage(ChatColor.GREEN + "Successfully loaded " + total + " Items and " + Slimefun.getRegistry().getResearches().size() + " Researches");
         sender.sendMessage(ChatColor.GREEN + "( " + slimefunOnly + " Items from Slimefun, " + (total - slimefunOnly) + " Items from " + Slimefun.getInstalledAddons().size() + " Addons )");
         sender.sendMessage("");
-        sender.sendMessage(ChatColor.GREEN + "Slimefun is an Open-Source project that is kept alive by a large community.");
-        sender.sendMessage(ChatColor.GREEN + "Consider helping us maintain this project by contributing on GitHub!");
+        sender.sendMessage(ChatColor.GREEN + "Slimefun DrakesCraft is maintained for this server by DrakesCraft Labs.");
+        sender.sendMessage(ChatColor.GREEN + "Report issues in the repository below.");
         sender.sendMessage("");
-        sender.sendMessage(ChatColor.GREEN + " - Source Code: https://github.com/Slimefun/Slimefun4");
-        sender.sendMessage(ChatColor.GREEN + " - Wiki: https://github.com/Slimefun/Slimefun4/wiki");
-        sender.sendMessage(ChatColor.GREEN + " - Addons: https://github.com/Slimefun/Slimefun4/wiki/Addons");
-        sender.sendMessage(ChatColor.GREEN + " - Bug Reports: https://github.com/Slimefun/Slimefun4/issues");
-        sender.sendMessage(ChatColor.GREEN + " - Discord: https://discord.gg/slimefun");
+        sender.sendMessage(ChatColor.GREEN + " - Repository: https://github.com/DrakesCraft-Labs/Slimefun4-Drake");
+        sender.sendMessage(ChatColor.GREEN + " - Issues: https://github.com/DrakesCraft-Labs/Slimefun4-Drake/issues");
 
         sender.sendMessage("");
 
