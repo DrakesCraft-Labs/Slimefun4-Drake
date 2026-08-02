@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/DrakesCraft-Labs/Slimefun4-Drake/main/slimefun_core_banner.svg" alt="Slimefun4-Drake banner" width="920" />
+<img src="banner.svg" alt="Slimefun4-Drake banner" width="920" />
 
 # Slimefun4-Drake Core
 
