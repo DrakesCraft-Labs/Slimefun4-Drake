@@ -16,7 +16,12 @@ import com.github.drakescraft_labs.slimefun4.legacy.api.BlockStorage;
 
 /**
  * This handles all integrations with {@link WorldEdit}.
- * If an are is cleared, we also wanna clear all Slimefun-related block data.
+ *
+ * <p>WorldEdit only carries vanilla block state in a clipboard. Slimefun stores
+ * machine data and inventories separately, so a successful edit over a
+ * Slimefun location must always invalidate its old data. This deliberately does
+ * not clone machines or their inventories, avoiding duplicated or corrupted
+ * machine state.</p>
  * 
  * @author TheBusyBiscuit
  *
@@ -43,19 +48,20 @@ class WorldEditIntegration {
 
             @Override
             public <T extends BlockStateHolder<T>> boolean setBlock(BlockVector3 pos, T block) throws WorldEditException {
-                if (block.getBlockType().getMaterial().isAir()) {
-                    World world = Bukkit.getWorld(event.getWorld().getName());
+                boolean changed = getExtent().setBlock(pos, block);
+                if (!changed) {
+                    return false;
+                }
 
-                    if (world != null) {
-                        Location l = new Location(world, pos.getBlockX(), pos.getBlockY(), pos.getBlockZ());
-
-                        if (BlockStorage.hasBlockInfo(l)) {
-                            BlockStorage.clearBlockInfo(l);
-                        }
+                World world = Bukkit.getWorld(event.getWorld().getName());
+                if (world != null) {
+                    Location location = new Location(world, pos.getBlockX(), pos.getBlockY(), pos.getBlockZ());
+                    if (BlockStorage.hasBlockInfo(location)) {
+                        BlockStorage.clearBlockInfo(location);
                     }
                 }
 
-                return getExtent().setBlock(pos, block);
+                return true;
             }
 
         });
