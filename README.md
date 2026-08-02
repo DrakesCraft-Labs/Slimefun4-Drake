@@ -65,3 +65,10 @@ registry bootstrap failure is infrastructure debt, not a valid SFMaster result.
 ## Maintainers
 
 DrakesCraft Labs / JackStar. Upstream Slimefun licensing remains GPL-3.0.
+
+## Support
+
+This repository is the operational reference for the DrakesCraft core. Attach
+generated error reports to the relevant DrakesCraft repository issue tracker;
+do not publish them to public paste services because they can contain server
+paths, plugin inventories or other operational metadata.
