@@ -62,6 +62,11 @@ registry bootstrap failure is infrastructure debt, not a valid SFMaster result.
 4. Restart during a maintenance window and verify the startup log, addon load list, BlockStorage load and no duplicate-plugin warning.
 5. Smoke-test the Slimefun Guide, a machine, a CargoNet operation and an EnergyNet operation before calling the update complete.
 
+## Guías DrakesCraft
+
+- [Progresión y automatización](docs/GUIA_DE_PROGRESION_Y_AUTOMATIZACION.md)
+- [Integridad de redes](https://github.com/DrakesCraft-Labs/NetworksV6-drake/blob/main/docs/INTEGRIDAD_DE_RED_DRAKESCRAFT.md)
+
 ## Maintainers
 
 DrakesCraft Labs / JackStar. Upstream Slimefun licensing remains GPL-3.0.
