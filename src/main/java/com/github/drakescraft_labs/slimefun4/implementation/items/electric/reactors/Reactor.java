@@ -65,6 +65,39 @@ public abstract class Reactor extends AbstractEnergyProvider implements Hologram
     private static final String MODE = "reactor-mode";
     private static final int INFO_SLOT = 49;
     private static final int COOLANT_DURATION = 50;
+
+    /**
+     * Instante en que se cargo la clase, que es practicamente el arranque del servidor.
+     *
+     * Ver {@link #enPeriodoDeGracia()}: durante los primeros segundos tras un reinicio, un reactor
+     * alimentado por cargo o por Networks se queda sin refrigerante no porque el jugador lo haya
+     * descuidado, sino porque la red que se lo lleva todavia no existe.
+     */
+    private static final long ARRANQUE = System.currentTimeMillis();
+
+    /**
+     * Cuanto se le perdona a un reactor tras el arranque, en milisegundos.
+     *
+     * NetworksV6 reconstruye sus redes a los 200 ticks (10s) y otra vez a los 600 (30s), mientras
+     * que Slimefun empieza a tickear maquinas casi de inmediato. En esa ventana el reactor pide
+     * refrigerante y no hay nadie para traerselo.
+     *
+     * 90 segundos cubren las dos reindexaciones con margen de sobra, y son irrelevantes para un
+     * reactor que lleve horas funcionando.
+     */
+    private static final long GRACIA_MILLIS = 90_000L;
+
+    /**
+     * True si el servidor acaba de arrancar y todavia no se puede culpar al jugador.
+     *
+     * Esto NO desactiva las explosiones: un reactor que se quede sin refrigerante en marcha sigue
+     * reventando igual. Solo evita que reviente por una carrera entre plugins que el jugador no
+     * puede prever ni impedir. Lo reporto LUISITO el 2026-08-06: "cada reinicio hace bum los
+     * nucleares... es por la net".
+     */
+    private static boolean enPeriodoDeGracia() {
+        return System.currentTimeMillis() - ARRANQUE < GRACIA_MILLIS;
+    }
     private static final BlockFace[] WATER_BLOCKS = { BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST, BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST };
 
     private static final int[] border = { 0, 1, 2, 3, 5, 6, 7, 8, 12, 13, 14, 21, 23 };
@@ -316,6 +349,15 @@ public abstract class Reactor extends AbstractEnergyProvider implements Hologram
             processor.updateProgressBar(inv, 22, operation);
 
             if (needsCooling() && !hasEnoughCoolant(l, inv, accessPort, operation)) {
+                if (enPeriodoDeGracia()) {
+                    // Recien arrancado: la red que trae el refrigerante puede no existir todavia.
+                    // Se deja pasar este punto de enfriamiento sin cobrarlo y sin reventar; el
+                    // siguiente llega 50 ticks despues, cuando la red ya esta en pie.
+                    //
+                    // No se rebobina el progreso: FuelOperation.addProgress exige un valor
+                    // positivo y lanzaria IllegalArgumentException, que es peor que la explosion.
+                    return 0;
+                }
                 explosionsQueue.add(l);
                 return 0;
             }
