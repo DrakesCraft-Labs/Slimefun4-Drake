@@ -5,10 +5,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.IllegalPluginAccessException;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
@@ -67,17 +69,37 @@ public class BlockMenu extends DirtyChestMenu {
      * immutable copy, otherwise machines can persist a partial inventory during a restart.
      */
     private MenuSnapshot captureSnapshot(Location l) {
-        if (Bukkit.isPrimaryThread() || Slimefun.instance() == null) {
+        if (Bukkit.isPrimaryThread()) {
             return captureSnapshotOnPrimaryThread(l);
         }
 
+        Slimefun plugin = Slimefun.instance();
+
+        /*
+         * Al apagar, el plugin sigue existiendo pero ya esta deshabilitado y el scheduler
+         * rechaza tareas nuevas. Antes se comprobaba solo el null, se intentaba programar igual
+         * y saltaba IllegalPluginAccessException, que no estaba cazada y abortaba el resto del
+         * lote de ese mundo.
+         *
+         * Devolver null deja el bloque marcado como sucio a proposito: no se toca 'changes', asi
+         * que lo recoge el volcado sincrono de AutoSavingService#shutdownSave, que corre en el
+         * hilo principal y reintenta hasta cinco veces. Saltarse esta pasada no pierde nada.
+         */
+        if (plugin == null || !plugin.isEnabled()) {
+            return null;
+        }
+
         try {
-            return Bukkit.getScheduler().callSyncMethod(Slimefun.instance(), () -> captureSnapshotOnPrimaryThread(l)).get();
+            return Bukkit.getScheduler().callSyncMethod(plugin, () -> captureSnapshotOnPrimaryThread(l)).get();
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
             throw new IllegalStateException("Interrupted while snapshotting Slimefun inventory", ex);
         } catch (ExecutionException ex) {
             throw new IllegalStateException("Could not snapshot Slimefun inventory", ex.getCause());
+        } catch (CancellationException | IllegalPluginAccessException ex) {
+            // Carrera con el apagado: entre el isEnabled() de arriba y el callSyncMethod el
+            // servidor empezo a pararse. Mismo trato, el bloque sigue sucio para el volcado.
+            return null;
         }
     }
 
