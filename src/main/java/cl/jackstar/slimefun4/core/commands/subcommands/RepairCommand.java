@@ -1,0 +1,98 @@
+package cl.jackstar.slimefun4.core.commands.subcommands;
+
+import javax.annotation.Nonnull;
+
+import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.core.commands.SlimefunCommand;
+import io.github.thebusybiscuit.slimefun4.core.commands.SubCommand;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
+import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunChunkData;
+import me.mrCookieSlime.Slimefun.api.BlockStorage;
+import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
+
+/** Repairs the active runtime state of persisted Slimefun blocks in the sender's current chunk. */
+class RepairCommand extends SubCommand {
+
+    RepairCommand(@Nonnull Slimefun plugin, @Nonnull SlimefunCommand cmd) {
+        super(plugin, cmd, "repair", true);
+    }
+
+    @Override
+    public void onExecute(@Nonnull CommandSender sender, @Nonnull String[] args) {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage("Este comando debe ejecutarse dentro del juego.");
+            return;
+        }
+        if (!player.hasPermission("slimefun.command.repair") && !player.isOp()) {
+            Slimefun.getLocalization().sendMessage(sender, "messages.no-permission", true);
+            return;
+        }
+        if (args.length != 2 || !args[1].equalsIgnoreCase("chunk")) {
+            sender.sendMessage("Uso: /sf repair chunk");
+            return;
+        }
+
+        RepairSummary summary = repairChunk(player.getLocation().getChunk());
+        sender.sendMessage("§aReparación SF del chunk: " + summary.validEntries + " válido(s), "
+                + summary.tickersEnabled + " ticker(s) reactivado(s), " + summary.inventoriesMarked
+                + " inventario(s) marcado(s) para guardado.");
+        if (summary.invalidEntries > 0 || summary.staleBlocks > 0) {
+            sender.sendMessage("§eDiagnóstico sin cambios: " + summary.invalidEntries + " ID(s) desconocido(s), "
+                    + summary.staleBlocks + " registro(s) con bloque ausente.");
+        }
+    }
+
+    /** Re-enables safe runtime services only; unknown or stale records remain untouched for recovery. */
+    private RepairSummary repairChunk(@Nonnull Chunk chunk) {
+        RepairSummary summary = new RepairSummary();
+        // Antes se usaba nuestro ChunkLocationIndex sobre BlockStorage. Aqui el chunk es un
+        // contenedor de primera clase del propio almacenamiento, asi que se pregunta a el:
+        // no hay indice paralelo que mantener ni que pueda desincronizarse.
+        SlimefunChunkData datosChunk =
+                Slimefun.getDatabaseManager().getBlockDataController().getChunkData(chunk);
+        if (datosChunk == null) {
+            return summary;
+        }
+
+        for (SlimefunBlockData bloque : datosChunk.getAllBlockData()) {
+            Location location = bloque.getLocation();
+            if (location.getBlock().getType().isAir()) {
+                summary.staleBlocks++;
+                continue;
+            }
+
+            SlimefunItem item = BlockStorage.check(location);
+            if (item == null) {
+                summary.invalidEntries++;
+                continue;
+            }
+
+            summary.validEntries++;
+            if (item.isTicking() && !item.isDisabledIn(chunk.getWorld())) {
+                Slimefun.getTickerTask().enableTicker(location);
+                summary.tickersEnabled++;
+            }
+
+            BlockMenu menu = BlockStorage.getInventory(location);
+            if (menu != null) {
+                menu.markDirty();
+                summary.inventoriesMarked++;
+            }
+        }
+        return summary;
+    }
+
+    private static final class RepairSummary {
+        private int validEntries;
+        private int tickersEnabled;
+        private int inventoriesMarked;
+        private int invalidEntries;
+        private int staleBlocks;
+    }
+}
