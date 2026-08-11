@@ -22,6 +22,7 @@ import io.github.thebusybiscuit.slimefun4.core.guide.options.SlimefunGuideSettin
 import io.github.thebusybiscuit.slimefun4.core.multiblocks.MultiBlock;
 import io.github.thebusybiscuit.slimefun4.core.multiblocks.MultiBlockMachine;
 import io.github.thebusybiscuit.slimefun4.core.services.sounds.SoundEffect;
+import cl.jackstar.slimefun4.core.services.CheatPolicy;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.implementation.tasks.AsyncRecipeChoiceTask;
 import io.github.thebusybiscuit.slimefun4.utils.ChatUtils;
@@ -341,17 +342,11 @@ public class SurvivalSlimefunGuide implements SlimefunGuideImplementation {
                 try {
                     if (isSurvivalMode()) {
                         displayItem(profile, sfitem, true);
-                    } else if (pl.hasPermission("slimefun.cheat.items")) {
+                    } else if (CheatPolicy.canUseCheat(pl)) {
                         if (sfitem instanceof MultiBlockMachine) {
                             Slimefun.getLocalization().sendMessage(pl, "guide.cheat.no-multiblocks");
                         } else {
-                            ItemStack clonedItem = sfitem.getItem().clone();
-
-                            if (action.isShiftClicked()) {
-                                clonedItem.setAmount(clonedItem.getMaxStackSize());
-                            }
-
-                            pl.getInventory().addItem(clonedItem);
+                            CheatPolicy.claim(pl, sfitem, action.isShiftClicked());
                         }
                     } else {
                         /*
@@ -416,7 +411,16 @@ public class SurvivalSlimefunGuide implements SlimefunGuideImplementation {
                 menu.addMenuClickHandler(index, (pl, slot, itm, action) -> {
                     try {
                         if (!isSurvivalMode()) {
-                            pl.getInventory().addItem(slimefunItem.getItem().clone());
+                            /*
+                             * La busqueda entregaba el item sin comprobar nada, mientras que la
+                             * vista de categoria si exigia 'slimefun.cheat.items'. Quien pudiera
+                             * abrir la guia en modo cheat se saltaba el permiso simplemente
+                             * buscando en vez de navegar. Ambas rutas pasan ahora por la misma
+                             * verja, que es lo que vigila CheatDeliveryPathTest.
+                             */
+                            if (CheatPolicy.canUseCheat(pl)) {
+                                CheatPolicy.claim(pl, slimefunItem, action.isShiftClicked());
+                            }
                         } else {
                             displayItem(profile, slimefunItem, true);
                         }

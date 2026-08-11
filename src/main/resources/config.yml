@@ -120,3 +120,55 @@ research-ranks:
   - 卓越大师
   - 精通大师
   - 天选之子
+
+# Defense-in-depth for the temporary SFMaster cheat permission.
+
+# Defense-in-depth for the temporary SFMaster cheat permission.
+sfmaster-guard:
+  enabled: true
+  limited-permission: "odysseia.sfmaster.active"
+  bypass-permission: "slimefun.cheat.items.bypass"
+  # Persistent rolling window. Restarting Slimefun or the server does not reset it.
+  max-claims: 12
+  window-minutes: 60
+  # Default-deny for addons. Expand only after auditing their complete catalog.
+  allowed-addons:
+    - "SLIMEFUN"
+    - "CULTIVATION"
+    - "NETWORKS"
+  allowed-item-ids: []
+  allowed-id-prefixes: []
+  blocked-addons:
+    - "SUPREME"
+    - "INFINITYEXPANSION"
+  blocked-id-prefixes:
+    - "SUPREME_"
+    - "INFINITY_"
+  blocked-id-fragments:
+    - "_SWORD"
+    - "_PICKAXE"
+    - "_AXE"
+    - "_SHOVEL"
+    - "_HOE"
+    - "_HELMET"
+    - "_CHESTPLATE"
+    - "_LEGGINGS"
+    - "_BOOTS"
+    - "_ARMOR"
+    - "_BOW"
+    - "_CROSSBOW"
+    - "_TRIDENT"
+    - "_STAFF"
+    - "_HAMMER"
+    - "_DRILL"
+    - "_MULTITOOL"
+    - "_SHIELD"
+    - "_ELYTRA"
+  blocked-materials:
+    - "DIAMOND"
+    - "DIAMOND_BLOCK"
+    - "EMERALD"
+    - "EMERALD_BLOCK"
+    - "NETHERITE_INGOT"
+    - "NETHERITE_BLOCK"
+    - "ANCIENT_DEBRIS"
