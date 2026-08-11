@@ -1,6 +1,6 @@
 package cl.jackstar.slimefun4.implementation.items.electric.machines.accelerators;
 
-final class GrowthAcceleratorTickGate {
+public final class GrowthAcceleratorTickGate {
 
     private GrowthAcceleratorTickGate() {
     }
@@ -9,7 +9,7 @@ final class GrowthAcceleratorTickGate {
      * Assigns each machine a deterministic phase so loaded farms share their work
      * across server ticks instead of all scanning their area simultaneously.
      */
-    static boolean shouldTick(long worldTime, int x, int y, int z, int interval) {
+    public static boolean shouldTick(long worldTime, int x, int y, int z, int interval) {
         int normalizedInterval = Math.max(1, interval);
 
         if (normalizedInterval == 1) {

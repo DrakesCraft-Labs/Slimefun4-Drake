@@ -15,6 +15,7 @@ import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.interfaces.InventoryBlock;
+import cl.jackstar.slimefun4.implementation.items.electric.machines.accelerators.GrowthAcceleratorTickGate;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
@@ -26,6 +27,9 @@ import org.bukkit.inventory.ItemStack;
  * Abstract base class for growth accelerators.
  */
 public abstract class AbstractGrowthAccelerator extends SlimefunItem implements InventoryBlock, EnergyNetComponent {
+
+    /** Uno de cada cuatro ticks. Con menos no se nota la mejora; con mas, el cultivo se arrastra. */
+    private static final int TICK_INTERVAL = 4;
 
     /**
      * The border slots for the menu layout.
@@ -95,7 +99,19 @@ public abstract class AbstractGrowthAccelerator extends SlimefunItem implements 
 
             @Override
             public void tick(Block b, SlimefunItem sf, SlimefunBlockData data) {
-                AbstractGrowthAccelerator.this.tick(b);
+                /*
+                 * Una granja grande tiene decenas de aceleradores, y todos escaneaban su area en
+                 * el mismo tick: un pico de trabajo periodico que se notaba en el TPS. La
+                 * compuerta da a cada maquina una fase distinta a partir de sus coordenadas, asi
+                 * que el mismo trabajo queda repartido entre varios ticks.
+                 *
+                 * La fase es deterministica: una maquina siempre cae en el mismo hueco, asi que
+                 * el reparto no cambia entre reinicios ni depende del orden de carga.
+                 */
+                if (GrowthAcceleratorTickGate.shouldTick(
+                        b.getWorld().getFullTime(), b.getX(), b.getY(), b.getZ(), TICK_INTERVAL)) {
+                    AbstractGrowthAccelerator.this.tick(b);
+                }
             }
 
             @Override

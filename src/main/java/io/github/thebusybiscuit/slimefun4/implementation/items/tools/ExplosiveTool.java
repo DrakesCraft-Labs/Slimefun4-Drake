@@ -35,6 +35,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -47,13 +48,25 @@ import org.bukkit.inventory.ItemStack;
 public class ExplosiveTool extends SimpleSlimefunItem<ToolUseHandler> implements NotPlaceable, DamageableItem {
 
     private final ItemSetting<Boolean> damageOnUse = new ItemSetting<>(this, "damage-on-use", true);
+
+    /*
+     * El area de efecto es 3x3x3 y canBreak() no miraba si el bloque guardaba objetos. Picar al
+     * lado de un cofre se lo llevaba con todo dentro, y en la base de uno mismo hay permiso de
+     * romper, asi que ninguna proteccion lo frenaba. En DrakesCraft se reporto como "el pico que
+     * dañaba todo" y costo que un jugador se planteara dejar el servidor.
+     *
+     * El bloque que se pica a mano sigue rompiendose siempre -eso lo gestiona el evento y no este
+     * codigo-, asi que quien quiera vaciar su cofre puede. Solo se evita el daño colateral.
+     */
+    private final ItemSetting<Boolean> protectContainers =
+            new ItemSetting<>(this, "protect-containers", true);
     private final ItemSetting<Boolean> callExplosionEvent = new ItemSetting<>(this, "call-explosion-event", false);
 
     @ParametersAreNonnullByDefault
     public ExplosiveTool(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(itemGroup, item, recipeType, recipe);
 
-        addItemSetting(damageOnUse, callExplosionEvent);
+        addItemSetting(damageOnUse, callExplosionEvent, protectContainers);
     }
 
     @Nonnull
@@ -154,6 +167,10 @@ public class ExplosiveTool extends SimpleSlimefunItem<ToolUseHandler> implements
     }
 
     protected boolean canBreak(@Nonnull Player p, @Nonnull Block b) {
+        if (protectContainers.getValue() && guardaObjetos(b)) {
+            return false;
+        }
+
         if (b.isEmpty() || b.isLiquid()) {
             return false;
         } else if (SlimefunTag.UNBREAKABLE_MATERIALS.isTagged(b.getType())) {
@@ -251,4 +268,20 @@ public class ExplosiveTool extends SimpleSlimefunItem<ToolUseHandler> implements
 
         damageItem(player, item);
     }
+
+    /**
+     * Si el bloque guarda objetos: cofres, barriles, shulkers, hornos... y tambien maquinas de
+     * Slimefun con inventario propio.
+     *
+     * Se pregunta primero por el menu de Slimefun porque es una consulta en memoria; getState()
+     * construye un snapshot del bloque y sale mas caro, asi que solo se llega ahi si hace falta.
+     */
+    private boolean guardaObjetos(@Nonnull Block b) {
+        if (StorageCacheUtils.getMenu(b.getLocation()) != null) {
+            return true;
+        }
+
+        return b.getState(false) instanceof InventoryHolder;
+    }
+
 }

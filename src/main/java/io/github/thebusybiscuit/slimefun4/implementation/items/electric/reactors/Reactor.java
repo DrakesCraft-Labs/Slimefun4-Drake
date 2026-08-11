@@ -60,6 +60,10 @@ import org.bukkit.inventory.ItemStack;
 public abstract class Reactor extends AbstractEnergyProvider
         implements HologramOwner, MachineProcessHolder<FuelOperation> {
 
+    private static final long ARRANQUE = System.currentTimeMillis();
+    private static final long GRACIA_MILLIS = 90_000L;
+
+
     private static final String MODE = "reactor-mode";
     private static final int INFO_SLOT = 49;
     private static final int COOLANT_DURATION = 50;
@@ -381,6 +385,23 @@ public abstract class Reactor extends AbstractEnergyProvider
             processor.updateProgressBar(inv, 22, operation);
 
             if (needsCooling() && !hasEnoughCoolant(l, inv, accessPort, operation)) {
+                /*
+                 * Slimefun empieza a tickear en cuanto arranca, pero las redes de cargo y de
+                 * Networks tardan cientos de ticks en reindexarse. Durante esa ventana el
+                 * refrigerante existe y esta en su sitio, pero todavia no ha llegado al reactor:
+                 * mirar solo el inventario da un falso negativo y el reactor explota solo.
+                 *
+                 * En DrakesCraft pasaba en CADA reinicio, y los jugadores lo vivian como que el
+                 * servidor les destruia la base por su cuenta.
+                 *
+                 * No se llama a addProgress(-1) aqui: FuelOperation valida que el numero sea
+                 * positivo y lanzaria IllegalArgumentException. Simplemente se salta el punto de
+                 * control hasta que el servidor lleva un rato en pie.
+                 */
+                if (enPeriodoDeGracia()) {
+                    return 0;
+                }
+
                 explosionsQueue.add(l);
                 return 0;
             }
@@ -572,4 +593,17 @@ public abstract class Reactor extends AbstractEnergyProvider
             return null;
         }
     }
+
+    /**
+     * Si el servidor acaba de arrancar y todavia no se puede fiar uno de lo que ve.
+     *
+     * Noventa segundos salen de medir el arranque real: Networks reindexa a los 200 y 600 ticks,
+     * asi que a los 90 s ya ha terminado con margen. Es deliberadamente generoso; el coste de
+     * pasarse es que un reactor sin refrigerante sobreviva minuto y medio de mas, y el de quedarse
+     * corto es que exploten bases enteras.
+     */
+    private static boolean enPeriodoDeGracia() {
+        return System.currentTimeMillis() - ARRANQUE < GRACIA_MILLIS;
+    }
+
 }
