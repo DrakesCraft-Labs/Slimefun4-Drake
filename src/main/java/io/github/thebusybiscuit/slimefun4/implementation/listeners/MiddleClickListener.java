@@ -8,6 +8,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
@@ -71,7 +72,20 @@ public class MiddleClickListener implements Listener {
             }
 
             // Give the item, doing it like this will not alter any other cases.
-            e.setCursor(sfItem.getItem().clone());
+            /*
+             * El cliente puede sustituir el stack custom por su equivalente vanilla si la
+             * transaccion creativa no se cancela antes. El resultado es un bloque que parece de
+             * Slimefun y no lo es, que luego no tickea y el jugador cree que esta roto.
+             */
+            ItemStack copia = sfItem.getItem().clone();
+            if (SlimefunItem.getByItem(copia) == null) {
+                e.setCancelled(true);
+                Slimefun.logger().warning(
+                        "Click creativo bloqueado: el item perdio su identidad Slimefun ("
+                        + sfItem.getId() + ")");
+                return;
+            }
+            e.setCursor(copia);
         }
     }
 

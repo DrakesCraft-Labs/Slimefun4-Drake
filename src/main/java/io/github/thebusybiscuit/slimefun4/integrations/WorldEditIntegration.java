@@ -44,17 +44,24 @@ class WorldEditIntegration {
                 @Override
                 public <T extends BlockStateHolder<T>> boolean setBlock(BlockVector3 pos, T block)
                         throws WorldEditException {
-                    if (block.getBlockType().getMaterial().isAir()) {
-                        World world = Bukkit.getWorld(event.getWorld().getName());
+                    /*
+                     * Antes solo se limpiaba si el bloque nuevo era aire, y eso deja datos
+                     * huerfanos: WorldEdit solo lleva estado vanilla en el portapapeles, asi que
+                     * pegar piedra encima de una maquina de Slimefun sustituye el bloque pero
+                     * conserva sus datos, apuntando a algo que ya no existe. Luego la maquina
+                     * "fantasma" sigue tickeando o revienta al abrirla.
+                     *
+                     * Cualquier escritura sobre una ubicacion con datos de Slimefun los invalida.
+                     * A proposito NO se clonan maquinas ni inventarios: copiar una maquina con su
+                     * contenido seria un duplicador de items servido en bandeja.
+                     */
+                    World world = Bukkit.getWorld(event.getWorld().getName());
 
-                        if (world != null) {
-                            Location l = new Location(world, pos.getBlockX(), pos.getBlockY(), pos.getBlockZ());
+                    if (world != null) {
+                        Location l = new Location(world, pos.getBlockX(), pos.getBlockY(), pos.getBlockZ());
 
-                            if (StorageCacheUtils.hasSlimefunBlock(l)) {
-                                Slimefun.getDatabaseManager()
-                                        .getBlockDataController()
-                                        .removeBlock(l);
-                            }
+                        if (StorageCacheUtils.hasSlimefunBlock(l)) {
+                            Slimefun.getDatabaseManager().getBlockDataController().removeBlock(l);
                         }
                     }
 

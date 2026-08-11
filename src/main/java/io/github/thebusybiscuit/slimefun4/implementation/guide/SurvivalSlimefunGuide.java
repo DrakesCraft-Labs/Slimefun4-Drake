@@ -754,7 +754,20 @@ public class SurvivalSlimefunGuide implements SlimefunGuideImplementation {
 
     @ParametersAreNonnullByDefault
     private void displayRecipes(Player p, PlayerProfile profile, ChestMenu menu, RecipeDisplayItem sfItem, int page) {
-        List<ItemStack> recipes = sfItem.getDisplayRecipes();
+        /*
+         * Un addon con una receta mal formada lanzaba aqui y se llevaba por delante toda la guia,
+         * no solo ese item. Aislarlo deja el resto navegable y ademas señala cual es el culpable.
+         */
+        final List<ItemStack> recipes;
+        try {
+            recipes = sfItem.getDisplayRecipes();
+        } catch (RuntimeException | LinkageError ex) {
+            Slimefun.logger().log(
+                    java.util.logging.Level.WARNING,
+                    "Receta invalida en " + sfItem.getId() + "; se omite para no romper la guia",
+                    ex);
+            return;
+        }
 
         if (!recipes.isEmpty()) {
             menu.addItem(53, null);

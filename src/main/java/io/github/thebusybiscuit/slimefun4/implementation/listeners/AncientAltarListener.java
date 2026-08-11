@@ -177,7 +177,13 @@ public class AncientAltarListener implements Listener {
             return;
         }
 
-        ItemStack catalyst = new CustomItemStack(p.getInventory().getItemInMainHand(), 1);
+        /*
+         * CustomItemStack sobre una mano vacia revienta. Pasa cuando el jugador suelta el objeto
+         * entre que se valida y se consume, que con lag es facil.
+         */
+        ItemStack enMano = p.getInventory().getItemInMainHand();
+        ItemStack catalyst = enMano == null ? new ItemStack(Material.AIR) : enMano.clone();
+        catalyst.setAmount(1);
         List<Block> pedestals = getPedestals(altar);
 
         if (!altars.contains(altar)) {
