@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -46,6 +47,24 @@ public class MenuListener implements Listener {
 
         if (menu != null) {
             markDirty(menu);
+
+            // COLLECT_TO_CURSOR (doble clic para apilar) recoge todo lo que coincida de la vista
+            // ENTERA, menu incluido, y lo hace sin pasar por un solo MenuClickHandler: la accion
+            // los salta por diseño. Si el doble clic se da en el inventario del jugador, abajo se
+            // consulta al playerInventoryClickHandler, que dice que si -- y con razon, porque el
+            // slot pulsado es suyo -- y entonces vanilla barre los slots protegidos del menu.
+            //
+            // Asi salieron del barril los telescopios sin nombre del 11-08: son iconos de la GUI.
+            // Nadie lo hizo a mano; los mods de ordenado (Inventory Profiles Next y parecidos)
+            // disparan doble clic constantemente para apilar, y cada uno era un barrido.
+            //
+            // Se cancela solo con un menu de Slimefun abierto. El coste es perder el apilado por
+            // doble clic mientras hay una maquina delante; el resto del ordenado sigue igual, que
+            // es lo que se queria conservar.
+            if (e.getAction() == InventoryAction.COLLECT_TO_CURSOR) {
+                e.setCancelled(true);
+                return;
+            }
 
             if (e.getRawSlot() < e.getInventory().getSize()) {
                 MenuClickHandler handler = menu.getMenuClickHandler(e.getSlot());
