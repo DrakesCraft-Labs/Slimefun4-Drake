@@ -19,8 +19,10 @@ class GrowthAcceleratorTickGateTest {
         int interval = 4;
         int runs = 0;
 
-        for (long tick = 100; tick < 100 + interval; tick++) {
-            if (GrowthAcceleratorTickGate.shouldTick(tick, -42, 64, 9001, interval)) {
+        // El ticker de Slimefun se invoca cada 20 ticks del mundo. La regresion original
+        // aparecia precisamente porque la prueba avanzaba de uno en uno y no imitaba ese ritmo.
+        for (long worldTime = 100; worldTime < 100 + interval * 20L; worldTime += 20L) {
+            if (GrowthAcceleratorTickGate.shouldTick(worldTime, -42, 64, 9001, interval)) {
                 runs++;
             }
         }
