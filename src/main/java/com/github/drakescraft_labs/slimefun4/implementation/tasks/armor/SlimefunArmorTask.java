@@ -22,6 +22,8 @@ import com.github.drakescraft_labs.slimefun4.implementation.items.armor.Slimefun
  */
 public class SlimefunArmorTask extends AbstractArmorTask {
 
+    private static final int REFRESH_MARGIN_TICKS = 60;
+
     @Override
     @ParametersAreNonnullByDefault
     protected void onPlayerTick(Player p, PlayerProfile profile) {
@@ -72,8 +74,19 @@ public class SlimefunArmorTask extends AbstractArmorTask {
     @ParametersAreNonnullByDefault
     protected void onArmorPieceTick(Player p, SlimefunArmorPiece sfArmorPiece, ItemStack armorPiece) {
         for (PotionEffect effect : sfArmorPiece.getPotionEffects()) {
-            p.removePotionEffect(effect.getType());
-            p.addPotionEffect(effect);
+            PotionEffect current = p.getPotionEffect(effect.getType());
+            if (current == null || shouldRefresh(
+                    current.getAmplifier(), current.getDuration(), effect.getAmplifier())) {
+                p.addPotionEffect(effect, true);
+            }
         }
+    }
+
+    /**
+     * Refreshes an armor effect only near expiration or when the requested amplifier is stronger.
+     * Removing HEALTH_BOOST before re-adding it temporarily lowers max health and damages players.
+     */
+    static boolean shouldRefresh(int currentAmplifier, int currentDuration, int expectedAmplifier) {
+        return currentAmplifier < expectedAmplifier || currentDuration <= REFRESH_MARGIN_TICKS;
     }
 }
