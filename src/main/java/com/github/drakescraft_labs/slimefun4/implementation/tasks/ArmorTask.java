@@ -44,6 +44,9 @@ import com.github.drakescraft_labs.slimefun4.utils.itemstack.ItemStackWrapper;
  */
 public class ArmorTask implements Runnable, Listener {
 
+    /** Margen antes de que expire un efecto de armadura para renovarlo, en ticks. */
+    private static final int MARGEN_REFRESCO_TICKS = 60;
+
     private final Set<PotionEffect> radiationEffects;
     private final boolean radioactiveFire;
     private final Random random = new Random();
@@ -116,13 +119,41 @@ public class ArmorTask implements Runnable, Listener {
 
                     if (slimefunArmor.canUse(p, true)) {
                         for (PotionEffect effect : slimefunArmor.getPotionEffects()) {
-                            p.removePotionEffect(effect.getType());
-                            p.addPotionEffect(effect);
+                            aplicarSiHaceFalta(p, effect);
                         }
                     }
                 });
             }
         }
+    }
+
+    /**
+     * Refresca un efecto de armadura solo cuando hace falta.
+     *
+     * POR QUE NO SE QUITA Y SE VUELVE A PONER
+     *
+     * Antes se hacia `removePotionEffect` seguido de `addPotionEffect` en cada pasada. Con la
+     * mayoria de efectos no se nota, pero con AUMENTO DE VIDA si: quitarlo baja la vida maxima al
+     * instante, y si el jugador tenia llenos esos corazones de mas, la diferencia se la come como
+     * daño. Con la tarea de armadura corriendo cada pocos segundos, eso son mordiscos constantes
+     * a quien lleve unas botas que den vida extra. Lo reporto un jugador y era exactamente esto.
+     *
+     * Refrescar solo cuando el efecto falta o esta a punto de agotarse tiene el mismo resultado
+     * visible -- el efecto no se corta mientras lleves la armadura -- sin el bajon de vida.
+     *
+     * El margen es de tres segundos: la tarea pasa mucho mas a menudo, asi que da tiempo de sobra
+     * a renovarlo antes de que expire de verdad.
+     */
+    private void aplicarSiHaceFalta(@Nonnull Player p, @Nonnull PotionEffect effect) {
+        PotionEffect actual = p.getPotionEffect(effect.getType());
+
+        if (actual != null
+                && actual.getAmplifier() >= effect.getAmplifier()
+                && actual.getDuration() > MARGEN_REFRESCO_TICKS) {
+            return;
+        }
+
+        p.addPotionEffect(effect);
     }
 
     private void checkForSolarHelmet(@Nonnull Player p) {
