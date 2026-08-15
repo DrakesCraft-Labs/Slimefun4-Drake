@@ -126,7 +126,6 @@ import com.github.drakescraft_labs.slimefun4.implementation.items.electric.machi
 import com.github.drakescraft_labs.slimefun4.implementation.items.electric.reactors.NetherStarReactor;
 import com.github.drakescraft_labs.slimefun4.implementation.items.electric.reactors.NuclearReactor;
 import com.github.drakescraft_labs.slimefun4.implementation.items.elevator.ElevatorPlate;
-import com.github.drakescraft_labs.slimefun4.implementation.items.food.BirthdayCake;
 import com.github.drakescraft_labs.slimefun4.implementation.items.food.DietCookie;
 import com.github.drakescraft_labs.slimefun4.implementation.items.food.FortuneCookie;
 import com.github.drakescraft_labs.slimefun4.implementation.items.food.HeavyCream;
@@ -1422,10 +1421,6 @@ public final class SlimefunItemSetup {
 
         new HiddenItem(itemGroups.magicalGadgets, SlimefunItems.FILLED_FLASK_OF_KNOWLEDGE, RecipeType.INTERACT,
         new ItemStack[] {SlimefunItems.FLASK_OF_KNOWLEDGE, null, null, null, null, null, null, null, null})
-        .register(plugin);
-
-        new BirthdayCake(itemGroups.birthday, new SlimefunItemStack("BIRTHDAY_CAKE", Material.CAKE, "&bBirthday Cake"), RecipeType.ENHANCED_CRAFTING_TABLE,
-        new ItemStack[] {null, new ItemStack(Material.TORCH), null, new ItemStack(Material.SUGAR), new ItemStack(Material.CAKE), new ItemStack(Material.SUGAR), null, null, null})
         .register(plugin);
 
         new Juice(itemGroups.christmas, SlimefunItems.CHRISTMAS_MILK, RecipeType.ENHANCED_CRAFTING_TABLE,
