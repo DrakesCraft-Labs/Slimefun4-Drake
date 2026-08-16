@@ -90,8 +90,13 @@ public class LegacyStorage implements Storage {
         // Not too sure why this is its own file
         Config waypointsFile = new Config("data-storage/Slimefun/waypoints/" + uuid + ".yml");
 
+        // Hay que mirar el disco antes de tocar nada: la linea siguiente vacia la clave en
+        // memoria, asi que despues ya no se puede distinguir un perfil nuevo de uno que tenia
+        // progreso.
+        boolean teniaDatos = playerFile.contains("researches") || playerFile.contains("backpacks");
+
         // Save research
-        playerFile.setValue("rearches", null);
+        playerFile.setValue("researches", null);
         for (Research research : Slimefun.getRegistry().getResearches()) {
             // Save the research if it's researched
             if (data.getResearches().contains(research)) {
@@ -138,6 +143,17 @@ public class LegacyStorage implements Storage {
         }
 
         // Save files
+        // Un perfil sin investigaciones ni mochilas encima de un archivo que si las tenia solo
+        // puede significar que la carga fallo: guardarlo borraria el progreso del jugador. Han
+        // aparecido 13 perfiles de 0 bytes en produccion por esta via, uno de ellos de una
+        // co-duena del servidor. Ante la duda se conserva el archivo y se deja constancia.
+        if (teniaDatos && data.getResearches().isEmpty() && data.getBackpacks().isEmpty()) {
+            Slimefun.logger().log(Level.WARNING,
+                    "[Slimefun] Guardado descartado para {0}: el perfil en memoria esta vacio y el"
+                    + " archivo en disco tiene datos. No se sobrescribe.", uuid);
+            return;
+        }
+
         playerFile.save();
         waypointsFile.save();
 
