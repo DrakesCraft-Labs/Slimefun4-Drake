@@ -26,8 +26,10 @@ class CheatDeliveryPathTest {
         String config = Files.readString(Path.of("src", "main", "resources", "config.yml"));
 
         assertTrue(config.contains("max-claims: 12"));
+        assertTrue(config.contains("premium-max-claims: 48"));
         assertTrue(config.contains("window-minutes: 60"));
         assertTrue(config.contains("limited-permission: \"odysseia.sfmaster.active\""));
+        assertTrue(config.contains("premium-limit-permission: \"odysseia.sfmaster.titan\""));
     }
 
     private static int occurrences(String source, String needle) {

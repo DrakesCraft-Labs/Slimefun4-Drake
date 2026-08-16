@@ -30,9 +30,12 @@ options:
 sfmaster-guard:
   enabled: true
   limited-permission: "odysseia.sfmaster.active"
+  # Titan Caos retains the same allowlist and ownership rules with a larger quota.
+  premium-limit-permission: "odysseia.sfmaster.titan"
   bypass-permission: "slimefun.cheat.items.bypass"
   # Persistent rolling window. Restarting Slimefun or the server does not reset it.
   max-claims: 12
+  premium-max-claims: 48
   window-minutes: 60
   # Default-deny for addons. Expand only after auditing their complete catalog.
   allowed-addons:

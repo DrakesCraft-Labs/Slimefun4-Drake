@@ -25,6 +25,7 @@ public final class CheatPolicy {
     private static final String GUARD = "sfmaster-guard";
     private static final String CHEAT_PERMISSION = "slimefun.cheat.items";
     private static final String DEFAULT_LIMITED_PERMISSION = "odysseia.sfmaster.active";
+    private static final String DEFAULT_PREMIUM_LIMIT_PERMISSION = "odysseia.sfmaster.titan";
     private static final String DEFAULT_BYPASS_PERMISSION = "slimefun.cheat.items.bypass";
     private static final String MARKER_LORE = "§cGenerado por SFMaster - No comerciable";
     private static final NamespacedKey CLAIM_HISTORY_KEY = NamespacedKey.fromString("slimefun:sfmaster_claim_history");
@@ -85,7 +86,7 @@ public final class CheatPolicy {
         }
         ClaimWindow.Result pendingClaim = limited ? evaluatePersistentClaim(player) : null;
         if (pendingClaim != null && !pendingClaim.allowed()) {
-            int maximum = Math.max(1, intSetting("max-claims", 12));
+            int maximum = maximumClaims(player);
             int minutes = Math.max(1, intSetting("window-minutes", 60));
             player.sendMessage("§cLímite SFMaster alcanzado: " + maximum + " reclamos cada " + minutes + " minutos.");
             return false;
@@ -171,8 +172,19 @@ public final class CheatPolicy {
         long[] history = data.get(CLAIM_HISTORY_KEY, PersistentDataType.LONG_ARRAY);
         long now = System.currentTimeMillis();
         long windowMillis = Math.max(1, intSetting("window-minutes", 60)) * 60_000L;
-        int maximum = Math.max(1, intSetting("max-claims", 12));
+        int maximum = maximumClaims(player);
         return ClaimWindow.consume(history, now, windowMillis, maximum);
+    }
+
+    /** Titan Caos keeps every SFMaster restriction while receiving a larger rolling quota. */
+    private static int maximumClaims(Player player) {
+        String premiumPermission = valueOrDefault(
+                Slimefun.getCfg().getString(GUARD + ".premium-limit-permission"),
+                DEFAULT_PREMIUM_LIMIT_PERMISSION);
+        if (player.hasPermission(premiumPermission)) {
+            return Math.max(1, intSetting("premium-max-claims", 48));
+        }
+        return Math.max(1, intSetting("max-claims", 12));
     }
 
     private static void persistClaim(Player player, ClaimWindow.Result result) {
