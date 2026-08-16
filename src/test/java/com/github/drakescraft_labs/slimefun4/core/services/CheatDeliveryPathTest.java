@@ -25,11 +25,21 @@ class CheatDeliveryPathTest {
     void productionDefaultsKeepThePublishedRollingLimit() throws IOException {
         String config = Files.readString(Path.of("src", "main", "resources", "config.yml"));
 
-        assertTrue(config.contains("max-claims: 12"));
+        assertTrue(config.contains("max-claims: 32"));
         assertTrue(config.contains("premium-max-claims: 48"));
         assertTrue(config.contains("window-minutes: 60"));
         assertTrue(config.contains("limited-permission: \"odysseia.sfmaster.active\""));
         assertTrue(config.contains("premium-limit-permission: \"odysseia.sfmaster.titan\""));
+    }
+
+    @Test
+    void limitedDeliveryUsesOneLegalStackPerClaim() throws IOException {
+        String policy = Files.readString(Path.of(
+                "src", "main", "java", "com", "github", "drakescraft_labs",
+                "slimefun4", "core", "services", "CheatPolicy.java"));
+
+        assertTrue(policy.contains("limited ? claimed.getMaxStackSize()"));
+        assertFalse(policy.contains("limited ? 1 :"));
     }
 
     private static int occurrences(String source, String needle) {

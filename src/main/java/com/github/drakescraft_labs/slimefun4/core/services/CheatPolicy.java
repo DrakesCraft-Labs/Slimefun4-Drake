@@ -61,7 +61,7 @@ public final class CheatPolicy {
 
     /**
      * Single delivery gate for category pages and search results.
-     * Limited claims are one item, persisted across restarts and marked before insertion.
+     * Limited claims are one legal stack, persisted across restarts and marked before insertion.
      */
     public static boolean claim(Player player, SlimefunItem item, boolean shiftClicked) {
         if (!canUseCheat(player)) {
@@ -75,7 +75,7 @@ public final class CheatPolicy {
 
         boolean limited = isLimitedPlayer(player);
         ItemStack claimed = item.getItem().clone();
-        claimed.setAmount(limited ? 1 : (shiftClicked ? claimed.getMaxStackSize() : 1));
+        claimed.setAmount(limited ? claimed.getMaxStackSize() : (shiftClicked ? claimed.getMaxStackSize() : 1));
 
         if (limited) {
             markClaim(claimed, player.getUniqueId());
@@ -99,7 +99,8 @@ public final class CheatPolicy {
         }
         if (limited) {
             persistClaim(player, pendingClaim);
-            Slimefun.logger().info("[SFMaster] " + player.getName() + " reclamó " + item.getId() + " x1.");
+            Slimefun.logger().info("[SFMaster] " + player.getName() + " reclamó " + item.getId()
+                    + " x" + claimed.getAmount() + ".");
         }
         return true;
     }
@@ -184,7 +185,7 @@ public final class CheatPolicy {
         if (player.hasPermission(premiumPermission)) {
             return Math.max(1, intSetting("premium-max-claims", 48));
         }
-        return Math.max(1, intSetting("max-claims", 12));
+        return Math.max(1, intSetting("max-claims", 32));
     }
 
     private static void persistClaim(Player player, ClaimWindow.Result result) {

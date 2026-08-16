@@ -34,7 +34,7 @@ sfmaster-guard:
   premium-limit-permission: "odysseia.sfmaster.titan"
   bypass-permission: "slimefun.cheat.items.bypass"
   # Persistent rolling window. Restarting Slimefun or the server does not reset it.
-  max-claims: 12
+  max-claims: 32
   premium-max-claims: 48
   window-minutes: 60
   # Default-deny for addons. Expand only after auditing their complete catalog.
