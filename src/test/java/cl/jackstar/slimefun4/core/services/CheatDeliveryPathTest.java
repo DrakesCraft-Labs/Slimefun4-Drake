@@ -14,8 +14,16 @@ class CheatDeliveryPathTest {
     @Test
     void categoryAndSearchUseTheSameDeliveryGate() throws IOException {
         String guide = Files.readString(Path.of(
-                "src", "main", "java", "io", "github", "thebusybiscuit",
-                "slimefun4", "implementation", "guide", "SurvivalSlimefunGuide.java"));
+                "src",
+                "main",
+                "java",
+                "io",
+                "github",
+                "thebusybiscuit",
+                "slimefun4",
+                "implementation",
+                "guide",
+                "SurvivalSlimefunGuide.java"));
 
         assertEquals(2, occurrences(guide, "CheatPolicy.claim("));
         assertFalse(guide.contains("p.getInventory().addItem(sfItem.getItem()"));

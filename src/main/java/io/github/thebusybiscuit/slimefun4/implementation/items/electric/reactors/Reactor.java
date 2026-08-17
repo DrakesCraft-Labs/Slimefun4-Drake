@@ -63,7 +63,6 @@ public abstract class Reactor extends AbstractEnergyProvider
     private static final long ARRANQUE = System.currentTimeMillis();
     private static final long GRACIA_MILLIS = 90_000L;
 
-
     private static final String MODE = "reactor-mode";
     private static final int INFO_SLOT = 49;
     private static final int COOLANT_DURATION = 50;
@@ -605,5 +604,4 @@ public abstract class Reactor extends AbstractEnergyProvider
     private static boolean enPeriodoDeGracia() {
         return System.currentTimeMillis() - ARRANQUE < GRACIA_MILLIS;
     }
-
 }

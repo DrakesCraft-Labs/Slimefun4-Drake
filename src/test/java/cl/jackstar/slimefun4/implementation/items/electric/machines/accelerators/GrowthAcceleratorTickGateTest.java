@@ -27,5 +27,4 @@ class GrowthAcceleratorTickGateTest {
 
         assertEquals(1, runs);
     }
-
 }

@@ -58,8 +58,7 @@ public class ExplosiveTool extends SimpleSlimefunItem<ToolUseHandler> implements
      * El bloque que se pica a mano sigue rompiendose siempre -eso lo gestiona el evento y no este
      * codigo-, asi que quien quiera vaciar su cofre puede. Solo se evita el daño colateral.
      */
-    private final ItemSetting<Boolean> protectContainers =
-            new ItemSetting<>(this, "protect-containers", true);
+    private final ItemSetting<Boolean> protectContainers = new ItemSetting<>(this, "protect-containers", true);
     private final ItemSetting<Boolean> callExplosionEvent = new ItemSetting<>(this, "call-explosion-event", false);
 
     @ParametersAreNonnullByDefault
@@ -283,5 +282,4 @@ public class ExplosiveTool extends SimpleSlimefunItem<ToolUseHandler> implements
 
         return b.getState(false) instanceof InventoryHolder;
     }
-
 }

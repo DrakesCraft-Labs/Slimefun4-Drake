@@ -15,16 +15,15 @@ public interface NativeAccelerationService {
     int sumSaturating(@Nonnull int[] values);
 
     double calculateMarketPrice(
-        double basePrice,
-        long demand,
-        double totalWealth,
-        double referenceWealth,
-        double minimumFactor,
-        double maximumFactor,
-        double demandStep,
-        double maximumDemandFactor,
-        double pulseFactor
-    );
+            double basePrice,
+            long demand,
+            double totalWealth,
+            double referenceWealth,
+            double minimumFactor,
+            double maximumFactor,
+            double demandStep,
+            double maximumDemandFactor,
+            double pulseFactor);
 
     long getNativeCalls();
 

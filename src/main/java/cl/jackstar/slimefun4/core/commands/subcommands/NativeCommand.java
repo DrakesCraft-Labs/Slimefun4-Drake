@@ -1,18 +1,15 @@
 package cl.jackstar.slimefun4.core.commands.subcommands;
 
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
-
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
-
+import cl.jackstar.slimefun4.api.services.NativeAccelerationService;
+import cl.jackstar.slimefun4.api.services.NativeServices;
+import io.github.bakedlibs.dough.common.ChatColors;
 import io.github.thebusybiscuit.slimefun4.core.commands.SlimefunCommand;
 import io.github.thebusybiscuit.slimefun4.core.commands.SubCommand;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
-
-import io.github.bakedlibs.dough.common.ChatColors;
-import cl.jackstar.slimefun4.api.services.NativeAccelerationService;
-import cl.jackstar.slimefun4.api.services.NativeServices;
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 
 /**
  * Reports the native engine state and its runtime counters.
@@ -32,11 +29,11 @@ final class NativeCommand extends SubCommand {
         }
 
         NativeAccelerationService service = NativeServices.acceleration();
-        sender.sendMessage(ChatColors.color("&6Slimefun-Rust &8| &7Estado: "
-            + (service.isAvailable() ? "&aACTIVO" : "&cFALLBACK JAVA")));
+        sender.sendMessage(ChatColors.color(
+                "&6Slimefun-Rust &8| &7Estado: " + (service.isAvailable() ? "&aACTIVO" : "&cFALLBACK JAVA")));
         sender.sendMessage(ChatColors.color("&7ABI: &f" + service.getAbiVersion()
-            + " &8| &7Llamadas nativas: &f" + service.getNativeCalls()
-            + " &8| &7Fallbacks: &f" + service.getFallbackCalls()
-            + " &8| &7Fallos: &f" + service.getFailures()));
+                + " &8| &7Llamadas nativas: &f" + service.getNativeCalls()
+                + " &8| &7Fallbacks: &f" + service.getFallbackCalls()
+                + " &8| &7Fallos: &f" + service.getFailures()));
     }
 }

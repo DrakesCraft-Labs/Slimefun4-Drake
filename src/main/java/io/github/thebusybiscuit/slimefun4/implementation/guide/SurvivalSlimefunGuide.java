@@ -1,6 +1,7 @@
 package io.github.thebusybiscuit.slimefun4.implementation.guide;
 
 import city.norain.slimefun4.VaultIntegration;
+import cl.jackstar.slimefun4.core.services.CheatPolicy;
 import io.github.bakedlibs.dough.chat.ChatInput;
 import io.github.bakedlibs.dough.items.CustomItemStack;
 import io.github.bakedlibs.dough.items.ItemUtils;
@@ -22,7 +23,6 @@ import io.github.thebusybiscuit.slimefun4.core.guide.options.SlimefunGuideSettin
 import io.github.thebusybiscuit.slimefun4.core.multiblocks.MultiBlock;
 import io.github.thebusybiscuit.slimefun4.core.multiblocks.MultiBlockMachine;
 import io.github.thebusybiscuit.slimefun4.core.services.sounds.SoundEffect;
-import cl.jackstar.slimefun4.core.services.CheatPolicy;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.implementation.tasks.AsyncRecipeChoiceTask;
 import io.github.thebusybiscuit.slimefun4.utils.ChatUtils;
@@ -762,10 +762,11 @@ public class SurvivalSlimefunGuide implements SlimefunGuideImplementation {
         try {
             recipes = sfItem.getDisplayRecipes();
         } catch (RuntimeException | LinkageError ex) {
-            Slimefun.logger().log(
-                    java.util.logging.Level.WARNING,
-                    "Receta invalida en " + sfItem.getId() + "; se omite para no romper la guia",
-                    ex);
+            Slimefun.logger()
+                    .log(
+                            java.util.logging.Level.WARNING,
+                            "Receta invalida en " + sfItem.getId() + "; se omite para no romper la guia",
+                            ex);
             return;
         }
 

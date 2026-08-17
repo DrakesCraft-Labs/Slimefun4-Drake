@@ -23,8 +23,7 @@ class ClaimWindowTest {
     void removesExpiredClaimsBeforeConsuming() {
         long now = 1_000_000L;
 
-        ClaimWindow.Result result = ClaimWindow.consume(
-                new long[] {now - 60_001L, now - 10_000L}, now, 60_000L, 2);
+        ClaimWindow.Result result = ClaimWindow.consume(new long[] {now - 60_001L, now - 10_000L}, now, 60_000L, 2);
 
         assertTrue(result.allowed());
         assertArrayEquals(new long[] {now - 10_000L, now}, result.history());
@@ -34,8 +33,7 @@ class ClaimWindowTest {
     void rejectsFutureTimestampsInsteadOfTrustingCorruptData() {
         long now = 1_000_000L;
 
-        ClaimWindow.Result result = ClaimWindow.consume(
-                new long[] {now + 10_000L}, now, 60_000L, 1);
+        ClaimWindow.Result result = ClaimWindow.consume(new long[] {now + 10_000L}, now, 60_000L, 1);
 
         assertTrue(result.allowed());
         assertArrayEquals(new long[] {now}, result.history());

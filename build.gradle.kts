@@ -140,11 +140,37 @@ tasks.named<ShadowJar>("shadowJar") {
     archiveBaseName.set("Slimefun")
     archiveVersion.set(project.version.toString())
     archiveClassifier.set("")
-    relocate("io.github.bakedlibs.dough", "io.github.thebusybiscuit.slimefun4.libraries.dough")
-    relocate("io.papermc.lib", "io.github.thebusybiscuit.slimefun4.libraries.paperlib")
-    relocate("kong.unirest", "io.github.thebusybiscuit.slimefun4.libraries.unirest")
-    relocate("org.apache.commons.lang", "io.github.thebusybiscuit.slimefun4.libraries.commons.lang")
-    relocate("net.guizhanss.guizhanlib", "io.github.thebusybiscuit.slimefun4.libraries.guizhanlib")
+    /*
+     * COMPATIBILIDAD DE ABI CON EL ECOSISTEMA DE DRAKESCRAFT
+     *
+     * Nuestro fork anterior (Slimefun4-Drake) repaqueto Slimefun entero a
+     * com.github.drakescraft_labs, y los ~40 addons de DrakesCraft-Labs estan compilados contra
+     * ESOS nombres. Al desplegar este core con los paquetes originales, esos addons dejaron de
+     * encontrar las clases y se cayeron: SFCalc, SensibleToolbox y DrakesSlimeMarket, ademas de
+     * romper las integraciones de BreweryX y AxGraves.
+     *
+     * La alternativa era recompilar los 40 addons. Se hace al reves --se ajusta el core-- porque
+     * es un cambio en un sitio en vez de cuarenta, y porque manteniendo la ABI el dia que
+     * queramos volver atras los addons siguen valiendo igual.
+     *
+     * El destino de las librerias sombreadas cambia tambien, para que 'libraries.dough' y
+     * companyia queden colgando del mismo prefijo. Si no, un addon que use dough lo buscaria en
+     * com.github.drakescraft_labs... y estaria en io.github.thebusybiscuit...
+     *
+     * Ojo al orden: las librerias se relocalizan a su destino FINAL directamente. Encadenar
+     * io.github.bakedlibs -> io.github.thebusybiscuit -> com.github.drakescraft_labs es
+     * fragil, porque shadow aplica las reglas en una sola pasada por clase.
+     */
+    relocate("io.github.bakedlibs.dough", "com.github.drakescraft_labs.slimefun4.libraries.dough")
+    relocate("io.papermc.lib", "com.github.drakescraft_labs.slimefun4.libraries.paperlib")
+    relocate("kong.unirest", "com.github.drakescraft_labs.slimefun4.libraries.unirest")
+    relocate("org.apache.commons.lang", "com.github.drakescraft_labs.slimefun4.libraries.commons.lang")
+    relocate("net.guizhanss.guizhanlib", "com.github.drakescraft_labs.slimefun4.libraries.guizhanlib")
+
+    // El core en si, y la API antigua que nuestro fork movio a 'legacy'.
+    relocate("io.github.thebusybiscuit", "com.github.drakescraft_labs")
+    relocate("me.mrCookieSlime.Slimefun", "com.github.drakescraft_labs.slimefun4.legacy")
+    relocate("me.mrCookieSlime.CSCoreLibPlugin", "com.github.drakescraft_labs.slimefun4.legacy.CSCoreLibPlugin")
     /**exclude {
         it.path == "META-INF" || it.path.startsWith("META-INF/")
     }*/

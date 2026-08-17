@@ -2,8 +2,7 @@ package cl.jackstar.slimefun4.implementation.items.electric.machines.accelerator
 
 public final class GrowthAcceleratorTickGate {
 
-    private GrowthAcceleratorTickGate() {
-    }
+    private GrowthAcceleratorTickGate() {}
 
     /**
      * Assigns each machine a deterministic phase so loaded farms share their work
@@ -20,5 +19,4 @@ public final class GrowthAcceleratorTickGate {
         long phase = Math.floorMod(locationHash, normalizedInterval);
         return Math.floorMod(worldTime, normalizedInterval) == phase;
     }
-
 }

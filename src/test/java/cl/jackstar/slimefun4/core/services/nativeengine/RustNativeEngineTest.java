@@ -35,18 +35,13 @@ class RustNativeEngineTest {
             {}
         };
         for (int[] sample : samples) {
-            assertEquals(
-                RustNativeEngine.sumInJava(sample),
-                RustNativeEngine.nativeSumSaturatingForTesting(sample)
-            );
+            assertEquals(RustNativeEngine.sumInJava(sample), RustNativeEngine.nativeSumSaturatingForTesting(sample));
         }
 
         double javaPrice = RustNativeEngine.calculateMarketPriceInJava(
-            250.0D, 12L, 53246.0D, 100_000_000.0D, 0.85D, 1.85D, 0.02D, 1.45D, 1.01D
-        );
+                250.0D, 12L, 53246.0D, 100_000_000.0D, 0.85D, 1.85D, 0.02D, 1.45D, 1.01D);
         double nativePrice = RustNativeEngine.nativeCalculateMarketPriceForTesting(
-            250.0D, 12L, 53246.0D, 100_000_000.0D, 0.85D, 1.85D, 0.02D, 1.45D, 1.01D
-        );
+                250.0D, 12L, 53246.0D, 100_000_000.0D, 0.85D, 1.85D, 0.02D, 1.45D, 1.01D);
         assertEquals(javaPrice, nativePrice);
     }
 }

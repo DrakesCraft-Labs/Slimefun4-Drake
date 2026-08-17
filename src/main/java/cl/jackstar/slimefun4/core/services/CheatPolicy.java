@@ -1,10 +1,12 @@
 package cl.jackstar.slimefun4.core.services;
 
+import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
-
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -12,10 +14,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-
-import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
-import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 
 /**
  * Applies the server-wide safety boundary for non-staff Slimefun cheat access.
@@ -31,8 +29,7 @@ public final class CheatPolicy {
     private static final NamespacedKey ITEM_MARKER_KEY = NamespacedKey.fromString("odysseia:sfmaster_item");
     private static final NamespacedKey ITEM_OWNER_KEY = NamespacedKey.fromString("odysseia:sfmaster_item_owner");
 
-    private CheatPolicy() {
-    }
+    private CheatPolicy() {}
 
     /**
      * Returns whether this player may open and use the cheat guide at all.
@@ -40,9 +37,11 @@ public final class CheatPolicy {
      */
     public static boolean canUseCheat(Player player) {
         return player.isOp()
-                || player.hasPermission(valueOrDefault(Slimefun.getCfg().getString(GUARD + ".bypass-permission"), DEFAULT_BYPASS_PERMISSION))
+                || player.hasPermission(valueOrDefault(
+                        Slimefun.getCfg().getString(GUARD + ".bypass-permission"), DEFAULT_BYPASS_PERMISSION))
                 || player.hasPermission(CHEAT_PERMISSION)
-                || player.hasPermission(valueOrDefault(Slimefun.getCfg().getString(GUARD + ".limited-permission"), DEFAULT_LIMITED_PERMISSION));
+                || player.hasPermission(valueOrDefault(
+                        Slimefun.getCfg().getString(GUARD + ".limited-permission"), DEFAULT_LIMITED_PERMISSION));
     }
 
     public static boolean canClaim(Player player, SlimefunItem item) {
@@ -114,12 +113,14 @@ public final class CheatPolicy {
             return false;
         }
 
-        String bypass = valueOrDefault(Slimefun.getCfg().getString(GUARD + ".bypass-permission"), DEFAULT_BYPASS_PERMISSION);
+        String bypass =
+                valueOrDefault(Slimefun.getCfg().getString(GUARD + ".bypass-permission"), DEFAULT_BYPASS_PERMISSION);
         if (player.hasPermission(bypass)) {
             return false;
         }
 
-        String limitedPermission = valueOrDefault(Slimefun.getCfg().getString(GUARD + ".limited-permission"), DEFAULT_LIMITED_PERMISSION);
+        String limitedPermission =
+                valueOrDefault(Slimefun.getCfg().getString(GUARD + ".limited-permission"), DEFAULT_LIMITED_PERMISSION);
         return player.hasPermission(CHEAT_PERMISSION) || player.hasPermission(limitedPermission);
     }
 
@@ -128,7 +129,8 @@ public final class CheatPolicy {
     }
 
     private static boolean isExplicitlyAllowed(SlimefunItem item, String id) {
-        String addonName = item.getAddon() == null ? "" : item.getAddon().getName().toUpperCase(Locale.ROOT);
+        String addonName =
+                item.getAddon() == null ? "" : item.getAddon().getName().toUpperCase(Locale.ROOT);
         return list("allowed-addons").stream().anyMatch(value -> addonName.contains(value.toUpperCase(Locale.ROOT)))
                 || matchesAny(id, list("allowed-id-prefixes"), true)
                 || list("allowed-item-ids").stream().anyMatch(value -> id.equalsIgnoreCase(value));

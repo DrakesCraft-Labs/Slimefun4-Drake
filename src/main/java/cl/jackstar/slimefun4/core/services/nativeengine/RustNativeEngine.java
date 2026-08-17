@@ -1,17 +1,14 @@
 package cl.jackstar.slimefun4.core.services.nativeengine;
 
+import cl.jackstar.slimefun4.api.services.NativeAccelerationService;
+import io.github.bakedlibs.dough.config.Config;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
-
 import javax.annotation.Nonnull;
-
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import io.github.bakedlibs.dough.config.Config;
-import cl.jackstar.slimefun4.api.services.NativeAccelerationService;
 
 /**
  * Loads the Linux JNI artifact and provides a fail-safe Java fallback.
@@ -30,12 +27,9 @@ public final class RustNativeEngine implements NativeAccelerationService {
 
     public void start(@Nonnull JavaPlugin plugin, @Nonnull Config config) {
         minimumBatchSize = Math.max(1, config.getInt("native-engine.minimum-batch-size"));
-        plugin.getServer().getServicesManager().register(
-            NativeAccelerationService.class,
-            this,
-            plugin,
-            ServicePriority.Normal
-        );
+        plugin.getServer()
+                .getServicesManager()
+                .register(NativeAccelerationService.class, this, plugin, ServicePriority.Normal);
 
         if (!config.getBoolean("native-engine.enabled")) {
             plugin.getLogger().info("[Slimefun-Rust] Motor nativo deshabilitado por configuración.");
@@ -49,7 +43,8 @@ public final class RustNativeEngine implements NativeAccelerationService {
             }
 
             Path dataRoot = plugin.getDataFolder().toPath().toAbsolutePath().normalize();
-            Path library = dataRoot.resolve(config.getString("native-engine.library")).normalize();
+            Path library =
+                    dataRoot.resolve(config.getString("native-engine.library")).normalize();
             if (!library.startsWith(dataRoot)) {
                 throw new IllegalArgumentException("La biblioteca nativa debe vivir dentro de plugins/Slimefun");
             }
@@ -71,11 +66,11 @@ public final class RustNativeEngine implements NativeAccelerationService {
         } catch (Throwable error) {
             available = false;
             failures.incrementAndGet();
-            plugin.getLogger().log(
-                Level.SEVERE,
-                "[Slimefun-Rust] No se pudo activar el motor nativo; EnergyNet continuará con fallback Java.",
-                error
-            );
+            plugin.getLogger()
+                    .log(
+                            Level.SEVERE,
+                            "[Slimefun-Rust] No se pudo activar el motor nativo; EnergyNet continuará con fallback Java.",
+                            error);
         }
     }
 
@@ -115,29 +110,40 @@ public final class RustNativeEngine implements NativeAccelerationService {
 
     @Override
     public double calculateMarketPrice(
-        double basePrice,
-        long demand,
-        double totalWealth,
-        double referenceWealth,
-        double minimumFactor,
-        double maximumFactor,
-        double demandStep,
-        double maximumDemandFactor,
-        double pulseFactor
-    ) {
+            double basePrice,
+            long demand,
+            double totalWealth,
+            double referenceWealth,
+            double minimumFactor,
+            double maximumFactor,
+            double demandStep,
+            double maximumDemandFactor,
+            double pulseFactor) {
         if (!available) {
             fallbackCalls.incrementAndGet();
             return calculateMarketPriceInJava(
-                basePrice, demand, totalWealth, referenceWealth, minimumFactor,
-                maximumFactor, demandStep, maximumDemandFactor, pulseFactor
-            );
+                    basePrice,
+                    demand,
+                    totalWealth,
+                    referenceWealth,
+                    minimumFactor,
+                    maximumFactor,
+                    demandStep,
+                    maximumDemandFactor,
+                    pulseFactor);
         }
 
         try {
             double result = nativeCalculateMarketPrice(
-                basePrice, demand, totalWealth, referenceWealth, minimumFactor,
-                maximumFactor, demandStep, maximumDemandFactor, pulseFactor
-            );
+                    basePrice,
+                    demand,
+                    totalWealth,
+                    referenceWealth,
+                    minimumFactor,
+                    maximumFactor,
+                    demandStep,
+                    maximumDemandFactor,
+                    pulseFactor);
             nativeCalls.incrementAndGet();
             return result;
         } catch (Throwable error) {
@@ -145,9 +151,15 @@ public final class RustNativeEngine implements NativeAccelerationService {
             fallbackCalls.incrementAndGet();
             available = false;
             return calculateMarketPriceInJava(
-                basePrice, demand, totalWealth, referenceWealth, minimumFactor,
-                maximumFactor, demandStep, maximumDemandFactor, pulseFactor
-            );
+                    basePrice,
+                    demand,
+                    totalWealth,
+                    referenceWealth,
+                    minimumFactor,
+                    maximumFactor,
+                    demandStep,
+                    maximumDemandFactor,
+                    pulseFactor);
         }
     }
 
@@ -171,31 +183,27 @@ public final class RustNativeEngine implements NativeAccelerationService {
         for (int value : values) {
             long candidate = (long) result + value;
             result = candidate > Integer.MAX_VALUE
-                ? Integer.MAX_VALUE
-                : candidate < Integer.MIN_VALUE ? Integer.MIN_VALUE : (int) candidate;
+                    ? Integer.MAX_VALUE
+                    : candidate < Integer.MIN_VALUE ? Integer.MIN_VALUE : (int) candidate;
         }
         return result;
     }
 
     static double calculateMarketPriceInJava(
-        double basePrice,
-        long demand,
-        double totalWealth,
-        double referenceWealth,
-        double minimumFactor,
-        double maximumFactor,
-        double demandStep,
-        double maximumDemandFactor,
-        double pulseFactor
-    ) {
+            double basePrice,
+            long demand,
+            double totalWealth,
+            double referenceWealth,
+            double minimumFactor,
+            double maximumFactor,
+            double demandStep,
+            double maximumDemandFactor,
+            double pulseFactor) {
         double safeReference = Math.max(1.0D, referenceWealth);
         double wealthRatio = Math.max(0.0D, totalWealth) / safeReference;
         double wealthFactor = 0.90D + (Math.log1p(wealthRatio) / Math.log(11.0D)) * 0.65D;
         double demandFactor = Math.min(maximumDemandFactor, 1.0D + Math.max(0L, demand) * demandStep);
-        double combined = Math.max(
-            minimumFactor,
-            Math.min(maximumFactor, wealthFactor * demandFactor * pulseFactor)
-        );
+        double combined = Math.max(minimumFactor, Math.min(maximumFactor, wealthFactor * demandFactor * pulseFactor));
         return Math.max(0.01D, Math.round(basePrice * combined * 100.0D) / 100.0D);
     }
 
@@ -212,20 +220,25 @@ public final class RustNativeEngine implements NativeAccelerationService {
     }
 
     static double nativeCalculateMarketPriceForTesting(
-        double basePrice,
-        long demand,
-        double totalWealth,
-        double referenceWealth,
-        double minimumFactor,
-        double maximumFactor,
-        double demandStep,
-        double maximumDemandFactor,
-        double pulseFactor
-    ) {
+            double basePrice,
+            long demand,
+            double totalWealth,
+            double referenceWealth,
+            double minimumFactor,
+            double maximumFactor,
+            double demandStep,
+            double maximumDemandFactor,
+            double pulseFactor) {
         return nativeCalculateMarketPrice(
-            basePrice, demand, totalWealth, referenceWealth, minimumFactor,
-            maximumFactor, demandStep, maximumDemandFactor, pulseFactor
-        );
+                basePrice,
+                demand,
+                totalWealth,
+                referenceWealth,
+                minimumFactor,
+                maximumFactor,
+                demandStep,
+                maximumDemandFactor,
+                pulseFactor);
     }
 
     private static native int nativeAbiVersion();
@@ -233,14 +246,13 @@ public final class RustNativeEngine implements NativeAccelerationService {
     private static native int nativeSumSaturating(int[] values);
 
     private static native double nativeCalculateMarketPrice(
-        double basePrice,
-        long demand,
-        double totalWealth,
-        double referenceWealth,
-        double minimumFactor,
-        double maximumFactor,
-        double demandStep,
-        double maximumDemandFactor,
-        double pulseFactor
-    );
+            double basePrice,
+            long demand,
+            double totalWealth,
+            double referenceWealth,
+            double minimumFactor,
+            double maximumFactor,
+            double demandStep,
+            double maximumDemandFactor,
+            double pulseFactor);
 }

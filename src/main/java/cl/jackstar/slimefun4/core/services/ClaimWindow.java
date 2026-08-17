@@ -8,8 +8,7 @@ import java.util.Arrays;
  */
 final class ClaimWindow {
 
-    private ClaimWindow() {
-    }
+    private ClaimWindow() {}
 
     static Result consume(long[] rawHistory, long now, long windowMillis, int maximum) {
         long[] history = rawHistory == null ? new long[0] : rawHistory;
@@ -25,6 +24,5 @@ final class ClaimWindow {
         return new Result(true, updated);
     }
 
-    record Result(boolean allowed, long[] history) {
-    }
+    record Result(boolean allowed, long[] history) {}
 }

@@ -1,8 +1,7 @@
 package cl.jackstar.slimefun4.api.services;
 
-import javax.annotation.Nonnull;
-
 import cl.jackstar.slimefun4.core.services.nativeengine.RustNativeEngine;
+import javax.annotation.Nonnull;
 
 /**
  * Punto de acceso al motor nativo en Rust.
@@ -21,8 +20,7 @@ public final class NativeServices {
 
     private static volatile RustNativeEngine motor;
 
-    private NativeServices() {
-    }
+    private NativeServices() {}
 
     /**
      * El servicio de aceleracion nativa, arrancandolo si hace falta.

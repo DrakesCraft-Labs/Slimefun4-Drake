@@ -8,12 +8,12 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * The {@link MiddleClickListener} is responsible for listening to
@@ -80,9 +80,9 @@ public class MiddleClickListener implements Listener {
             ItemStack copia = sfItem.getItem().clone();
             if (SlimefunItem.getByItem(copia) == null) {
                 e.setCancelled(true);
-                Slimefun.logger().warning(
-                        "Click creativo bloqueado: el item perdio su identidad Slimefun ("
-                        + sfItem.getId() + ")");
+                Slimefun.logger()
+                        .warning("Click creativo bloqueado: el item perdio su identidad Slimefun (" + sfItem.getId()
+                                + ")");
                 return;
             }
             e.setCursor(copia);
