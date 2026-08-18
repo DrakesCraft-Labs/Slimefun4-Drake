@@ -6,6 +6,16 @@
 
 Fork de alta eficiencia de **Slimefun 4** equipado con una arquitectura de persistencia moderna sobre motores de base de datos relacionales (**SQLite, MySQL, PostgreSQL**) en lugar de archivos planos por chunk. Mantenido por **DrakesCraft Labs** para Paper/Purpur 1.21.11 en Java 21.
 
+> ### 🏰 ¡Únete a la Comunidad Oficial de DrakesCraft!
+> 
+> * 🎮 **IP del Servidor**: `play.drakescraft.net` *(Java 1.21.11 & Bedrock)*
+> * 💬 **Discord Oficial**: [discord.gg/drakescraft](https://discord.gg/rR7FbfCt9Y)
+> * 🌐 **Web & Guía**: [drakescraft.net](https://drakescraft.net) — 🛒 **Tienda**: [tienda.drakescraft.net](https://tienda.drakescraft.net)
+> 
+> *¡Juega con este addon y más de 80 expansiones optimizadas en vivo en nuestra network de supervivencia técnica!*
+
+---
+
 ---
 
 ## 🎯 Arquitectura de Persistencia SQL
