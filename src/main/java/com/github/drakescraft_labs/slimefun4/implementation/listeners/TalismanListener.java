@@ -166,11 +166,16 @@ public class TalismanListener implements Listener {
         }
 
         /*
-         * We are also excluding entities which can pickup items,
-         * this is not perfect but it at least prevents dupes
-         * by tossing items to zombies.
+         * Entities that can pick up items (like zombies) include the
+         * items they collected in their drops. Doubling those would
+         * allow duplicating items by simply tossing them to the entity,
+         * so the Hunter Talisman must never trigger on them.
          */
-        if (!entity.getCanPickupItems() && Talisman.trigger(e, SlimefunItems.TALISMAN_HUNTER)) {
+        if (entity.getCanPickupItems()) {
+            return;
+        }
+
+        if (Talisman.trigger(e, SlimefunItems.TALISMAN_HUNTER)) {
             Collection<ItemStack> extraDrops = getExtraDrops(e.getEntity(), e.getDrops());
 
             for (ItemStack drop : extraDrops) {
