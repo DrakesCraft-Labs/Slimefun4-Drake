@@ -452,7 +452,14 @@ public final class SlimefunUtils {
         return Optional.empty();
     }
 
-    private static boolean equalsItemMeta(@Nonnull ItemMeta itemMeta, @Nonnull ItemMetaSnapshot itemMetaSnapshot, boolean checkLore) {
+    private static boolean equalsItemMeta(@Nullable ItemMeta itemMeta, @Nonnull ItemMetaSnapshot itemMetaSnapshot, boolean checkLore) {
+        // Misma razon que en la sobrecarga de abajo: hasItemMeta() puede decir que si y
+        // getItemMeta() devolver null. Un item sin meta nunca equivale a uno de Slimefun, que
+        // siempre lleva al menos nombre.
+        if (itemMeta == null) {
+            return false;
+        }
+
         Optional<String> displayName = itemMetaSnapshot.getDisplayName();
 
         if (itemMeta.hasDisplayName() != displayName.isPresent()) {
@@ -478,7 +485,24 @@ public final class SlimefunUtils {
         }
     }
 
-    private static boolean equalsItemMeta(@Nonnull ItemMeta itemMeta, @Nonnull ItemMeta sfitemMeta, boolean checkLore) {
+    private static boolean equalsItemMeta(@Nullable ItemMeta itemMeta, @Nullable ItemMeta sfitemMeta, boolean checkLore) {
+        /*
+         * Estos dos parametros venian anotados @Nonnull, pero en produccion llegan nulos y el
+         * metodo reventaba en la primera linea.
+         *
+         * Ocurre por la via del ItemStackWrapper del cargo: hasItemMeta() puede decir que si
+         * mientras getItemMeta() devuelve null, y entonces el NPE no lo sufre quien construyo el
+         * item, sino el nodo de Networks que intenta moverlo. Y ahi importa mucho, porque
+         * TickerTask.reportErrors borra el bloque y lo convierte en aire tras cuatro errores
+         * seguidos: un item raro en un cofre se acababa llevando por delante la maquina que
+         * intentaba recibirlo.
+         *
+         * Sin meta que comparar, dos items solo son equivalentes si a ninguno le falta.
+         */
+        if (itemMeta == null || sfitemMeta == null) {
+            return itemMeta == sfitemMeta;
+        }
+
         if (itemMeta.hasDisplayName() != sfitemMeta.hasDisplayName()) {
             return false;
         } else if (itemMeta.hasDisplayName() && sfitemMeta.hasDisplayName() && !itemMeta.getDisplayName().equals(sfitemMeta.getDisplayName())) {
