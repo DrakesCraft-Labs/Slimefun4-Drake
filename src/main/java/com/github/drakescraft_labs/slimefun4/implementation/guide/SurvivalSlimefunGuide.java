@@ -1,7 +1,6 @@
 package com.github.drakescraft_labs.slimefun4.implementation.guide;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -77,10 +76,16 @@ public class SurvivalSlimefunGuide implements SlimefunGuideImplementation {
     private final ItemStack item;
     private final boolean showVanillaRecipes;
     private final boolean showHiddenItemGroupsInSearch;
+    private final boolean bookmarksEnabled;
 
     public SurvivalSlimefunGuide(boolean showVanillaRecipes, boolean showHiddenItemGroupsInSearch) {
+        this(showVanillaRecipes, showHiddenItemGroupsInSearch, false);
+    }
+
+    public SurvivalSlimefunGuide(boolean showVanillaRecipes, boolean showHiddenItemGroupsInSearch, boolean bookmarksEnabled) {
         this.showVanillaRecipes = showVanillaRecipes;
         this.showHiddenItemGroupsInSearch = showHiddenItemGroupsInSearch;
+        this.bookmarksEnabled = bookmarksEnabled;
         item = new SlimefunGuideItem(this, "&aSlimefun Guide &7(Chest GUI)");
     }
 
@@ -300,10 +305,13 @@ public class SurvivalSlimefunGuide implements SlimefunGuideImplementation {
                 return false;
             });
         } else {
-            menu.addItem(index, sfitem.getItem());
+            menu.addItem(index, decorateBookmarkedItem(p, sfitem));
             menu.addMenuClickHandler(index, (pl, slot, item, action) -> {
                 try {
-                    if (isSurvivalMode()) {
+                    if (bookmarksEnabled && isSurvivalMode() && action.isRightClicked()) {
+                        toggleBookmark(pl, sfitem);
+                        openItemGroup(profile, itemGroup, page);
+                    } else if (isSurvivalMode()) {
                         displayItem(profile, sfitem, true);
                     } else if (CheatPolicy.canUseCheat(pl)) {
                         if (sfitem instanceof MultiBlockMachine) {
@@ -356,16 +364,21 @@ public class SurvivalSlimefunGuide implements SlimefunGuideImplementation {
             }
 
             if (!slimefunItem.isHidden() && isItemGroupAccessible(p, slimefunItem) && isSearchFilterApplicable(slimefunItem, searchTerm)) {
-                ItemStack itemstack = new CustomItemStack(slimefunItem.getItem(), meta -> {
+                ItemStack itemstack = new CustomItemStack(decorateBookmarkedItem(p, slimefunItem), meta -> {
                     ItemGroup itemGroup = slimefunItem.getItemGroup();
-                    meta.setLore(Arrays.asList("", ChatColor.DARK_GRAY + "\u21E8 " + ChatColor.WHITE + itemGroup.getDisplayName(p)));
+                    List<String> lore = meta.hasLore() ? new ArrayList<>(meta.getLore()) : new ArrayList<>();
+                    lore.add(ChatColor.DARK_GRAY + "\u21E8 " + ChatColor.WHITE + itemGroup.getDisplayName(p));
+                    meta.setLore(lore);
                     meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS, VersionedItemFlag.HIDE_ADDITIONAL_TOOLTIP);
                 });
 
                 menu.addItem(index, itemstack);
                 menu.addMenuClickHandler(index, (pl, slot, itm, action) -> {
                     try {
-                        if (!isSurvivalMode()) {
+                        if (bookmarksEnabled && isSurvivalMode() && action.isRightClicked()) {
+                            toggleBookmark(pl, slimefunItem);
+                            openSearch(profile, input, false);
+                        } else if (!isSurvivalMode()) {
                             if (slimefunItem instanceof MultiBlockMachine) {
                                 Slimefun.getLocalization().sendMessage(pl, "guide.cheat.no-multiblocks");
                             } else {
@@ -610,9 +623,97 @@ public class SurvivalSlimefunGuide implements SlimefunGuideImplementation {
             return false;
         });
 
+        if (bookmarksEnabled && isSurvivalMode()) {
+            int count = GuideBookmarks.get().size(p.getUniqueId());
+            menu.addItem(5, new CustomItemStack(Material.NETHER_STAR, "&6&lFavoritos", "", "&7Recetas guardadas: &f" + count, "", "&eClic para abrir", "&7Clic derecho sobre una receta", "&7para guardarla o quitarla."));
+            menu.addMenuClickHandler(5, (pl, slot, item, action) -> {
+                openBookmarks(profile, 1);
+                return false;
+            });
+        }
+
         for (int i = 45; i < 54; i++) {
             menu.addItem(i, ChestMenuUtils.getBackground(), ChestMenuUtils.getEmptyClickHandler());
         }
+    }
+
+    private void openBookmarks(@Nonnull PlayerProfile profile, int page) {
+        Player p = profile.getPlayer();
+
+        if (p == null || !bookmarksEnabled || !isSurvivalMode()) {
+            return;
+        }
+
+        List<SlimefunItem> bookmarkedItems = new ArrayList<>();
+        for (String id : GuideBookmarks.get().getBookmarks(p.getUniqueId())) {
+            SlimefunItem sfItem = SlimefunItem.getById(id);
+            if (sfItem != null && !sfItem.isDisabledIn(p.getWorld()) && !sfItem.isHidden() && isItemGroupAccessible(p, sfItem)) {
+                bookmarkedItems.add(sfItem);
+            }
+        }
+
+        int pages = Math.max(1, (bookmarkedItems.size() - 1) / MAX_ITEM_GROUPS + 1);
+        int safePage = Math.max(1, Math.min(page, pages));
+        ChestMenu menu = new ChestMenu(ChatColor.GOLD + "" + ChatColor.BOLD + "Favoritos de Slimefun");
+        createHeader(p, profile, menu);
+        addBackButton(menu, 1, p, profile);
+
+        int start = MAX_ITEM_GROUPS * (safePage - 1);
+        for (int index = 0; index < MAX_ITEM_GROUPS && start + index < bookmarkedItems.size(); index++) {
+            SlimefunItem sfItem = bookmarkedItems.get(start + index);
+            int slot = index + 9;
+            menu.addItem(slot, decorateBookmarkedItem(p, sfItem));
+            menu.addMenuClickHandler(slot, (pl, clickedSlot, clickedItem, action) -> {
+                if (action.isRightClicked()) {
+                    toggleBookmark(pl, sfItem);
+                    openBookmarks(profile, safePage);
+                } else {
+                    displayItem(profile, sfItem, true);
+                }
+                return false;
+            });
+        }
+
+        menu.addItem(46, ChestMenuUtils.getPreviousButton(p, safePage, pages));
+        menu.addMenuClickHandler(46, (pl, slot, item, action) -> {
+            if (safePage > 1) {
+                openBookmarks(profile, safePage - 1);
+            }
+            return false;
+        });
+        menu.addItem(52, ChestMenuUtils.getNextButton(p, safePage, pages));
+        menu.addMenuClickHandler(52, (pl, slot, item, action) -> {
+            if (safePage < pages) {
+                openBookmarks(profile, safePage + 1);
+            }
+            return false;
+        });
+        menu.open(p);
+    }
+
+    private @Nonnull ItemStack decorateBookmarkedItem(@Nonnull Player player, @Nonnull SlimefunItem sfItem) {
+        if (!bookmarksEnabled || !isSurvivalMode()) {
+            return sfItem.getItem();
+        }
+
+        boolean bookmarked = GuideBookmarks.get().contains(player.getUniqueId(), sfItem.getId());
+        return new CustomItemStack(sfItem.getItem(), meta -> {
+            List<String> lore = meta.hasLore() ? new ArrayList<>(meta.getLore()) : new ArrayList<>();
+            lore.add("");
+            lore.add(bookmarked ? ChatColor.GOLD + "★ Guardado en favoritos" : ChatColor.YELLOW + "Clic derecho: guardar favorito");
+            if (bookmarked) {
+                lore.add(ChatColor.GRAY + "Clic derecho para quitarlo");
+            }
+            meta.setLore(lore);
+        });
+    }
+
+    private void toggleBookmark(@Nonnull Player player, @Nonnull SlimefunItem sfItem) {
+        boolean added = GuideBookmarks.get().toggle(player.getUniqueId(), sfItem.getId());
+        String itemName = ChatColor.stripColor(sfItem.getItemName());
+        player.sendMessage(added
+            ? ChatColor.GOLD + "★ " + ChatColor.WHITE + itemName + ChatColor.GOLD + " guardado en favoritos."
+            : ChatColor.YELLOW + itemName + " fue eliminado de favoritos.");
     }
 
     private void addBackButton(ChestMenu menu, int slot, Player p, PlayerProfile profile) {

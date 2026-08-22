@@ -22,6 +22,13 @@
 
 Slimefun4-Drake owns the reliable base layer for recipes, categories, guides, research, block storage, cargo networks, energy networks and addon loading. It is the compatibility boundary for the DrakesCraft Slimefun ecosystem.
 
+The survival guide includes native per-player bookmarks. Players can right-click
+an unlocked item in a category or search result to save it, then open the star
+button in the guide header for a paginated quick-access list. Bookmarks persist
+as stable Slimefun item IDs in `guide-bookmarks.yml`, so addon recipe or texture
+updates do not serialize stale `ItemStack` data. The feature is controlled by
+`guide.bookmarks` and defaults to enabled for existing installations.
+
 The runtime is hybrid. `Slimefun-Rust` is the shared acceleration layer for
 deterministic work across this core, addons and DrakesCraft-owned plugins. Java
 remains authoritative for Bukkit state and supplies a transparent fallback.

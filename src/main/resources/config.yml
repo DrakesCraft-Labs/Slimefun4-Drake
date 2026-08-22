@@ -83,6 +83,8 @@ guide:
   show-vanilla-recipes: true
   receive-on-first-join: true
   show-hidden-item-groups-in-search: false
+  # Guarda accesos rapidos por jugador en guide-bookmarks.yml.
+  bookmarks: true
 
 researches:
   free-in-creative-mode: true

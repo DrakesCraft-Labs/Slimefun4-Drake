@@ -37,6 +37,7 @@ import com.github.drakescraft_labs.slimefun4.core.guide.SlimefunGuideMode;
 import com.github.drakescraft_labs.slimefun4.core.multiblocks.MultiBlock;
 import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
 import com.github.drakescraft_labs.slimefun4.implementation.guide.CheatSheetSlimefunGuide;
+import com.github.drakescraft_labs.slimefun4.implementation.guide.GuideBookmarks;
 import com.github.drakescraft_labs.slimefun4.implementation.guide.SurvivalSlimefunGuide;
 
 import com.github.drakescraft_labs.slimefun4.legacy.api.BlockInfoConfig;
@@ -103,7 +104,9 @@ public final class SlimefunRegistry {
 
         boolean showVanillaRecipes = cfg.getBoolean("guide.show-vanilla-recipes");
         boolean showHiddenItemGroupsInSearch = cfg.getBoolean("guide.show-hidden-item-groups-in-search");
-        guides.put(SlimefunGuideMode.SURVIVAL_MODE, new SurvivalSlimefunGuide(showVanillaRecipes, showHiddenItemGroupsInSearch));
+        boolean bookmarksEnabled = !cfg.contains("guide.bookmarks") || cfg.getBoolean("guide.bookmarks");
+        GuideBookmarks.initialize(plugin);
+        guides.put(SlimefunGuideMode.SURVIVAL_MODE, new SurvivalSlimefunGuide(showVanillaRecipes, showHiddenItemGroupsInSearch, bookmarksEnabled));
         guides.put(SlimefunGuideMode.CHEAT_MODE, new CheatSheetSlimefunGuide());
 
         researchRanks.addAll(cfg.getStringList("research-ranks"));
