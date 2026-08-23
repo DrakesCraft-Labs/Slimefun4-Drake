@@ -40,13 +40,7 @@ public final class CheatPolicy {
      * Staff bypasses remain unrestricted while SFMaster uses the limited path.
      */
     public static boolean canUseCheat(Player player) {
-        if (hasAdministrativeBypass(player)) {
-            return true;
-        }
-
-        return isAllowedCheatWorld(player)
-                && (player.hasPermission(CHEAT_PERMISSION)
-                || player.hasPermission(valueOrDefault(Slimefun.getCfg().getString(GUARD + ".limited-permission"), DEFAULT_LIMITED_PERMISSION)));
+        return hasAdministrativeBypass(player) || isLaboratoryAccess(player);
     }
 
     /**
@@ -61,6 +55,9 @@ public final class CheatPolicy {
     }
 
     public static boolean canClaim(Player player, SlimefunItem item) {
+        if (isLaboratoryAccess(player)) {
+            return item != null;
+        }
         if (!isLimitedPlayer(player) || item == null) {
             return true;
         }
@@ -87,11 +84,12 @@ public final class CheatPolicy {
             return false;
         }
 
-        boolean limited = isLimitedPlayer(player);
+        boolean laboratory = isLaboratoryAccess(player);
+        boolean limited = isLimitedPlayer(player) && !laboratory;
         ItemStack claimed = item.getItem().clone();
         claimed.setAmount(limited ? claimed.getMaxStackSize() : (shiftClicked ? claimed.getMaxStackSize() : 1));
 
-        if (limited) {
+        if (limited || laboratory) {
             markClaim(claimed, player.getUniqueId());
         }
         if (!hasSpace(player, claimed)) {
@@ -116,6 +114,10 @@ public final class CheatPolicy {
             Slimefun.logger().info("[SFMaster] " + player.getName() + " reclamó " + item.getId()
                     + " x" + claimed.getAmount() + ".");
         }
+        if (laboratory) {
+            Slimefun.logger().info("[Laboratorio] " + player.getName() + " retiró " + item.getId()
+                    + " x" + claimed.getAmount() + " del catálogo de pruebas.");
+        }
         return true;
     }
 
@@ -139,7 +141,8 @@ public final class CheatPolicy {
         return player.hasPermission(CHEAT_PERMISSION) || player.hasPermission(limitedPermission);
     }
 
-    private static boolean isAllowedCheatWorld(Player player) {
+    /** Returns whether the player is currently inside a configured testing world. */
+    public static boolean isLaboratoryAccess(Player player) {
         List<String> allowedWorlds = list("allowed-worlds");
         if (allowedWorlds.isEmpty()) {
             return false;

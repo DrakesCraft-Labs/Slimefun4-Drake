@@ -53,11 +53,27 @@ class CheatDeliveryPathTest {
         String research = Files.readString(commands.resolve("ResearchCommand.java"));
         String config = Files.readString(Path.of("src", "main", "resources", "config.yml"));
 
-        assertTrue(cheat.contains("CheatPolicy.canUseCheat(player)"));
+        assertTrue(cheat.contains("CheatPolicy.hasAdministrativeBypass(player)"));
         assertTrue(give.contains("CheatPolicy.hasAdministrativeBypass(player)"));
         assertTrue(research.contains("CheatPolicy.hasAdministrativeBypass(player)"));
         assertTrue(config.contains("allowed-worlds:"));
         assertTrue(config.contains("- \"laboratorio\""));
+    }
+
+    @Test
+    void laboratoryBookOpensDirectlyWithoutRunningTheCheatCommand() throws IOException {
+        String listener = Files.readString(Path.of(
+                "src", "main", "java", "com", "github", "drakescraft_labs",
+                "slimefun4", "implementation", "listeners", "SlimefunGuideListener.java"));
+        String policy = Files.readString(Path.of(
+                "src", "main", "java", "com", "github", "drakescraft_labs",
+                "slimefun4", "core", "services", "CheatPolicy.java"));
+
+        assertTrue(listener.contains("PlayerChangedWorldEvent"));
+        assertTrue(listener.contains("openGuide(p, e, SlimefunGuideMode.CHEAT_MODE)"));
+        assertFalse(listener.contains("p.chat(\"/sf cheat\")"));
+        assertTrue(policy.contains("hasAdministrativeBypass(player) || isLaboratoryAccess(player)"));
+        assertTrue(policy.contains("if (limited || laboratory)"));
     }
 
     private static int occurrences(String source, String needle) {
