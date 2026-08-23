@@ -39,6 +39,7 @@ import com.github.drakescraft_labs.slimefun4.core.handlers.BlockBreakHandler;
 import com.github.drakescraft_labs.slimefun4.core.handlers.BlockPlaceHandler;
 import com.github.drakescraft_labs.slimefun4.core.handlers.ToolUseHandler;
 import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
+import com.github.drakescraft_labs.slimefun4.utils.BlockStorageIntegrity;
 import com.github.drakescraft_labs.slimefun4.utils.compatibility.VersionedEnchantment;
 import com.github.drakescraft_labs.slimefun4.utils.tags.SlimefunTag;
 
@@ -70,9 +71,24 @@ public class BlockListener implements Listener {
     public void onBlockPlaceExisting(BlockPlaceEvent e) {
         Block block = e.getBlock();
 
+        if (!BlockStorage.hasBlockInfo(block)) {
+            return;
+        }
+
+        SlimefunItem storedItem = BlockStorage.check(block);
+        if (storedItem != null
+                && !BlockStorageIntegrity.matches(e.getBlockReplacedState().getType(), storedItem.getItem().getType())) {
+            /*
+             * The physical block no longer represents the persisted Slimefun item. Clear the
+             * orphan before it can reject this placement or open an invisible machine menu.
+             */
+            BlockStorage.clearBlockInfo(block);
+            return;
+        }
+
         // Fixes #2636 - This will solve the "ghost blocks" issue
-        if (e.getBlockReplacedState().getType().isAir() && BlockStorage.hasBlockInfo(block) && !Slimefun.getTickerTask().isDeletedSoon(block.getLocation())) {
-            SlimefunItem sfItem = BlockStorage.check(block);
+        if (e.getBlockReplacedState().getType().isAir() && !Slimefun.getTickerTask().isDeletedSoon(block.getLocation())) {
+            SlimefunItem sfItem = storedItem;
 
             if (sfItem != null) {
                 for (ItemStack item : sfItem.getDrops()) {
@@ -83,7 +99,7 @@ public class BlockListener implements Listener {
             }
 
             BlockStorage.clearBlockInfo(block);
-        } else if (BlockStorage.hasBlockInfo(e.getBlock())) {
+        } else {
             // If there is no air (e.g. grass) then don't let the block be placed
             e.setCancelled(true);
         }

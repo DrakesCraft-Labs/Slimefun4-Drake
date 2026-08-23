@@ -11,6 +11,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -24,6 +25,7 @@ import com.github.drakescraft_labs.slimefun4.core.handlers.ItemUseHandler;
 import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
 import com.github.drakescraft_labs.slimefun4.implementation.SlimefunItems;
 import com.github.drakescraft_labs.slimefun4.utils.SlimefunUtils;
+import com.github.drakescraft_labs.slimefun4.utils.BlockStorageIntegrity;
 
 import com.github.drakescraft_labs.slimefun4.legacy.api.BlockStorage;
 import com.github.drakescraft_labs.slimefun4.legacy.api.inventory.BlockMenu;
@@ -47,6 +49,20 @@ public class SlimefunItemInteractListener implements Listener {
 
     public SlimefunItemInteractListener(@Nonnull Slimefun plugin) {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
+    }
+
+    /** Removes stale metadata before a ghost machine can consume the interaction. */
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void clearGhostBlock(PlayerInteractEvent e) {
+        Block clicked = e.getClickedBlock();
+        if (clicked == null || !BlockStorage.hasBlockInfo(clicked)) {
+            return;
+        }
+
+        SlimefunItem storedItem = BlockStorage.check(clicked);
+        if (storedItem != null && !BlockStorageIntegrity.matches(clicked, storedItem)) {
+            BlockStorage.clearBlockInfo(clicked);
+        }
     }
 
     @EventHandler
