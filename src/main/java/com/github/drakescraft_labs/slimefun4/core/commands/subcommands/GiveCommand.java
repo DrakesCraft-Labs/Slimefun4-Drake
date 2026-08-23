@@ -17,6 +17,7 @@ import com.github.drakescraft_labs.slimefun4.api.items.SlimefunItem;
 import com.github.drakescraft_labs.slimefun4.core.commands.SlimefunCommand;
 import com.github.drakescraft_labs.slimefun4.core.commands.SubCommand;
 import com.github.drakescraft_labs.slimefun4.core.multiblocks.MultiBlockMachine;
+import com.github.drakescraft_labs.slimefun4.core.services.CheatPolicy;
 import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
 
 class GiveCommand extends SubCommand {
@@ -32,7 +33,7 @@ class GiveCommand extends SubCommand {
 
     @Override
     public void onExecute(CommandSender sender, String[] args) {
-        if (sender.hasPermission("slimefun.cheat.items") || !(sender instanceof Player)) {
+        if (!(sender instanceof Player player) || CheatPolicy.hasAdministrativeBypass(player)) {
             if (args.length > 2) {
                 Optional<Player> player = PlayerList.findByName(args[1]);
 

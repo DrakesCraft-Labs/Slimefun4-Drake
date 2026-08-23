@@ -33,6 +33,9 @@ sfmaster-guard:
   # Titan Caos retains the same allowlist and ownership rules with a larger quota.
   premium-limit-permission: "odysseia.sfmaster.titan"
   bypass-permission: "slimefun.cheat.items.bypass"
+  # Limited SFMaster access exists only inside isolated laboratory inventories.
+  allowed-worlds:
+    - "laboratorio"
   # Persistent rolling window. Restarting Slimefun or the server does not reset it.
   max-claims: 32
   premium-max-claims: 48

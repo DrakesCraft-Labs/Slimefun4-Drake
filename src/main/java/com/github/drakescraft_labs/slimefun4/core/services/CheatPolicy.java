@@ -40,10 +40,24 @@ public final class CheatPolicy {
      * Staff bypasses remain unrestricted while SFMaster uses the limited path.
      */
     public static boolean canUseCheat(Player player) {
+        if (hasAdministrativeBypass(player)) {
+            return true;
+        }
+
+        return isAllowedCheatWorld(player)
+                && (player.hasPermission(CHEAT_PERMISSION)
+                || player.hasPermission(valueOrDefault(Slimefun.getCfg().getString(GUARD + ".limited-permission"), DEFAULT_LIMITED_PERMISSION)));
+    }
+
+    /**
+     * Administrative item/research commands must never inherit the laboratory
+     * permission. This is intentionally stricter than opening the limited guide.
+     */
+    public static boolean hasAdministrativeBypass(Player player) {
         return player.isOp()
-                || player.hasPermission(valueOrDefault(Slimefun.getCfg().getString(GUARD + ".bypass-permission"), DEFAULT_BYPASS_PERMISSION))
-                || player.hasPermission(CHEAT_PERMISSION)
-                || player.hasPermission(valueOrDefault(Slimefun.getCfg().getString(GUARD + ".limited-permission"), DEFAULT_LIMITED_PERMISSION));
+                || player.hasPermission(valueOrDefault(
+                        Slimefun.getCfg().getString(GUARD + ".bypass-permission"),
+                        DEFAULT_BYPASS_PERMISSION));
     }
 
     public static boolean canClaim(Player player, SlimefunItem item) {
@@ -123,6 +137,15 @@ public final class CheatPolicy {
 
         String limitedPermission = valueOrDefault(Slimefun.getCfg().getString(GUARD + ".limited-permission"), DEFAULT_LIMITED_PERMISSION);
         return player.hasPermission(CHEAT_PERMISSION) || player.hasPermission(limitedPermission);
+    }
+
+    private static boolean isAllowedCheatWorld(Player player) {
+        List<String> allowedWorlds = list("allowed-worlds");
+        if (allowedWorlds.isEmpty()) {
+            return false;
+        }
+        String worldName = player.getWorld().getName();
+        return allowedWorlds.stream().anyMatch(worldName::equalsIgnoreCase);
     }
 
     static ClaimWindow.Result evaluateWindow(long[] history, long now, long windowMillis, int maximum) {

@@ -42,6 +42,24 @@ class CheatDeliveryPathTest {
         assertFalse(policy.contains("limited ? 1 :"));
     }
 
+    @Test
+    void administrativeCommandsCannotReuseLaboratoryPermission() throws IOException {
+        Path commands = Path.of(
+                "src", "main", "java", "com", "github", "drakescraft_labs",
+                "slimefun4", "core", "commands", "subcommands");
+
+        String cheat = Files.readString(commands.resolve("CheatCommand.java"));
+        String give = Files.readString(commands.resolve("GiveCommand.java"));
+        String research = Files.readString(commands.resolve("ResearchCommand.java"));
+        String config = Files.readString(Path.of("src", "main", "resources", "config.yml"));
+
+        assertTrue(cheat.contains("CheatPolicy.canUseCheat(player)"));
+        assertTrue(give.contains("CheatPolicy.hasAdministrativeBypass(player)"));
+        assertTrue(research.contains("CheatPolicy.hasAdministrativeBypass(player)"));
+        assertTrue(config.contains("allowed-worlds:"));
+        assertTrue(config.contains("- \"laboratorio\""));
+    }
+
     private static int occurrences(String source, String needle) {
         int count = 0;
         int index = 0;

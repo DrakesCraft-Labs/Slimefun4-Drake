@@ -14,6 +14,7 @@ import com.github.drakescraft_labs.slimefun4.api.player.PlayerProfile;
 import com.github.drakescraft_labs.slimefun4.api.researches.Research;
 import com.github.drakescraft_labs.slimefun4.core.commands.SlimefunCommand;
 import com.github.drakescraft_labs.slimefun4.core.commands.SubCommand;
+import com.github.drakescraft_labs.slimefun4.core.services.CheatPolicy;
 import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
 
 class ResearchCommand extends SubCommand {
@@ -40,7 +41,7 @@ class ResearchCommand extends SubCommand {
         }
 
         if (args.length == 3) {
-            if (!(sender instanceof Player) || sender.hasPermission("slimefun.cheat.researches")) {
+            if (!(sender instanceof Player player) || CheatPolicy.hasAdministrativeBypass(player)) {
                 Optional<Player> player = PlayerList.findByName(args[1]);
 
                 if (player.isPresent()) {
