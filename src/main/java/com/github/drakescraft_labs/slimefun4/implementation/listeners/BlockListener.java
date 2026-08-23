@@ -83,9 +83,14 @@ public class BlockListener implements Listener {
             }
 
             BlockStorage.clearBlockInfo(block);
-        } else if (BlockStorage.hasBlockInfo(e.getBlock())) {
-            // If there is no air (e.g. grass) then don't let the block be placed
-            e.setCancelled(true);
+        } else if (BlockStorage.hasBlockInfo(block) && !Slimefun.getTickerTask().isDeletedSoon(block.getLocation())) {
+            /*
+             * A BlockPlaceEvent can replace grass, snow and other replaceable blocks. If Slimefun still has
+             * data at that coordinate, the physical machine is already gone and this is stale metadata.
+             * Cancelling here made every machine rebound to the player's hand after a previous machine was
+             * broken. Clear only the orphaned record; the HIGHEST handler below will register the new item.
+             */
+            BlockStorage.clearBlockInfo(block);
         }
     }
 
