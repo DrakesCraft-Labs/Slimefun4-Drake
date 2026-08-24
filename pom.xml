@@ -327,7 +327,7 @@
             <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
-                <version>5.10.3</version>
+                <version>6.0.3</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -369,11 +369,11 @@
             <version>5.10.0</version>
             <scope>test</scope>
         </dependency>
-        <!-- This needs to be before Spigot because MockBukkit will fail otherwise. -->
+        <!-- Keep MockBukkit aligned with the current Paper registry format. -->
         <dependency>
-            <groupId>com.github.seeseemelk</groupId>
-            <artifactId>MockBukkit-v1.21</artifactId>
-            <version>3.133.2</version>
+            <groupId>org.mockbukkit.mockbukkit</groupId>
+            <artifactId>mockbukkit-v1.21</artifactId>
+            <version>4.116.3</version>
             <scope>test</scope>
         </dependency>
 
@@ -490,18 +490,4 @@
         </dependency>
     </dependencies>
 
-    <profiles>
-        <profile>
-            <id>legacy-mockbukkit-tests</id>
-            <activation>
-                <property>
-                    <name>legacyMockBukkitTests</name>
-                </property>
-            </activation>
-            <properties>
-                <!-- MockBukkit 3.133.2 models Paper 1.21.1, independently of the production target. -->
-                <paper.version>1.21.1-R0.1-SNAPSHOT</paper.version>
-            </properties>
-        </profile>
-    </profiles>
 </project>

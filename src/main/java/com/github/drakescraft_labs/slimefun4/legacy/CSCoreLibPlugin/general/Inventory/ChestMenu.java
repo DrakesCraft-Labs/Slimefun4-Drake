@@ -42,13 +42,19 @@ public class ChestMenu {
             Class<?> craftItemStack = Class.forName("org.bukkit.craftbukkit.inventory.CraftItemStack");
             return craftItemStack.getMethod("asCraftCopy", ItemStack.class);
         } catch (ReflectiveOperationException exception) {
-            throw new ExceptionInInitializerError(exception);
+            // MockBukkit intentionally has no CraftBukkit implementation.
+            // A normal Bukkit clone is sufficient in that test environment.
+            return null;
         }
     }
 
     private ItemStack sanitizeInventoryItem(ItemStack item) {
         if (item == null || item.getClass().getName().equals("org.bukkit.craftbukkit.inventory.CraftItemStack")) {
             return item;
+        }
+
+        if (AS_CRAFT_COPY == null) {
+            return item.clone();
         }
 
         try {

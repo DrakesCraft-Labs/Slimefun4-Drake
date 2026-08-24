@@ -1,4 +1,4 @@
-package be.seeseemelk.mockbukkit.plugin;
+package org.mockbukkit.mockbukkit.plugin;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;

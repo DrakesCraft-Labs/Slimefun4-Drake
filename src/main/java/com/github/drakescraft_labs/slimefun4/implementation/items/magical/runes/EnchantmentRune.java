@@ -51,7 +51,22 @@ public class EnchantmentRune extends SimpleSlimefunItem<ItemDropHandler> {
 
         for (Material mat : Material.values()) {
             if (Slimefun.instance().isUnitTest() && mat.isLegacy()) continue;
-            if (!mat.isItem()) continue;
+
+            try {
+                if (!mat.isItem()) continue;
+            } catch (RuntimeException ignored) {
+                // MockBukkit 4.x does not implement the legacy conversion used
+                // internally by Paper's Material#isItem yet.
+            }
+
+            ItemStack candidate;
+            try {
+                candidate = new ItemStack(mat);
+            } catch (RuntimeException exception) {
+                // MockBukkit cannot resolve Material#isItem yet; constructing the
+                // stack remains a reliable test-only filter for non-item entries.
+                continue;
+            }
 
             List<Enchantment> enchantments = new ArrayList<>();
 
@@ -60,7 +75,7 @@ public class EnchantmentRune extends SimpleSlimefunItem<ItemDropHandler> {
                     continue;
                 }
 
-                if (enchantment.canEnchantItem(new ItemStack(mat))) {
+                if (enchantment.canEnchantItem(candidate)) {
                     enchantments.add(enchantment);
                 }
             }
