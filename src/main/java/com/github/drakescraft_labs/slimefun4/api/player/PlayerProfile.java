@@ -39,6 +39,7 @@ import com.github.drakescraft_labs.slimefun4.core.attributes.ProtectiveArmor;
 import com.github.drakescraft_labs.slimefun4.core.debug.Debug;
 import com.github.drakescraft_labs.slimefun4.core.debug.TestCase;
 import com.github.drakescraft_labs.slimefun4.core.guide.GuideHistory;
+import com.github.drakescraft_labs.slimefun4.core.services.CheatPolicy;
 import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
 import com.github.drakescraft_labs.slimefun4.implementation.items.armor.SlimefunArmorPiece;
 import com.github.drakescraft_labs.slimefun4.utils.NumberUtils;
@@ -171,6 +172,13 @@ public class PlayerProfile {
     public boolean hasUnlocked(@Nullable Research research) {
         if (research == null) {
             // No Research, no restriction
+            return true;
+        }
+
+        // Laboratory is an isolated test modality. Treat research as unlocked
+        // only while the profile owner is online there, without persisting it.
+        Player owner = Bukkit.getPlayer(ownerId);
+        if (owner != null && CheatPolicy.isLaboratoryAccess(owner)) {
             return true;
         }
 

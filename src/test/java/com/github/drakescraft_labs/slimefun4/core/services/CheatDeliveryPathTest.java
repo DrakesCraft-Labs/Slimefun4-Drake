@@ -76,6 +76,16 @@ class CheatDeliveryPathTest {
         assertTrue(policy.contains("if (limited || laboratory)"));
     }
 
+    @Test
+    void laboratoryResearchBypassIsVirtualAndNotPersisted() throws IOException {
+        String profile = Files.readString(Path.of(
+                "src", "main", "java", "com", "github", "drakescraft_labs",
+                "slimefun4", "api", "player", "PlayerProfile.java"));
+
+        assertTrue(profile.contains("CheatPolicy.isLaboratoryAccess(owner)"));
+        assertFalse(profile.contains("setResearched(research, CheatPolicy.isLaboratoryAccess"));
+    }
+
     private static int occurrences(String source, String needle) {
         int count = 0;
         int index = 0;
