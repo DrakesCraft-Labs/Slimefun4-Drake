@@ -58,7 +58,10 @@ public class AutoSavingService implements Listener {
         plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, this::saveAllPlayers, 2000L, interval * 60L * 20L);
         plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, this::saveAllBlocks, 2000L, interval * 60L * 20L);
         if (dynamicIntervalSeconds > 0) {
-            plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, this::saveDirtyBlocksBatch, dynamicIntervalSeconds * 20L, dynamicIntervalSeconds * 20L);
+            // BlockStorage's Bukkit configuration is mutated on the server thread.
+            // A bounded batch here avoids ConcurrentModificationException without
+            // turning the periodic full persistence pass into a main-thread spike.
+            plugin.getServer().getScheduler().runTaskTimer(plugin, this::saveDirtyBlocksBatch, dynamicIntervalSeconds * 20L, dynamicIntervalSeconds * 20L);
         }
 
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
