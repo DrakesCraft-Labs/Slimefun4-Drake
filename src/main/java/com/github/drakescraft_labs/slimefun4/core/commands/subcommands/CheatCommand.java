@@ -21,7 +21,7 @@ class CheatCommand extends SubCommand {
     @Override
     public void onExecute(CommandSender sender, String[] args) {
         if (sender instanceof Player player) {
-            if (CheatPolicy.hasAdministrativeBypass(player)) {
+            if (CheatPolicy.canUseCheat(player)) {
                 SlimefunGuide.openCheatMenu(player);
             } else {
                 Slimefun.getLocalization().sendMessage(sender, "messages.no-permission", true);

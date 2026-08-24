@@ -43,7 +43,7 @@ class CheatDeliveryPathTest {
     }
 
     @Test
-    void administrativeCommandsCannotReuseLaboratoryPermission() throws IOException {
+    void laboratoryCanOpenCheatCatalogWithoutAdministrativeCommands() throws IOException {
         Path commands = Path.of(
                 "src", "main", "java", "com", "github", "drakescraft_labs",
                 "slimefun4", "core", "commands", "subcommands");
@@ -53,7 +53,7 @@ class CheatDeliveryPathTest {
         String research = Files.readString(commands.resolve("ResearchCommand.java"));
         String config = Files.readString(Path.of("src", "main", "resources", "config.yml"));
 
-        assertTrue(cheat.contains("CheatPolicy.hasAdministrativeBypass(player)"));
+        assertTrue(cheat.contains("CheatPolicy.canUseCheat(player)"));
         assertTrue(give.contains("CheatPolicy.hasAdministrativeBypass(player)"));
         assertTrue(research.contains("CheatPolicy.hasAdministrativeBypass(player)"));
         assertTrue(config.contains("allowed-worlds:"));
