@@ -624,7 +624,7 @@ public class SurvivalSlimefunGuide implements SlimefunGuideImplementation {
         });
 
         if (bookmarksEnabled && isSurvivalMode()) {
-            int count = GuideBookmarks.get().size(p.getUniqueId());
+            int count = GuideBookmarks.get().size(p.getUniqueId()) + GuideBookmarks.get().groupSize(p.getUniqueId());
             menu.addItem(5, new CustomItemStack(Material.NETHER_STAR, "&6&lFavoritos", "", "&7Recetas guardadas: &f" + count, "", "&eClic para abrir", "&7Clic derecho sobre una receta", "&7para guardarla o quitarla."));
             menu.addMenuClickHandler(5, (pl, slot, item, action) -> {
                 openBookmarks(profile, 1);
@@ -652,26 +652,52 @@ public class SurvivalSlimefunGuide implements SlimefunGuideImplementation {
             }
         }
 
-        int pages = Math.max(1, (bookmarkedItems.size() - 1) / MAX_ITEM_GROUPS + 1);
+        // Group favorites (e.g. bookmarked FlexItemGroup menus) are resolved dynamically against
+        // the registry, so a group removed by a disabled/updated addon simply drops off the list.
+        List<ItemGroup> bookmarkedGroups = new ArrayList<>();
+        for (ItemGroup group : GuideBookmarks.get().getResolvedGroupBookmarks(p.getUniqueId())) {
+            if (!(group instanceof FlexItemGroup flexItemGroup) || flexItemGroup.isVisible(p, profile, getMode())) {
+                bookmarkedGroups.add(group);
+            }
+        }
+
+        int entries = bookmarkedItems.size() + bookmarkedGroups.size();
+        int pages = Math.max(1, (entries - 1) / MAX_ITEM_GROUPS + 1);
         int safePage = Math.max(1, Math.min(page, pages));
         ChestMenu menu = new ChestMenu(ChatColor.GOLD + "" + ChatColor.BOLD + "Favoritos de Slimefun");
         createHeader(p, profile, menu);
         addBackButton(menu, 1, p, profile);
 
         int start = MAX_ITEM_GROUPS * (safePage - 1);
-        for (int index = 0; index < MAX_ITEM_GROUPS && start + index < bookmarkedItems.size(); index++) {
-            SlimefunItem sfItem = bookmarkedItems.get(start + index);
+        for (int index = 0; index < MAX_ITEM_GROUPS && start + index < entries; index++) {
+            int target = start + index;
             int slot = index + 9;
-            menu.addItem(slot, decorateBookmarkedItem(p, sfItem));
-            menu.addMenuClickHandler(slot, (pl, clickedSlot, clickedItem, action) -> {
-                if (action.isRightClicked()) {
-                    toggleBookmark(pl, sfItem);
-                    openBookmarks(profile, safePage);
-                } else {
-                    displayItem(profile, sfItem, true);
-                }
-                return false;
-            });
+
+            if (target < bookmarkedItems.size()) {
+                SlimefunItem sfItem = bookmarkedItems.get(target);
+                menu.addItem(slot, decorateBookmarkedItem(p, sfItem));
+                menu.addMenuClickHandler(slot, (pl, clickedSlot, clickedItem, action) -> {
+                    if (action.isRightClicked()) {
+                        toggleBookmark(pl, sfItem);
+                        openBookmarks(profile, safePage);
+                    } else {
+                        displayItem(profile, sfItem, true);
+                    }
+                    return false;
+                });
+            } else {
+                ItemGroup group = bookmarkedGroups.get(target - bookmarkedItems.size());
+                menu.addItem(slot, decorateBookmarkedGroup(p, group));
+                menu.addMenuClickHandler(slot, (pl, clickedSlot, clickedItem, action) -> {
+                    if (action.isRightClicked()) {
+                        GuideBookmarks.get().toggleGroup(pl.getUniqueId(), group.getKey().toString());
+                        openBookmarks(profile, safePage);
+                    } else {
+                        openItemGroup(profile, group, 1);
+                    }
+                    return false;
+                });
+            }
         }
 
         menu.addItem(46, ChestMenuUtils.getPreviousButton(p, safePage, pages));
@@ -689,6 +715,16 @@ public class SurvivalSlimefunGuide implements SlimefunGuideImplementation {
             return false;
         });
         menu.open(p);
+    }
+
+    private @Nonnull ItemStack decorateBookmarkedGroup(@Nonnull Player player, @Nonnull ItemGroup group) {
+        return new CustomItemStack(group.getItem(player), meta -> {
+            List<String> lore = meta.hasLore() ? new ArrayList<>(meta.getLore()) : new ArrayList<>();
+            lore.add("");
+            lore.add(ChatColor.GOLD + "★ Grupo guardado en favoritos");
+            lore.add(ChatColor.GRAY + "Clic derecho para quitarlo");
+            meta.setLore(lore);
+        });
     }
 
     private @Nonnull ItemStack decorateBookmarkedItem(@Nonnull Player player, @Nonnull SlimefunItem sfItem) {

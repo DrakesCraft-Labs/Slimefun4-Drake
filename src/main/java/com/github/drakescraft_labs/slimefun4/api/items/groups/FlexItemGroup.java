@@ -14,6 +14,7 @@ import com.github.drakescraft_labs.slimefun4.api.items.SlimefunItem;
 import com.github.drakescraft_labs.slimefun4.api.player.PlayerProfile;
 import com.github.drakescraft_labs.slimefun4.core.guide.SlimefunGuide;
 import com.github.drakescraft_labs.slimefun4.core.guide.SlimefunGuideMode;
+import com.github.drakescraft_labs.slimefun4.implementation.guide.GuideBookmarks;
 
 /**
  * A {@link FlexItemGroup} is a {@link ItemGroup} inside the {@link SlimefunGuide} that can
@@ -75,6 +76,40 @@ public abstract class FlexItemGroup extends ItemGroup {
      *            The current {@link SlimefunGuideMode}
      */
     public abstract void open(Player p, PlayerProfile profile, SlimefunGuideMode layout);
+
+    /**
+     * Whether {@code p} has bookmarked this whole {@link FlexItemGroup} as a favorite.
+     * <p>
+     * This is deliberately opt-in: the core guide never renders a favorite icon or intercepts
+     * clicks inside {@link #open(Player, PlayerProfile, SlimefunGuideMode)} on its own, since doing
+     * so could shadow click handlers a machine-driven menu relies on. An implementation decides for
+     * itself where to place the icon and whether to call {@link #toggleFavorite(Player)} from its
+     * own click handler.
+     *
+     * @param p
+     *            The {@link Player} to check
+     *
+     * @return whether the group is bookmarked
+     */
+    @ParametersAreNonnullByDefault
+    protected final boolean isFavorite(Player p) {
+        return GuideBookmarks.get().containsGroup(p.getUniqueId(), getKey().toString());
+    }
+
+    /**
+     * Toggles whether {@code p} has bookmarked this whole {@link FlexItemGroup} and persists the
+     * change immediately. See {@link #isFavorite(Player)} for why this is opt-in rather than
+     * automatic.
+     *
+     * @param p
+     *            The {@link Player} toggling their bookmark
+     *
+     * @return {@code true} when the group was added to favorites, {@code false} when removed
+     */
+    @ParametersAreNonnullByDefault
+    protected final boolean toggleFavorite(Player p) {
+        return GuideBookmarks.get().toggleGroup(p.getUniqueId(), getKey().toString());
+    }
 
     @Override
     public final void add(@Nonnull SlimefunItem item) {

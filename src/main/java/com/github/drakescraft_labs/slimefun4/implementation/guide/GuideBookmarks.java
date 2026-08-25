@@ -14,9 +14,20 @@ import javax.annotation.Nonnull;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import com.github.drakescraft_labs.slimefun4.api.items.ItemGroup;
 import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
 
-/** Stores per-player guide bookmarks by Slimefun item id. */
+/**
+ * Stores per-player guide bookmarks.
+ * <p>
+ * Two kinds of favorites are tracked: individual Slimefun item ids (the original,
+ * on-disk-compatible format) and item group keys, which addons such as a
+ * {@link com.github.drakescraft_labs.slimefun4.api.items.groups.FlexItemGroup} can use to let
+ * players bookmark a whole custom menu instead of a single item. Group keys are resolved
+ * dynamically against {@link com.github.drakescraft_labs.slimefun4.core.SlimefunRegistry} so a
+ * group removed by a disabled/updated addon simply disappears from the resolved list instead of
+ * throwing.
+ */
 public final class GuideBookmarks {
 
     private static GuideBookmarks instance;
@@ -75,6 +86,67 @@ public final class GuideBookmarks {
 
     private @Nonnull Set<String> read(@Nonnull UUID playerId) {
         return new LinkedHashSet<>(data.getStringList(playerId.toString()));
+    }
+
+    public synchronized boolean containsGroup(@Nonnull UUID playerId, @Nonnull String groupKey) {
+        return readGroups(playerId).contains(groupKey);
+    }
+
+    public synchronized int groupSize(@Nonnull UUID playerId) {
+        return readGroups(playerId).size();
+    }
+
+    public synchronized @Nonnull List<String> getGroupBookmarks(@Nonnull UUID playerId) {
+        return new ArrayList<>(readGroups(playerId));
+    }
+
+    /**
+     * Resolves the player's bookmarked group keys against the current
+     * {@link com.github.drakescraft_labs.slimefun4.core.SlimefunRegistry}, silently dropping keys
+     * that no longer match a registered {@link ItemGroup} (e.g. the owning addon was disabled).
+     * Nothing is deleted from disk, so the bookmark reappears if the group is registered again.
+     */
+    public synchronized @Nonnull List<ItemGroup> getResolvedGroupBookmarks(@Nonnull UUID playerId) {
+        List<String> keys = getGroupBookmarks(playerId);
+        List<ItemGroup> resolved = new ArrayList<>(keys.size());
+
+        for (ItemGroup group : Slimefun.getRegistry().getAllItemGroups()) {
+            if (keys.contains(group.getKey().toString())) {
+                resolved.add(group);
+            }
+        }
+
+        return resolved;
+    }
+
+    /**
+     * Toggles one group bookmark and immediately persists the new state.
+     *
+     * @return {@code true} when added, {@code false} when removed
+     */
+    public synchronized boolean toggleGroup(@Nonnull UUID playerId, @Nonnull String groupKey) {
+        Set<String> ids = readGroups(playerId);
+        boolean added = ids.add(groupKey);
+
+        if (!added) {
+            ids.remove(groupKey);
+        }
+
+        data.set(groupPath(playerId), new ArrayList<>(ids));
+        save();
+        return added;
+    }
+
+    private @Nonnull Set<String> readGroups(@Nonnull UUID playerId) {
+        return new LinkedHashSet<>(data.getStringList(groupPath(playerId)));
+    }
+
+    /**
+     * Group bookmarks live under a separate top-level {@code groups} branch so they never collide
+     * with the flat item-id list already stored directly under {@code playerId}.
+     */
+    private @Nonnull String groupPath(@Nonnull UUID playerId) {
+        return "groups." + playerId;
     }
 
     private void save() {
