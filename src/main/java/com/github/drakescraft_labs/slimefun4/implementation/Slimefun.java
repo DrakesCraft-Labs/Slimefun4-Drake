@@ -409,6 +409,14 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
     public void onDisable() {
         // Slimefun never loaded successfully, so we don't even bother doing stuff here
         if (instance() == null || minecraftVersion == MinecraftVersion.UNIT_TEST) {
+            // Aun sin inicializacion completa, el ThreadService y el SlimefunProfiler de esta
+            // instancia ya existen (se crean en el constructor). Sin este shutdown, cada
+            // MockBukkit.load() en la suite de tests deja vivos su cachedPool/scheduledPool y
+            // el pool de 2 hilos del profiler para siempre, porque nada mas los detiene:
+            // acumulan hilos entre clases de test hasta degradar CPU y causar timeouts/perfiles
+            // nulos en tests tardios del reactor completo.
+            threadService.shutdown();
+            profiler.kill();
             return;
         }
 
@@ -456,6 +464,7 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
         // Close and unload any resources from our Metrics Service
         metricsService.cleanUp();
         nativeAccelerationService.stop(this);
+        threadService.shutdown();
 
         // Terminate our Plugin instance
         setInstance(null);

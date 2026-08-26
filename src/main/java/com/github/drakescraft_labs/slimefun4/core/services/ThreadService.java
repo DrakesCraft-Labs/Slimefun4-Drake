@@ -84,6 +84,16 @@ public final class ThreadService {
     }
 
     /**
+     * Shuts down both underlying thread pools immediately. Any task still queued or running
+     * (e.g. an async {@code PlayerProfile} load) is abandoned rather than awaited, since this
+     * is only meant to reclaim threads on plugin disable/reload, not to drain pending work.
+     */
+    public void shutdown() {
+        cachedPool.shutdownNow();
+        scheduledPool.shutdownNow();
+    }
+
+    /**
      * Get the caller of a given method, this should only be used for debugging purposes and is not performant.
      *
      * @return The caller of the method that called this method.

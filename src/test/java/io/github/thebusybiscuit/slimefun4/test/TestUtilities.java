@@ -86,7 +86,11 @@ public final class TestUtilities {
             latch.countDown();
         }));
 
-        latch.await(2, TimeUnit.SECONDS);
+        // 2s alcanzaba en maquinas ociosas, pero con contencion real de CPU (reactor completo,
+        // otro agente corriendo en paralelo, runners de un solo nucleo) la carga async de
+        // PlayerProfile podia no completar a tiempo y dejar "profile" en null sin que fuera
+        // un fallo real del codigo bajo prueba.
+        latch.await(10, TimeUnit.SECONDS);
         return ref.get();
     }
 
