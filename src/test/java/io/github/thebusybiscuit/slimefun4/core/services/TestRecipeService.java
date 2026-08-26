@@ -46,7 +46,9 @@ class TestRecipeService {
         MinecraftRecipeService service = new MinecraftRecipeService(plugin);
 
         NamespacedKey key = new NamespacedKey(plugin, "furnace_recipe_test");
-        ItemStack result = new ItemStack(Material.EMERALD_BLOCK);
+        // Nether Star has no vanilla crafting/smelting recipe, so mockbukkit's
+        // pre-registered vanilla recipe list can't collide with the one we add here.
+        ItemStack result = new ItemStack(Material.NETHER_STAR);
         FurnaceRecipe recipe = new FurnaceRecipe(key, result, new MaterialChoice(Material.DIAMOND), 1, 2);
         server.addRecipe(recipe);
 
