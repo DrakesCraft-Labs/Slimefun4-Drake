@@ -483,6 +483,18 @@ public class PlayerProfile {
         return Slimefun.getRegistry().getPlayerProfiles().values().iterator();
     }
 
+    /**
+     * {@code loading} vive a nivel de JVM, no por instancia de {@link Slimefun}. En la suite de
+     * tests, MockBukkit reutiliza UUIDs de jugador entre clases y el ThreadService se apaga en
+     * cada {@code onDisable()}; si un hilo de carga no alcanzo a remover su UUID antes del
+     * shutdown, el flag queda marcado para siempre y {@link #get} descarta el callback en la
+     * siguiente clase de test, dejando el perfil en null. Debe limpiarse en cada apagado de
+     * unit test para no contaminar clases de test posteriores.
+     */
+    public static void resetLoadingStateForTests() {
+        loading.clear();
+    }
+
     public static void getBackpack(@Nullable ItemStack item, @Nonnull Consumer<PlayerBackpack> callback) {
         if (item == null || !item.hasItemMeta() || !item.getItemMeta().hasLore()) {
             return;

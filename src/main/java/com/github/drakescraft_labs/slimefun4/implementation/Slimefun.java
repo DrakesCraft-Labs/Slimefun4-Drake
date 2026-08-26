@@ -220,7 +220,14 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
 
         // Check that we got loaded by MockBukkit rather than Bukkit's loader
         // TODO: This is very much a hack and we can hopefully move to a more native way in the future
-        if (getClassLoader().getClass().getPackageName().startsWith("be.seeseemelk.mockbukkit")) {
+        // El fork de MockBukkit se renombro de be.seeseemelk.mockbukkit a org.mockbukkit.mockbukkit
+        // (ver commit 25714e9c9, migracion a mockbukkit-v1.21 para Paper 1.21.11). El paquete viejo
+        // ya no existe, asi que este check dejaba de detectar el entorno de test: isUnitTest()
+        // devolvia false siempre y toda la suite arrancaba por onPluginStart() (el camino de
+        // produccion real) en lugar de onUnitTestStart(), disparando registros "solo una vez"
+        // (investigaciones, GEO-resources) y perfiles de jugador nunca inicializados en el
+        // reactor completo.
+        if (getClassLoader().getClass().getPackageName().startsWith("org.mockbukkit.mockbukkit")) {
             minecraftVersion = MinecraftVersion.UNIT_TEST;
         }
     }
@@ -417,6 +424,12 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
             // nulos en tests tardios del reactor completo.
             threadService.shutdown();
             profiler.kill();
+            // PlayerProfile.loading es un mapa estatico de JVM, no de instancia. Si el shutdown
+            // anterior interrumpio un hilo de PlayerProfile#get() antes de que retirara su UUID,
+            // ese UUID queda marcado "cargando" para siempre y, como MockBukkit reutiliza UUIDs
+            // de jugador entre clases de test, la siguiente clase que reciba ese UUID ve su
+            // callback descartado y el perfil queda en null indefinidamente.
+            PlayerProfile.resetLoadingStateForTests();
             return;
         }
 
