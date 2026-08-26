@@ -70,6 +70,7 @@ class TestSmithingTableListener {
         Player player = server.addPlayer();
 
         SmithingInventory inv = Mockito.mock(SmithingInventory.class);
+        Mockito.when(inv.getType()).thenReturn(org.bukkit.event.inventory.InventoryType.SMITHING);
         // MinecraftVersion#isAtLeast always returns true during unit test, so we use the 1.20 layout here.
         Mockito.when(inv.getContents()).thenReturn(new ItemStack[] { new ItemStack(Material.NETHERITE_UPGRADE_SMITHING_TEMPLATE), tool, material, null });
 
@@ -84,6 +85,7 @@ class TestSmithingTableListener {
         Player player = server.addPlayer();
 
         SmithingInventory inv = Mockito.mock(SmithingInventory.class);
+        Mockito.when(inv.getType()).thenReturn(org.bukkit.event.inventory.InventoryType.SMITHING);
         MutableObject<ItemStack> result = new MutableObject<>(new ItemStack(Material.NETHERITE_PICKAXE));
 
         Mockito.doAnswer(invocation -> {
