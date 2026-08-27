@@ -2,8 +2,14 @@ package me.mrCookieSlime.CSCoreLibPlugin.Configuration;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.Collections;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -16,6 +22,17 @@ import com.github.drakescraft_labs.slimefun4.legacy.api.BlockStorage;
  * Only used by the legacy {@link BlockStorage} system.
  */
 public class Config {
+
+    private static final Logger LOGGER = Logger.getLogger("Slimefun");
+
+    /**
+     * Guarda toda la lectura y escritura del {@link FileConfiguration} interno.
+     * El hilo principal muta estos Config al colocar o romper bloques, mientras
+     * el guardado automatico los recorre desde un hilo asincrono; sin este lock
+     * la iteracion revienta con {@link java.util.ConcurrentModificationException}
+     * y los cambios encolados se pierden.
+     */
+    private final Object lock = new Object();
 
     private final File file;
     private FileConfiguration config;
@@ -82,16 +99,16 @@ public class Config {
      *            The Value for that Path
      */
     public void setValue(String path, Object value) {
-        this.config.set(path, value);
+        synchronized (lock) {
+            this.config.set(path, value);
+        }
     }
 
     /**
      * Saves the Config Object to its File
      */
     public void save() {
-        try {
-            config.save(file);
-        } catch (IOException e) {}
+        save(this.file);
     }
 
     /**
@@ -101,9 +118,26 @@ public class Config {
      *            The File you are saving this Config to
      */
     public void save(File file) {
+        // Serializa bajo el lock, pero deja la escritura en disco fuera de el:
+        // asi el hilo principal nunca espera por I/O al guardar un bloque.
+        String data;
+
+        synchronized (lock) {
+            data = config.saveToString();
+        }
+
         try {
-            config.save(file);
-        } catch (IOException e) {}
+            File parent = file.getParentFile();
+
+            if (parent != null) {
+                parent.mkdirs();
+            }
+
+            Files.write(file.toPath(), data.getBytes(StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            // Tragar este fallo perdia datos en silencio: al menos queda rastro.
+            LOGGER.log(Level.WARNING, e, () -> "No se pudo guardar el archivo \"" + file.getName() + '"');
+        }
     }
 
     /**
@@ -129,7 +163,9 @@ public class Config {
      * @return True/false
      */
     public boolean contains(String path) {
-        return config.contains(path);
+        synchronized (lock) {
+            return config.contains(path);
+        }
     }
 
     /**
@@ -140,7 +176,9 @@ public class Config {
      * @return The Value at that Path
      */
     public Object getValue(String path) {
-        return config.get(path);
+        synchronized (lock) {
+            return config.get(path);
+        }
     }
 
     /**
@@ -151,7 +189,9 @@ public class Config {
      * @return The String at that Path
      */
     public String getString(String path) {
-        return config.getString(path);
+        synchronized (lock) {
+            return config.getString(path);
+        }
     }
 
     /**
@@ -169,7 +209,10 @@ public class Config {
      * @return All Paths in this Config
      */
     public Set<String> getKeys() {
-        return config.getKeys(false);
+        synchronized (lock) {
+            // getKeys(false) construye un Set nuevo, por eso es seguro devolverlo.
+            return config.getKeys(false);
+        }
     }
 
     /**
@@ -180,13 +223,20 @@ public class Config {
      * @return All Sub-Paths of the specified Path
      */
     public Set<String> getKeys(String path) {
-        return config.getConfigurationSection(path).getKeys(false);
+        synchronized (lock) {
+            ConfigurationSection section = config.getConfigurationSection(path);
+            return section == null ? Collections.emptySet() : section.getKeys(false);
+        }
     }
 
     /**
      * Reloads the Configuration File
      */
     public void reload() {
-        this.config = YamlConfiguration.loadConfiguration(this.file);
+        FileConfiguration reloaded = YamlConfiguration.loadConfiguration(this.file);
+
+        synchronized (lock) {
+            this.config = reloaded;
+        }
     }
 }
