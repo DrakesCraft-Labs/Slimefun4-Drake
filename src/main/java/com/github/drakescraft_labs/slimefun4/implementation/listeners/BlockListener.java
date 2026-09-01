@@ -77,7 +77,7 @@ public class BlockListener implements Listener {
 
         SlimefunItem storedItem = BlockStorage.check(block);
         if (storedItem != null
-                && !BlockStorageIntegrity.matches(e.getBlockReplacedState().getType(), storedItem.getItem().getType())) {
+                && !BlockStorageIntegrity.matches(e.getBlockReplacedState().getType(), storedItem)) {
             /*
              * The physical block no longer represents the persisted Slimefun item. Clear the
              * orphan before it can reject this placement or open an invisible machine menu.
