@@ -17,6 +17,15 @@ class TestBlockStorageIntegrity {
     }
 
     @Test
+    void testCauldronVariants() {
+        assertTrue(BlockStorageIntegrity.matches(Material.WATER_CAULDRON, Material.CAULDRON));
+        assertTrue(BlockStorageIntegrity.matches(Material.CAULDRON, Material.WATER_CAULDRON));
+        assertTrue(BlockStorageIntegrity.matches(Material.LAVA_CAULDRON, Material.CAULDRON));
+        assertTrue(BlockStorageIntegrity.matches(Material.POWDER_SNOW_CAULDRON, Material.CAULDRON));
+        assertFalse(BlockStorageIntegrity.matches(Material.DIRT, Material.CAULDRON));
+    }
+
+    @Test
     void testRejectsGhostMetadataOnVanillaBlocks() {
         assertFalse(BlockStorageIntegrity.matches(Material.DIRT, Material.MAGENTA_STAINED_GLASS));
         assertFalse(BlockStorageIntegrity.matches(Material.SNOW, Material.HOPPER));

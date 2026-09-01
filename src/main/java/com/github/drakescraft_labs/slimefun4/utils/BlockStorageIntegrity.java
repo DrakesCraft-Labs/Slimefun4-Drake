@@ -21,6 +21,10 @@ public final class BlockStorageIntegrity {
             return true;
         }
 
+        if (isCauldron(physical) && isCauldron(expected)) {
+            return true;
+        }
+
         String physicalName = physical.name();
         if (physicalName.startsWith("WALL_") && physicalName.substring(5).equals(expected.name())) {
             return true;
@@ -28,6 +32,13 @@ public final class BlockStorageIntegrity {
 
         return physicalName.contains("_WALL_")
             && physicalName.replace("_WALL_", "_").equals(expected.name());
+    }
+
+    private static boolean isCauldron(@Nonnull Material material) {
+        return material == Material.CAULDRON
+            || material == Material.WATER_CAULDRON
+            || material == Material.LAVA_CAULDRON
+            || material == Material.POWDER_SNOW_CAULDRON;
     }
 
     /** Returns whether the block is the physical representation of the persisted item. */
