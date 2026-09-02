@@ -767,6 +767,7 @@ public class BlockStorage {
 
     public static void addBlockInfo(Location l, String key, String value, boolean updateTicker) {
         Config cfg = getLocationInfo(l);
+        String previousId = null;
 
         if (cfg == emptyBlockData) {
             cfg = new BlockInfoConfig();
@@ -776,10 +777,13 @@ public class BlockStorage {
             if (value == null ? current == null : value.equals(current)) {
                 return;
             }
+            // getLocationInfo devuelve el Config vivo del mapa y lo mutamos aqui mismo, asi que
+            // setBlockInfo ya no podria averiguar cual era el id anterior. Lo capturamos antes.
+            previousId = cfg.getString("id");
         }
 
         cfg.setValue(key, value);
-        setBlockInfo(l, cfg, updateTicker);
+        setBlockInfo(l, cfg, updateTicker, previousId);
     }
 
     public static boolean hasBlockInfo(Block block) {
@@ -798,6 +802,10 @@ public class BlockStorage {
     }
 
     private static void setBlockInfo(Location l, Config cfg, boolean updateTicker) {
+        setBlockInfo(l, cfg, updateTicker, null);
+    }
+
+    private static void setBlockInfo(Location l, Config cfg, boolean updateTicker, @Nullable String knownPreviousId) {
         BlockStorage storage = getStorage(l.getWorld());
 
         if (storage == null) {
@@ -805,8 +813,27 @@ public class BlockStorage {
             return;
         }
 
+        /*
+         * Cada id vive en su propio fichero "<id>.sfb". Si el id de esta posicion cambia
+         * --Cultivation reemplaza CROP_STICKS por la planta que nace del cruce-- solo se
+         * escribia el fichero nuevo y la entrada del anterior quedaba huerfana en disco.
+         * En el siguiente arranque las dos reclamaban la misma Location y el desempate
+         * de resolveDuplicateBlock descartaba una: la planta que el jugador ve dejaba de
+         * responder al clic derecho y no se podia retirar. Borramos la entrada vieja aqui,
+         * igual que hace deleteLocationInfoUnsafely.
+         */
+        Config previous = storage.storage.get(l);
+        String previousId = knownPreviousId != null || previous == null || previous == cfg
+            ? knownPreviousId
+            : previous.getString("id");
+
         storage.storage.put(l, cfg);
         String id = cfg.getString("id");
+
+        if (previousId != null && !previousId.equals(id)) {
+            refreshCache(storage, l, previousId, null, false);
+        }
+
         if (id == null) {
             storage.unindexLocation(l);
         } else {
