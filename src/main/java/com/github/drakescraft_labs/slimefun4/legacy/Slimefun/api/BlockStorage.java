@@ -273,7 +273,7 @@ public class BlockStorage {
         // Always warn so it shows up in DrakesCraft Monitor's WARN summary
         if (Slimefun.getRegistry().logDuplicateBlockEntries()) {
             Slimefun.logger().log(Level.WARNING,
-                "[DuplicateBlock] Conflict @ {0},{1},{2}: keeping {3} ({4} keys) over {5} ({6} keys)",
+                "[DuplicateBlock] Conflict @ {0,number,#},{1,number,#},{2,number,#}: keeping {3} ({4} keys) over {5} ({6} keys)",
                 new Object[] {
                     l.getBlockX(), l.getBlockY(), l.getBlockZ(),
                     winnerId, (replaceResident ? incomingKeys : residentKeys),
@@ -720,7 +720,7 @@ public class BlockStorage {
         } catch (Exception x) {
             Logger logger = Slimefun.logger();
             logger.log(Level.WARNING, x.getClass().getName());
-            logger.log(Level.WARNING, "Failed to parse BlockInfo for Block @ {0}, {1}, {2}", new Object[] { l.getBlockX(), l.getBlockY(), l.getBlockZ() });
+            logger.log(Level.WARNING, "Failed to parse BlockInfo for Block @ {0,number,#}, {1,number,#}, {2,number,#}", new Object[] { l.getBlockX(), l.getBlockY(), l.getBlockZ() });
             logger.log(Level.WARNING, json);
             logger.log(Level.WARNING, "");
             logger.log(Level.WARNING, "IGNORE THIS ERROR UNLESS IT IS SPAMMING");
