@@ -41,6 +41,16 @@ public class AutoSavingService implements Listener {
     private final AtomicBoolean blockPersistenceRunning = new AtomicBoolean();
 
     /**
+     * Ticks to wait before retrying a periodic block save that lost the persistence lock.
+     */
+    private static final long BLOCK_SAVE_RETRY_DELAY = 20L;
+
+    /**
+     * How many times a periodic block save retries before giving up on its cycle.
+     */
+    private static final int BLOCK_SAVE_MAX_RETRIES = 30;
+
+    /**
      * This method starts the {@link AutoSavingService} with the given interval.
      * 
      * @param plugin
@@ -127,7 +137,15 @@ public class AutoSavingService implements Listener {
      * This method saves the data of every {@link Block} marked dirty by {@link BlockStorage}.
      */
     private void saveAllBlocks() {
+        saveAllBlocksWithRetry(0);
+    }
+
+    private void saveAllBlocksWithRetry(int attempt) {
         if (!blockPersistenceRunning.compareAndSet(false, true)) {
+            // The dynamic batch drain holds the lock. Returning here would push the full
+            // pass -- and BlockStorage.saveChunks() with it -- back by a whole interval,
+            // so retry shortly instead of dropping the cycle.
+            retrySaveAllBlocks(attempt);
             return;
         }
 
@@ -136,6 +154,19 @@ public class AutoSavingService implements Listener {
         } finally {
             blockPersistenceRunning.set(false);
         }
+    }
+
+    private void retrySaveAllBlocks(int attempt) {
+        if (attempt >= BLOCK_SAVE_MAX_RETRIES) {
+            Slimefun.logger().log(Level.WARNING, "Periodic block auto-save skipped: block persistence stayed busy for {0} retries.", BLOCK_SAVE_MAX_RETRIES);
+            return;
+        }
+
+        if (plugin == null || !plugin.isEnabled()) {
+            return;
+        }
+
+        plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, () -> saveAllBlocksWithRetry(attempt + 1), BLOCK_SAVE_RETRY_DELAY);
     }
 
     private void saveAllBlocksNow() {
