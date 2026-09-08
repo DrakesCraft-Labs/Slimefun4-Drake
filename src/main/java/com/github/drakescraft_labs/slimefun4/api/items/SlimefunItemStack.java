@@ -257,9 +257,31 @@ public class SlimefunItemStack extends ItemStack {
     @Override
     public boolean setItemMeta(ItemMeta meta) {
         validate();
-        itemMetaSnapshot = new ItemMetaSnapshot(meta);
+        itemMetaSnapshot = createSnapshot(meta);
 
         return super.setItemMeta(meta);
+    }
+
+    /**
+     * Bukkit permite invocar {@link ItemStack#setItemMeta(ItemMeta)} con {@code null} para
+     * retirar la meta de un {@link ItemStack}, y los plugins de auditoria lo hacen al registrar
+     * los drops de una entidad. El constructor de {@link ItemMetaSnapshot} de algunas versiones
+     * de dough desreferencia su argumento sin comprobarlo, asi que nunca le pasamos {@code null}:
+     * en ese caso partimos de una meta vacia real, que produce la misma instantanea sin campos.
+     *
+     * @param meta
+     *            La {@link ItemMeta} de la que tomar la instantanea, puede ser null
+     *
+     * @return Una {@link ItemMetaSnapshot} equivalente, sin desreferenciar un argumento nulo
+     */
+    private static @Nonnull ItemMetaSnapshot createSnapshot(@Nullable ItemMeta meta) {
+        ItemMeta safeMeta = meta;
+
+        if (safeMeta == null) {
+            safeMeta = Bukkit.getItemFactory().getItemMeta(Material.STONE);
+        }
+
+        return new ItemMetaSnapshot(safeMeta);
     }
 
     @Override
