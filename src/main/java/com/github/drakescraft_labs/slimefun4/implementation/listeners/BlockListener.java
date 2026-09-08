@@ -2,8 +2,12 @@ package com.github.drakescraft_labs.slimefun4.implementation.listeners;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.annotation.Nonnull;
@@ -11,8 +15,10 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -27,12 +33,14 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
 
 import dev.drake.dough.protection.Interaction;
 import com.github.drakescraft_labs.slimefun4.api.events.ExplosiveToolBreakBlocksEvent;
 import com.github.drakescraft_labs.slimefun4.api.events.SlimefunBlockBreakEvent;
 import com.github.drakescraft_labs.slimefun4.api.events.SlimefunBlockPlaceEvent;
 import com.github.drakescraft_labs.slimefun4.api.items.SlimefunItem;
+import com.github.drakescraft_labs.slimefun4.api.items.SlimefunItemStack;
 import com.github.drakescraft_labs.slimefun4.api.MinecraftVersion;
 import com.github.drakescraft_labs.slimefun4.core.attributes.NotPlaceable;
 import com.github.drakescraft_labs.slimefun4.core.handlers.BlockBreakHandler;
@@ -67,6 +75,51 @@ public class BlockListener implements Listener {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
+    private final Map<UUID, Long> fastPlaceCooldowns = new ConcurrentHashMap<>();
+
+    private void warnFastPlacement(@Nullable Player player) {
+        if (player == null) {
+            return;
+        }
+
+        long now = System.currentTimeMillis();
+        Long lastWarn = fastPlaceCooldowns.get(player.getUniqueId());
+
+        if (lastWarn == null || (now - lastWarn) > 2000L) {
+            fastPlaceCooldowns.put(player.getUniqueId(), now);
+            player.sendMessage(
+                ChatColor.GOLD + "" + ChatColor.BOLD + "DrakesCraft " + ChatColor.DARK_GRAY + "· " +
+                ChatColor.RED + "¡Oye Flash, más despacio velocista! ⚡ " +
+                ChatColor.YELLOW + "Estás colocando bloques muy rápido. " +
+                ChatColor.GRAY + "Protegimos tu ítem en tu mano para evitar que se convierta en vanilla."
+            );
+        }
+    }
+
+    public static boolean isSlimefunItem(@Nullable ItemStack item) {
+        if (item == null || item.getType() == Material.AIR || !item.hasItemMeta()) {
+            return false;
+        }
+
+        if (item instanceof SlimefunItemStack) {
+            return true;
+        }
+
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) {
+            return false;
+        }
+
+        PersistentDataContainer pdc = meta.getPersistentDataContainer();
+        for (NamespacedKey key : pdc.getKeys()) {
+            if ("slimefun".equalsIgnoreCase(key.getNamespace())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onBlockPlaceExisting(BlockPlaceEvent e) {
         Block block = e.getBlock();
@@ -76,14 +129,26 @@ public class BlockListener implements Listener {
         }
 
         SlimefunItem storedItem = BlockStorage.check(block);
-        if (storedItem != null
-                && !BlockStorageIntegrity.matches(e.getBlockReplacedState().getType(), storedItem)) {
+        if (storedItem != null) {
             /*
-             * The physical block no longer represents the persisted Slimefun item. Clear the
-             * orphan before it can reject this placement or open an invisible machine menu.
+             * Si el bloque físico actual en el mundo ya corresponde al SlimefunItem registrado,
+             * este evento es un paquete duplicado (doble empuñadura, ráfaga o clic rápido).
+             * NUNCA debemos borrar la metadata ni permitir que vanilla lo sobreescriba.
              */
-            BlockStorage.clearBlockInfo(block);
-            return;
+            if (BlockStorageIntegrity.matches(block.getType(), storedItem)) {
+                e.setCancelled(true);
+                warnFastPlacement(e.getPlayer());
+                return;
+            }
+
+            if (!BlockStorageIntegrity.matches(e.getBlockReplacedState().getType(), storedItem)) {
+                /*
+                 * The physical block no longer represents the persisted Slimefun item. Clear the
+                 * orphan before it can reject this placement or open an invisible machine menu.
+                 */
+                BlockStorage.clearBlockInfo(block);
+                return;
+            }
         }
 
         // Fixes #2636 - This will solve the "ghost blocks" issue
@@ -110,11 +175,43 @@ public class BlockListener implements Listener {
         ItemStack item = e.getItemInHand();
         SlimefunItem sfItem = SlimefunItem.getByItem(item);
 
-        // TODO: Protection manager is null in testing environment.
-        if (!Slimefun.instance().isUnitTest()) {
-            Slimefun.getProtectionManager().logAction(e.getPlayer(), e.getBlock(), Interaction.PLACE_BLOCK);
+        // Fallback 1: inspección directa de la mano activa del jugador si el snapshot de itemInHand viene vacío/desincronizado
+        if (sfItem == null && e.getPlayer() != null && e.getHand() != null) {
+            ItemStack handItem = e.getPlayer().getInventory().getItem(e.getHand());
+            if (handItem != null && handItem.getType() != Material.AIR) {
+                sfItem = SlimefunItem.getByItem(handItem);
+                if (sfItem != null) {
+                    item = handItem;
+                }
+            }
         }
-        if (sfItem != null && !(sfItem instanceof NotPlaceable)) {
+
+        // Fallback 2: recuperación de ID en PDC con normalización de mayúsculas y recorte de espacios
+        if (sfItem == null && item != null && item.hasItemMeta()) {
+            Optional<String> rawId = Slimefun.getItemDataService().getItemData(item);
+            if (rawId.isPresent()) {
+                sfItem = SlimefunItem.getById(rawId.get().trim().toUpperCase(Locale.ROOT));
+            }
+        }
+
+        // Escudo Anti-Vanilla: verificar si el ítem manipulado posee metadatos de Slimefun
+        ItemStack handItem = (e.getPlayer() != null && e.getHand() != null) ? e.getPlayer().getInventory().getItem(e.getHand()) : null;
+        boolean isSf = sfItem != null || isSlimefunItem(item) || isSlimefunItem(handItem);
+
+        if (isSf) {
+            // Si el ítem es de Slimefun pero no se resolvió como bloque colocable, o es NotPlaceable:
+            // NUNCA permitir que se coloque como un bloque vanilla ordinario.
+            if (sfItem == null || sfItem instanceof NotPlaceable) {
+                e.setCancelled(true);
+                warnFastPlacement(e.getPlayer());
+                return;
+            }
+
+            // TODO: Protection manager is null in testing environment.
+            if (!Slimefun.instance().isUnitTest()) {
+                Slimefun.getProtectionManager().logAction(e.getPlayer(), e.getBlock(), Interaction.PLACE_BLOCK);
+            }
+
             Player player = e.getPlayer();
 
             if (!sfItem.canUse(player, true)) {
@@ -145,6 +242,10 @@ public class BlockListener implements Listener {
                     BlockStorage.addBlockInfo(block, "id", sfItem.getId(), true);
                     sfItem.callItemHandler(BlockPlaceHandler.class, handler -> handler.onPlayerPlace(e));
                 }
+            }
+        } else {
+            if (!Slimefun.instance().isUnitTest()) {
+                Slimefun.getProtectionManager().logAction(e.getPlayer(), e.getBlock(), Interaction.PLACE_BLOCK);
             }
         }
     }
