@@ -76,6 +76,7 @@ public class BlockListener implements Listener {
     }
 
     private final Map<UUID, Long> fastPlaceCooldowns = new ConcurrentHashMap<>();
+    private final Map<UUID, Long> unresolvedItemCooldowns = new ConcurrentHashMap<>();
 
     private void warnFastPlacement(@Nullable Player player) {
         if (player == null) {
@@ -92,6 +93,24 @@ public class BlockListener implements Listener {
                 ChatColor.RED + "¡Oye Flash, más despacio velocista! ⚡ " +
                 ChatColor.YELLOW + "Estás colocando bloques muy rápido. " +
                 ChatColor.GRAY + "Protegimos tu ítem en tu mano para evitar que se convierta en vanilla."
+            );
+        }
+    }
+
+    private void warnUnresolvedSlimefunItem(@Nullable Player player) {
+        if (player == null) {
+            return;
+        }
+
+        long now = System.currentTimeMillis();
+        Long lastWarn = unresolvedItemCooldowns.get(player.getUniqueId());
+
+        if (lastWarn == null || (now - lastWarn) > 2000L) {
+            unresolvedItemCooldowns.put(player.getUniqueId(), now);
+            player.sendMessage(
+                ChatColor.GOLD + "" + ChatColor.BOLD + "DrakesCraft " + ChatColor.DARK_GRAY + "· " +
+                ChatColor.RED + "Este ítem conserva metadatos de Slimefun que ya no se reconocen. " +
+                ChatColor.YELLOW + "No es un bloqueo por velocidad; guárdalo y solicita revisión al staff."
             );
         }
     }
@@ -202,7 +221,7 @@ public class BlockListener implements Listener {
             // Un ID Slimefun que no puede resolverse nunca debe degradarse a bloque vanilla.
             if (sfItem == null) {
                 e.setCancelled(true);
-                warnFastPlacement(e.getPlayer());
+                warnUnresolvedSlimefunItem(e.getPlayer());
                 return;
             }
 
