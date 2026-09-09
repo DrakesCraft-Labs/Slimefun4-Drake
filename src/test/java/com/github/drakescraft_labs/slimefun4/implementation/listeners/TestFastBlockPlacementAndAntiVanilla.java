@@ -169,8 +169,8 @@ class TestFastBlockPlacementAndAntiVanilla {
     }
 
     @Test
-    @DisplayName("Escudo Anti-Vanilla cancela colocación de ítem marcado como NotPlaceable")
-    void testAntiVanillaShieldBlocksNotPlaceableItem() {
+    @DisplayName("NotPlaceable omite el registro de Slimefun sin cancelar listeners de addons")
+    void testNotPlaceableSkipsSlimefunRegistrationWithoutCancellingEvent() {
         PlayerMock player = new PlayerMock(server, "PlayerShield2");
         ItemStack unplaceableStack = unplaceableItem.getItem().clone();
         player.getInventory().setItemInMainHand(unplaceableStack);
@@ -194,8 +194,8 @@ class TestFastBlockPlacementAndAntiVanilla {
 
         server.getPluginManager().callEvent(event);
 
-        Assertions.assertTrue(event.isCancelled(), "Un ítem NotPlaceable debe cancelar el evento de colocación para no degradarse a vanilla");
-        Assertions.assertFalse(BlockStorage.hasBlockInfo(block), "No debe registrarse en BlockStorage");
+        Assertions.assertFalse(event.isCancelled(), "NotPlaceable no debe cancelar BlockPlaceEvent");
+        Assertions.assertFalse(BlockStorage.hasBlockInfo(block), "Un ítem NotPlaceable no debe registrarse en BlockStorage");
     }
 
     private static class MockUnplaceableItem extends SlimefunItem implements NotPlaceable {

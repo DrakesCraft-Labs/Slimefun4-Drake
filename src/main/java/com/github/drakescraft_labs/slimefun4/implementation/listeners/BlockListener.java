@@ -199,11 +199,20 @@ public class BlockListener implements Listener {
         boolean isSf = sfItem != null || isSlimefunItem(item) || isSlimefunItem(handItem);
 
         if (isSf) {
-            // Si el ítem es de Slimefun pero no se resolvió como bloque colocable, o es NotPlaceable:
-            // NUNCA permitir que se coloque como un bloque vanilla ordinario.
-            if (sfItem == null || sfItem instanceof NotPlaceable) {
+            // Un ID Slimefun que no puede resolverse nunca debe degradarse a bloque vanilla.
+            if (sfItem == null) {
                 e.setCancelled(true);
                 warnFastPlacement(e.getPlayer());
+                return;
+            }
+
+            /*
+             * NotPlaceable significa que Slimefun no debe registrar el bloque; por contrato no
+             * cancela BlockPlaceEvent. Algunos addons (EquivalencyTech, por ejemplo) gestionan
+             * esos bloques en su propio listener. Cancelarlos aqui impide colocar sus cofres y
+             * deja que el listener del addon persista una ubicacion cuyo bloque fue rechazado.
+             */
+            if (sfItem instanceof NotPlaceable) {
                 return;
             }
 
