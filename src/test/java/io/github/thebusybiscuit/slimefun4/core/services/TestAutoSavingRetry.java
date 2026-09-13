@@ -54,10 +54,16 @@ class TestAutoSavingRetry {
         method.invoke(service, attempt);
     }
 
-    private int maxRetries() throws ReflectiveOperationException {
-        Field field = AutoSavingService.class.getDeclaredField("BLOCK_SAVE_MAX_RETRIES");
+    private int maxRetries(AutoSavingService service) throws ReflectiveOperationException {
+        Field field = AutoSavingService.class.getDeclaredField("blockSaveMaxRetries");
         field.setAccessible(true);
-        return field.getInt(null);
+        return field.getInt(service);
+    }
+
+    private int computeBlockSaveMaxRetries(int intervalMinutes) throws ReflectiveOperationException {
+        Method method = AutoSavingService.class.getDeclaredMethod("computeBlockSaveMaxRetries", int.class);
+        method.setAccessible(true);
+        return (int) method.invoke(null, intervalMinutes);
     }
 
     @Test
@@ -78,9 +84,26 @@ class TestAutoSavingRetry {
         AutoSavingService service = busyService();
         int before = plugin.getServer().getScheduler().getPendingTasks().size();
 
-        saveAllBlocksWithRetry(service, maxRetries());
+        saveAllBlocksWithRetry(service, maxRetries(service));
 
         Assertions.assertEquals(before, plugin.getServer().getScheduler().getPendingTasks().size(),
             "saveAllBlocksWithRetry() kept retrying past its safety limit");
+    }
+
+    @Test
+    @DisplayName("The retry budget spans the interval instead of a fixed 30 seconds")
+    void testRetryBudgetFollowsInterval() throws ReflectiveOperationException {
+        // 15 minutes of interval, minus the 30 s margin, at one retry per second.
+        Assertions.assertEquals(870, computeBlockSaveMaxRetries(15),
+            "the retry budget must cover the interval, not a fixed 30 s");
+    }
+
+    @Test
+    @DisplayName("A tiny interval still keeps the minimum retry budget")
+    void testRetryBudgetHasFloor() throws ReflectiveOperationException {
+        Assertions.assertEquals(30, computeBlockSaveMaxRetries(1),
+            "a short interval must not drop the retry budget below its floor");
+        Assertions.assertEquals(30, computeBlockSaveMaxRetries(0),
+            "a zero interval must not produce a negative retry budget");
     }
 }

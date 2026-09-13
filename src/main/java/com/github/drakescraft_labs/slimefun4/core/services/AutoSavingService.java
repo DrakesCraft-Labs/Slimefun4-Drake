@@ -39,6 +39,7 @@ public class AutoSavingService implements Listener {
     private int dynamicBatchSize;
     private final AtomicBoolean playerPersistenceRunning = new AtomicBoolean();
     private final AtomicBoolean blockPersistenceRunning = new AtomicBoolean();
+    private int blockSaveMaxRetries = 30;
 
     /**
      * Ticks to wait before retrying a periodic block save that lost the persistence lock.
@@ -46,9 +47,16 @@ public class AutoSavingService implements Listener {
     private static final long BLOCK_SAVE_RETRY_DELAY = 20L;
 
     /**
-     * How many times a periodic block save retries before giving up on its cycle.
+     * Retries a periodic block save always gets, even when the configured interval is
+     * too short to fit the regular budget.
      */
-    private static final int BLOCK_SAVE_MAX_RETRIES = 30;
+    private static final int BLOCK_SAVE_MIN_RETRIES = 30;
+
+    /**
+     * Seconds at the tail of the interval kept free of retries, so a cycle always gives
+     * up before its successor is scheduled instead of leaving two retry chains running.
+     */
+    private static final int BLOCK_SAVE_RETRY_MARGIN_SECONDS = 30;
 
     /**
      * This method starts the {@link AutoSavingService} with the given interval.
@@ -61,6 +69,7 @@ public class AutoSavingService implements Listener {
     public void start(@Nonnull Slimefun plugin, int interval) {
         this.interval = interval;
         this.plugin = plugin;
+        this.blockSaveMaxRetries = computeBlockSaveMaxRetries(interval);
         this.dynamicIntervalSeconds = Math.max(0, plugin.getConfig().getInt("performance.dynamic-block-autosave.interval-seconds", 30));
         this.dynamicThreshold = Math.max(1, plugin.getConfig().getInt("performance.dynamic-block-autosave.threshold", 2048));
         this.dynamicBatchSize = Math.max(1, plugin.getConfig().getInt("performance.dynamic-block-autosave.batch-size", 500));
@@ -156,9 +165,27 @@ public class AutoSavingService implements Listener {
         }
     }
 
+    /**
+     * One retry per second, spread over the interval minus a safety margin. A fixed budget
+     * of 30 s was not enough for the dynamic batch to finish draining a large queue, so a
+     * cycle could still be lost -- and with it BlockStorage.saveChunks() -- even though the
+     * next full pass was still 15 minutes away.
+     * 
+     * @param intervalMinutes
+     *            The configured auto-save interval in minutes
+     * 
+     * @return How many times a periodic block save may retry before giving up
+     */
+    private static int computeBlockSaveMaxRetries(int intervalMinutes) {
+        long secondsPerRetry = Math.max(1L, BLOCK_SAVE_RETRY_DELAY / 20L);
+        long budget = (intervalMinutes * 60L - BLOCK_SAVE_RETRY_MARGIN_SECONDS) / secondsPerRetry;
+
+        return (int) Math.max(BLOCK_SAVE_MIN_RETRIES, budget);
+    }
+
     private void retrySaveAllBlocks(int attempt) {
-        if (attempt >= BLOCK_SAVE_MAX_RETRIES) {
-            Slimefun.logger().log(Level.WARNING, "Periodic block auto-save skipped: block persistence stayed busy for {0} retries.", BLOCK_SAVE_MAX_RETRIES);
+        if (attempt >= blockSaveMaxRetries) {
+            Slimefun.logger().log(Level.WARNING, "Periodic block auto-save skipped: block persistence stayed busy for {0} retries.", blockSaveMaxRetries);
             return;
         }
 
