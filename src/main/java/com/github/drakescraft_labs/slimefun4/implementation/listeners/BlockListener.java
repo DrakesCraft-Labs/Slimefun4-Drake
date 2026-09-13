@@ -150,11 +150,15 @@ public class BlockListener implements Listener {
         SlimefunItem storedItem = BlockStorage.check(block);
         if (storedItem != null) {
             /*
-             * Si el bloque físico actual en el mundo ya corresponde al SlimefunItem registrado,
-             * este evento es un paquete duplicado (doble empuñadura, ráfaga o clic rápido).
-             * NUNCA debemos borrar la metadata ni permitir que vanilla lo sobreescriba.
+             * Si el bloque que se está reemplazando ya correspondía físicamente al SlimefunItem
+             * registrado (no es aire), este evento es un paquete duplicado (doble empuñadura,
+             * ráfaga o clic rápido sobre un bloque Slimefun existente). NUNCA debemos borrar
+             * la metadata ni permitir que vanilla lo sobreescriba.
+             * Si el bloque reemplazado era aire, la metadata residual en BlockStorage es huérfana
+             * y debe limpiarse para permitir colocar el bloque nuevo legítimo (ej. cofres EMC).
              */
-            if (BlockStorageIntegrity.matches(block.getType(), storedItem)) {
+            if (!e.getBlockReplacedState().getType().isAir()
+                    && BlockStorageIntegrity.matches(e.getBlockReplacedState().getType(), storedItem)) {
                 e.setCancelled(true);
                 warnFastPlacement(e.getPlayer());
                 return;

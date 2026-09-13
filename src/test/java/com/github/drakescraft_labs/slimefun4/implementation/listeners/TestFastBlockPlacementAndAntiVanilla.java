@@ -109,11 +109,12 @@ class TestFastBlockPlacementAndAntiVanilla {
         Assertions.assertTrue(BlockStorage.hasBlockInfo(block), "El bloque debe estar registrado en BlockStorage tras el evento 1");
         Assertions.assertEquals("TEST_VIRTUAL_FARM", BlockStorage.checkID(block), "El ID debe ser TEST_VIRTUAL_FARM");
 
-        // Evento 2: Paquete duplicado en ráfaga rápida sobre el mismo bloque
+        // Evento 2: Paquete duplicado en ráfaga rápida sobre el mismo bloque ya colocado
         ItemStack offHandEmpty = new ItemStack(Material.AIR);
+        BlockState replacedPlacedState = new BlockStateMock(Material.WARPED_NYLIUM);
         BlockPlaceEvent event2 = new BlockPlaceEvent(
             block,
-            replacedAirState,
+            replacedPlacedState,
             blockAgainst,
             offHandEmpty,
             player,
@@ -201,6 +202,40 @@ class TestFastBlockPlacementAndAntiVanilla {
 
         Assertions.assertFalse(event.isCancelled(), "NotPlaceable no debe cancelar BlockPlaceEvent");
         Assertions.assertFalse(BlockStorage.hasBlockInfo(block), "Un ítem NotPlaceable no debe registrarse en BlockStorage");
+    }
+
+    @Test
+    @DisplayName("Metadata huérfana sobre aire no bloquea colocación ni dispara falsa alarma de FastPlace")
+    void testOrphanSlimefunMetadataOnAirDoesNotTriggerFastPlace() {
+        PlayerMock player = new PlayerMock(server, "PlayerChestPlacer");
+        ItemStack chestItem = new ItemStack(Material.CHEST);
+        player.getInventory().setItemInMainHand(chestItem);
+
+        World world = server.addSimpleWorld("chest_world");
+        BlockStorage.getOrCreate(world);
+
+        Location loc = new Location(world, 400, 64, 400);
+        Block block = new BlockMock(Material.CHEST, loc);
+        Block blockAgainst = new BlockMock(Material.STONE, new Location(world, 400, 63, 400));
+
+        // Simular metadata huérfana previa en la ubicación donde ahora hay aire
+        BlockStorage.addBlockInfo(loc, "id", "TEST_VIRTUAL_FARM");
+
+        BlockPlaceEvent event = new BlockPlaceEvent(
+            block,
+            new BlockStateMock(Material.AIR),
+            blockAgainst,
+            chestItem,
+            player,
+            true,
+            EquipmentSlot.HAND
+        );
+
+        server.getPluginManager().callEvent(event);
+
+        Assertions.assertFalse(event.isCancelled(), "La colocación no debe cancelarse por FastPlace falso");
+        Assertions.assertNull(player.nextMessage(), "No debe enviarse advertencia de colocar bloques muy rápido");
+        Assertions.assertTrue(Slimefun.getTickerTask().isDeletedSoon(loc), "La metadata huérfana debe estar encolada para purga");
     }
 
     private static class MockUnplaceableItem extends SlimefunItem implements NotPlaceable {
