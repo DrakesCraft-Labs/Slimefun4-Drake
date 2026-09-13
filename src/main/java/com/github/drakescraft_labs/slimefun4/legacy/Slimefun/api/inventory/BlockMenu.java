@@ -13,6 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.IllegalPluginAccessException;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
 import dev.drake.dough.config.Config;
@@ -137,14 +138,20 @@ public class BlockMenu extends DirtyChestMenu {
 
         private void save() {
             File file = new File("data-storage/Slimefun/stored-inventories/" + serializeLocation(location) + ".sfi");
-            Config cfg = new Config(file);
-            cfg.setValue("preset", presetId);
+            /*
+             * No se usa dough Config aqui: su constructor crea un DoughLogger por instancia y ese
+             * setParent/setLevel toma el treeLock global de java.util.logging. El lote sincrono de
+             * autoguardado persiste cientos de menus por pasada, asi que ese lock llego a bloquear
+             * el Server thread 10 s y disparar el watchdog (2026-09-12). Ver InventoryFileWriter.
+             */
+            YamlConfiguration cfg = InventoryFileWriter.load(file);
+            cfg.set("preset", presetId);
 
             for (int slot : slots) {
-                cfg.setValue(String.valueOf(slot), contents[slot]);
+                InventoryFileWriter.setItem(cfg, String.valueOf(slot), contents[slot]);
             }
 
-            cfg.save();
+            InventoryFileWriter.save(cfg, file);
         }
     }
 

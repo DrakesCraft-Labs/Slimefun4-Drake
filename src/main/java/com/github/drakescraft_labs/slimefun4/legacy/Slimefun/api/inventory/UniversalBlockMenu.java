@@ -2,6 +2,8 @@ package com.github.drakescraft_labs.slimefun4.legacy.api.inventory;
 
 import java.io.File;
 
+import org.bukkit.configuration.file.YamlConfiguration;
+
 import dev.drake.dough.config.Config;
 
 // This class will be deprecated, relocated and rewritten in a future version.
@@ -42,14 +44,16 @@ public class UniversalBlockMenu extends DirtyChestMenu {
         this.getContents();
 
         File file = new File("data-storage/Slimefun/universal-inventories/" + preset.getID() + ".sfi");
-        Config cfg = new Config(file);
-        cfg.setValue("preset", preset.getID());
+        // Mismo motivo que en BlockMenu$MenuSnapshot#save: un DoughLogger por guardado
+        // serializa el treeLock global de java.util.logging. Ver InventoryFileWriter.
+        YamlConfiguration cfg = InventoryFileWriter.load(file);
+        cfg.set("preset", preset.getID());
 
         for (int slot : preset.getInventorySlots()) {
-            cfg.setValue(String.valueOf(slot), getItemInSlot(slot));
+            InventoryFileWriter.setItem(cfg, String.valueOf(slot), getItemInSlot(slot));
         }
 
-        cfg.save();
+        InventoryFileWriter.save(cfg, file);
 
         changes = 0;
     }
