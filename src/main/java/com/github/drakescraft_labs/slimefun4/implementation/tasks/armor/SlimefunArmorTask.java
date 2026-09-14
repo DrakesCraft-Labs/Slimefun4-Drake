@@ -22,7 +22,7 @@ import com.github.drakescraft_labs.slimefun4.implementation.items.armor.Slimefun
  */
 public class SlimefunArmorTask extends AbstractArmorTask {
 
-    private static final int REFRESH_MARGIN_TICKS = 60;
+    private static final int REFRESH_MARGIN_TICKS = 120;
 
     @Override
     @ParametersAreNonnullByDefault
