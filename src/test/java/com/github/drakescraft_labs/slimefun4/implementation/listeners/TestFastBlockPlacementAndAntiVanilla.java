@@ -238,6 +238,39 @@ class TestFastBlockPlacementAndAntiVanilla {
         Assertions.assertTrue(Slimefun.getTickerTask().isDeletedSoon(loc), "La metadata huérfana debe estar encolada para purga");
     }
 
+    @Test
+    @DisplayName("Metadata residual de ID desconocido o nulo no cancela colocación en bloques reemplazables como césped")
+    void testUnknownOrphanMetadataOnGrassDoesNotCancelPlacement() {
+        PlayerMock player = new PlayerMock(server, "PlayerGrassPlacer");
+        ItemStack chestItem = new ItemStack(Material.CHEST);
+        player.getInventory().setItemInMainHand(chestItem);
+
+        World world = server.addSimpleWorld("grass_world");
+        BlockStorage.getOrCreate(world);
+
+        Location loc = new Location(world, 500, 64, 500);
+        Block block = new BlockMock(Material.CHEST, loc);
+        Block blockAgainst = new BlockMock(Material.DIRT, new Location(world, 500, 63, 500));
+
+        // Simular metadata huérfana de un plugin desinstalado o ID corrupto sobre césped
+        BlockStorage.addBlockInfo(loc, "id", "DELETED_OR_UNKNOWN_ADDON_ITEM");
+
+        BlockPlaceEvent event = new BlockPlaceEvent(
+            block,
+            new BlockStateMock(Material.SHORT_GRASS),
+            blockAgainst,
+            chestItem,
+            player,
+            true,
+            EquipmentSlot.HAND
+        );
+
+        server.getPluginManager().callEvent(event);
+
+        Assertions.assertFalse(event.isCancelled(), "La colocación no debe cancelarse sobre césped con metadata residual");
+        Assertions.assertTrue(Slimefun.getTickerTask().isDeletedSoon(loc), "La metadata huérfana debe purgarse");
+    }
+
     private static class MockUnplaceableItem extends SlimefunItem implements NotPlaceable {
         public MockUnplaceableItem(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
             super(itemGroup, item, recipeType, recipe);

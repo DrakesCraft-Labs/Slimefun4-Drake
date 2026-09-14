@@ -148,30 +148,33 @@ public class BlockListener implements Listener {
         }
 
         SlimefunItem storedItem = BlockStorage.check(block);
-        if (storedItem != null) {
-            /*
-             * Si el bloque que se está reemplazando ya correspondía físicamente al SlimefunItem
-             * registrado (no es aire), este evento es un paquete duplicado (doble empuñadura,
-             * ráfaga o clic rápido sobre un bloque Slimefun existente). NUNCA debemos borrar
-             * la metadata ni permitir que vanilla lo sobreescriba.
-             * Si el bloque reemplazado era aire, la metadata residual en BlockStorage es huérfana
-             * y debe limpiarse para permitir colocar el bloque nuevo legítimo (ej. cofres EMC).
-             */
-            if (!e.getBlockReplacedState().getType().isAir()
-                    && BlockStorageIntegrity.matches(e.getBlockReplacedState().getType(), storedItem)) {
-                e.setCancelled(true);
-                warnFastPlacement(e.getPlayer());
-                return;
-            }
+        if (storedItem == null) {
+            BlockStorage.clearBlockInfo(block);
+            return;
+        }
 
-            if (!BlockStorageIntegrity.matches(e.getBlockReplacedState().getType(), storedItem)) {
-                /*
-                 * The physical block no longer represents the persisted Slimefun item. Clear the
-                 * orphan before it can reject this placement or open an invisible machine menu.
-                 */
-                BlockStorage.clearBlockInfo(block);
-                return;
-            }
+        /*
+         * Si el bloque que se está reemplazando ya correspondía físicamente al SlimefunItem
+         * registrado (no es aire), este evento es un paquete duplicado (doble empuñadura,
+         * ráfaga o clic rápido sobre un bloque Slimefun existente). NUNCA debemos borrar
+         * la metadata ni permitir que vanilla lo sobreescriba.
+         * Si el bloque reemplazado era aire u otro material, la metadata residual en BlockStorage
+         * es huérfana y debe limpiarse para permitir colocar el bloque nuevo legítimo (ej. cofres EMC).
+         */
+        if (!e.getBlockReplacedState().getType().isAir()
+                && BlockStorageIntegrity.matches(e.getBlockReplacedState().getType(), storedItem)) {
+            e.setCancelled(true);
+            warnFastPlacement(e.getPlayer());
+            return;
+        }
+
+        if (!BlockStorageIntegrity.matches(e.getBlockReplacedState().getType(), storedItem)) {
+            /*
+             * The physical block no longer represents the persisted Slimefun item. Clear the
+             * orphan before it can reject this placement or open an invisible machine menu.
+             */
+            BlockStorage.clearBlockInfo(block);
+            return;
         }
 
         // Fixes #2636 - This will solve the "ghost blocks" issue
