@@ -37,6 +37,10 @@ public class MobDropListener implements Listener {
 
     @EventHandler
     public void onEntityKill(EntityDeathEvent e) {
+        if (!Slimefun.getWorldSettingsService().isWorldEnabled(e.getEntity().getWorld())) {
+            return;
+        }
+
         if (e.getEntity().getKiller() != null) {
             Player p = e.getEntity().getKiller();
             ItemStack item = p.getInventory().getItemInMainHand();

@@ -47,6 +47,10 @@ public class MultiBlockListener implements Listener {
         }
 
         Player p = e.getPlayer();
+        if (!Slimefun.getWorldSettingsService().isWorldEnabled(p.getWorld())) {
+            return;
+        }
+
         Block b = e.getClickedBlock();
         LinkedList<MultiBlock> multiblocks = new LinkedList<>();
 
