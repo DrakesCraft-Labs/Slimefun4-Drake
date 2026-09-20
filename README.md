@@ -1,3 +1,13 @@
+
+> [!IMPORTANT]
+> **dough va SHADEADO dentro de Slimefun, no como jar suelto.** El código fuente
+> vive en el repo `dough-core`, pero Slimefun lo consume como dependencia Maven
+> (`com.github.drakescraft_labs:dough-core`) y al empaquetar lo reubica a
+> `com.github.drakescraft_labs.slimefun4.libraries.dough`. **No existe un
+> `dough.jar` en producción.** Por tanto, cualquier cambio en `dough-core` exige:
+> `mvn install` en dough-core → **recompilar Slimefun** (y todo plugin que lo
+> shadee) → subir esos jars. Subir dough suelto no aplica el cambio.
+
 <div align="center">
 
 <img src="banner.svg" alt="Slimefun4-Drake banner" width="920" />
