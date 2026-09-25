@@ -558,6 +558,31 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
             int version = PaperLib.getMinecraftVersion();
             int patchVersion = PaperLib.getMinecraftPatchVersion();
 
+            if (version <= 0) {
+                try {
+                    String mcVer = Bukkit.getMinecraftVersion();
+                    if (mcVer != null && !mcVer.isEmpty()) {
+                        String[] parts = mcVer.split("\\.");
+                        if (parts.length > 0) {
+                            version = Integer.parseInt(parts[0]);
+                            patchVersion = parts.length > 1 ? Integer.parseInt(parts[1]) : 0;
+                        }
+                    }
+                } catch (Throwable ignored) {
+                    try {
+                        String bVer = Bukkit.getBukkitVersion();
+                        if (bVer != null && bVer.contains("-")) {
+                            String vStr = bVer.split("-")[0];
+                            String[] parts = vStr.split("\\.");
+                            if (parts.length > 0) {
+                                version = Integer.parseInt(parts[0]);
+                                patchVersion = parts.length > 1 ? Integer.parseInt(parts[1]) : 0;
+                            }
+                        }
+                    } catch (Throwable ignored2) {}
+                }
+            }
+
             if (version > 0) {
                 // Check all supported versions of Minecraft
                 for (MinecraftVersion supportedVersion : MinecraftVersion.values()) {
@@ -565,6 +590,12 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
                         minecraftVersion = supportedVersion;
                         return false;
                     }
+                }
+
+                // If version is >= 26 but not matched exactly, use MINECRAFT_26
+                if (version >= 26) {
+                    minecraftVersion = MinecraftVersion.MINECRAFT_26;
+                    return false;
                 }
 
                 // Looks like you are using an unsupported Minecraft Version

@@ -15,11 +15,13 @@ public class VersionedItemFlag {
     public static final ItemFlag HIDE_ADDITIONAL_TOOLTIP;
 
     static {
-        MinecraftVersion version = Slimefun.getMinecraftVersion();
-
-        HIDE_ADDITIONAL_TOOLTIP = version.isAtLeast(MinecraftVersion.MINECRAFT_1_20_5)
-            ? ItemFlag.HIDE_ADDITIONAL_TOOLTIP
-            : getKey("HIDE_POTION_EFFECTS");
+        ItemFlag modern = getKey("HIDE_ADDITIONAL_TOOLTIP");
+        if (modern != null) {
+            HIDE_ADDITIONAL_TOOLTIP = modern;
+        } else {
+            ItemFlag legacy = getKey("HIDE_POTION_EFFECTS");
+            HIDE_ADDITIONAL_TOOLTIP = legacy != null ? legacy : ItemFlag.HIDE_ENCHANTS;
+        }
     }
 
     @Nullable

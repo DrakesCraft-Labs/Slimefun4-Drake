@@ -62,6 +62,11 @@ public enum MinecraftVersion {
     MINECRAFT_1_21(21, 0, "1.21.x"),
 
     /**
+     * This constant represents Minecraft (Java Edition) Version 26.x
+     */
+    MINECRAFT_26(26, 0, "26.x"),
+
+    /**
      * This constant represents an exceptional state in which we were unable
      * to identify the Minecraft Version we are using
      */
@@ -179,6 +184,10 @@ public enum MinecraftVersion {
         return virtual;
     }
 
+    public int getMajorVersion() {
+        return majorVersion;
+    }
+
     /**
      * This tests if the given minecraft version number matches with this
      * {@link MinecraftVersion}.
@@ -236,6 +245,11 @@ public enum MinecraftVersion {
         Validate.notNull(version, "A Minecraft version cannot be null!");
 
         if (this == UNKNOWN) {
+            try {
+                if (PaperLib.getMinecraftVersion() >= version.getMajorVersion()) {
+                    return true;
+                }
+            } catch (Throwable ignored) {}
             return false;
         }
 
@@ -271,7 +285,12 @@ public enum MinecraftVersion {
         Validate.notNull(version, "A Minecraft version cannot be null!");
 
         if (this == UNKNOWN) {
-            return true;
+            try {
+                if (PaperLib.getMinecraftVersion() >= version.getMajorVersion()) {
+                    return false;
+                }
+            } catch (Throwable ignored) {}
+            return false;
         }
 
         return version.ordinal() > this.ordinal();
