@@ -124,40 +124,36 @@ public final class SlimefunGuideSettings {
         // @formatter:off
         menu.addItem(6, new CustomItemStack(Material.COMPARATOR,
            "&e" + locale.getMessage(p, "guide.title.source"),
-           "", "&7Last Activity: &a" + NumberUtils.getElapsedTime(github.getLastUpdate()) + " ago",
-           "&7Forks: &e" + github.getForks(),
-           "&7Stars: &e" + github.getStars(),
            "",
-           "&7&oSlimefun 4 is a community project,",
-           "&7&othe source code is available on GitHub",
-           "&7&oand if you want to keep this Plugin alive,",
-           "&7&othen please consider contributing to it",
+           "&7Ecosistema tecnológico Slimefun optimizado",
+           "&7y adaptado exclusivamente para &6DrakesCraft&7.",
+           "&7Mejoras de rendimiento, fixes y nuevos módulos.",
            "",
-           "&7\u21E8 &eClick to go to GitHub"
+           "&7\u21E8 &eClick para abrir GitHub (DrakesCraft-Labs)"
         ));
         // @formatter:on
 
         menu.addMenuClickHandler(6, (pl, slot, item, action) -> {
             pl.closeInventory();
-            ChatUtils.sendURL(pl, "https://github.com/Slimefun/Slimefun4");
+            ChatUtils.sendURL(pl, "https://github.com/DrakesCraft-Labs");
             return false;
         });
 
         // @formatter:off
         menu.addItem(8, new CustomItemStack(Material.KNOWLEDGE_BOOK,
             "&3" + locale.getMessage(p, "guide.title.wiki"),
-            "", "&7Do you need help with an Item or machine?",
-            "&7You cannot figure out what to do?",
-            "&7Check out our community-maintained Wiki",
-            "&7and become one of our Editors!",
             "",
-            "&7\u21E8 &eClick to go to the official Slimefun Wiki"
+            "&7¿Tienes dudas con alguna máquina o ítem?",
+            "&7Consulta la guía web oficial de DrakesCraft con",
+            "&7todos los detalles, recetas, guías y consejos.",
+            "",
+            "&7\u21E8 &eClick para abrir la Guía Web de DrakesCraft"
         ));
         // @formatter:on
 
         menu.addMenuClickHandler(8, (pl, slot, item, action) -> {
             pl.closeInventory();
-            ChatUtils.sendURL(pl, "https://github.com/Slimefun/Slimefun4/wiki");
+            ChatUtils.sendURL(pl, "https://web.drakescraft.cl/guia-slimefun.html");
             return false;
         });
 
@@ -165,19 +161,19 @@ public final class SlimefunGuideSettings {
         menu.addItem(47, new CustomItemStack(Material.BOOKSHELF,
             "&3" + locale.getMessage(p, "guide.title.addons"),
             "",
-            "&7Slimefun is huge. But its addons are what makes",
-            "&7this plugin truly shine. Go check them out, some",
-            "&7of them may be exactly what you were missing out on!",
+            "&7Slimefun en DrakesCraft es un universo entero.",
+            "&7Contamos con decenas de addons integrados y balanceados",
+            "&7(Infinity, Supreme, Networks, DankTech, DynaTech, etc.).",
             "",
-            "&7Installed on this Server: &b" + Slimefun.getInstalledAddons().size(),
+            "&7Addons activos en este servidor: &b" + Slimefun.getInstalledAddons().size(),
             "",
-            "&7\u21E8 &eClick to see all available addons for Slimefun4"
+            "&7\u21E8 &eClick para ver la Wiki de Addons en la Web"
         ));
         // @formatter:on
 
         menu.addMenuClickHandler(47, (pl, slot, item, action) -> {
             pl.closeInventory();
-            ChatUtils.sendURL(pl, "https://github.com/Slimefun/Slimefun4/wiki/Addons");
+            ChatUtils.sendURL(pl, "https://web.drakescraft.cl/");
             return false;
         });
 
@@ -185,23 +181,42 @@ public final class SlimefunGuideSettings {
         menu.addItem(49, new CustomItemStack(Material.REDSTONE_TORCH,
             "&4" + locale.getMessage(p, "guide.title.bugs"),
             "",
-            "&7&oBug reports have to be made in English!",
+            "&7¿Encontraste algún bug, glitch o error?",
+            "&7¡Infórmalo a &6Jack &7y &bSAORI &7en nuestro Discord!",
+            "&7Atención directa en español y recompensas por reportes.",
             "",
-            "&7Open Issues: &a" + github.getOpenIssues(),
-            "&7Pending Pull Requests: &a" + github.getPendingPullRequests(),
-            "",
-            "&7\u21E8 &eClick to go to the Slimefun4 Bug Tracker"
+            "&7\u21E8 &eClick para abrir el canal de soporte y tickets"
         ));
         // @formatter:on
 
         menu.addMenuClickHandler(49, (pl, slot, item, action) -> {
             pl.closeInventory();
-            ChatUtils.sendURL(pl, "https://github.com/Slimefun/Slimefun4/issues");
+            ChatUtils.sendURL(pl, "https://discord.gg/drakescraft");
             return false;
         });
 
-        menu.addItem(51, new CustomItemStack(Material.TOTEM_OF_UNDYING, ChatColor.RED + locale.getMessage(p, "guide.work-in-progress")), (pl, slot, item, action) -> {
-            // Add something here
+        // @formatter:off
+        menu.addItem(51, new CustomItemStack(Material.TOTEM_OF_UNDYING,
+            "&6Tótem de Sabiduría &b(Asistente SAORI)",
+            "",
+            "&7Guía interactiva in-game y asistencia del servidor.",
+            "&7Obtén ayuda rápida sobre comandos clave, economía,",
+            "&7protección de islas y el ecosistema de Slimefun.",
+            "",
+            "&7\u21E8 &eClick para recibir asistencia de SAORI en chat"
+        ), (pl, slot, item, action) -> {
+            pl.closeInventory();
+            pl.sendMessage("§8§m--------------------------------------------------");
+            pl.sendMessage("§6§l✦ DRAKESCRAFT ︱ ASISTENCIA & GUÍA RÁPIDA ✦");
+            pl.sendMessage("§7Hola §e" + pl.getName() + "§7, ¿en qué te puede ayudar §bSAORI§7?");
+            pl.sendMessage("");
+            pl.sendMessage("§e ⏵ §b/guia §7- Abre la guía web y tutoriales del servidor");
+            pl.sendMessage("§e ⏵ §b/asistencia §7- Solicita ayuda directa al Staff y a SAORI");
+            pl.sendMessage("§e ⏵ §b/sf guide §7- Guía enciclopedia de Slimefun");
+            pl.sendMessage("§e ⏵ §b/is help §7- Comandos y configuración de tu isla BentoBox");
+            pl.sendMessage("§e ⏵ §b/discord §7- Únete a nuestra comunidad oficial");
+            pl.sendMessage("§8§m--------------------------------------------------");
+            SoundEffect.TOME_OF_KNOWLEDGE_USE_SOUND.playFor(pl);
             return false;
         });
     }
