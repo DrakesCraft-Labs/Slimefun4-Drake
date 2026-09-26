@@ -1,5 +1,6 @@
 package com.github.drakescraft_labs.slimefun4.api.items.groups;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -113,22 +114,22 @@ public abstract class FlexItemGroup extends ItemGroup {
 
     @Override
     public final void add(@Nonnull SlimefunItem item) {
-        throw new UnsupportedOperationException("You cannot add items to a FlexItemGroup!");
+        // FlexItemGroup generates and displays items dynamically; manual addition is a no-op
     }
 
     @Override
     public final @Nonnull List<SlimefunItem> getItems() {
-        throw new UnsupportedOperationException("A FlexItemGroup has no items!");
+        return Collections.emptyList();
     }
 
     @Override
     public final boolean contains(SlimefunItem item) {
-        throw new UnsupportedOperationException("A FlexItemGroup has no items!");
+        return false;
     }
 
     @Override
     public final void remove(@Nonnull SlimefunItem item) {
-        throw new UnsupportedOperationException("A FlexItemGroup has no items, so there is nothing remove!");
+        // FlexItemGroup generates and displays items dynamically; manual removal is a no-op
     }
 
 }

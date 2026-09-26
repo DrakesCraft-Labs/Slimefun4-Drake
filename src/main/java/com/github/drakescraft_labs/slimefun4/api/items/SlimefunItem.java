@@ -1,5 +1,7 @@
 package com.github.drakescraft_labs.slimefun4.api.items;
 
+import com.github.drakescraft_labs.slimefun4.api.items.groups.FlexItemGroup;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -356,9 +358,13 @@ public class SlimefunItem implements Placeable {
 
             if (state == ItemState.ENABLED) {
                 if (hidden) {
-                    itemGroup.remove(this);
+                    if (!(itemGroup instanceof FlexItemGroup)) {
+                        itemGroup.remove(this);
+                    }
                 } else {
-                    itemGroup.add(this);
+                    if (!(itemGroup instanceof FlexItemGroup)) {
+                        itemGroup.add(this);
+                    }
                 }
             }
         }
@@ -687,8 +693,12 @@ public class SlimefunItem implements Placeable {
     public void setItemGroup(@Nonnull ItemGroup itemGroup) {
         Validate.notNull(itemGroup, "The ItemGroup is not allowed to be null!");
 
-        this.itemGroup.remove(this);
-        itemGroup.add(this);
+        if (!(this.itemGroup instanceof FlexItemGroup)) {
+            this.itemGroup.remove(this);
+        }
+        if (!(itemGroup instanceof FlexItemGroup)) {
+            itemGroup.add(this);
+        }
 
         this.itemGroup = itemGroup;
     }
@@ -767,7 +777,7 @@ public class SlimefunItem implements Placeable {
      * This method is used for internal purposes only.
      */
     public void load() {
-        if (!hidden) {
+        if (!hidden && !(itemGroup instanceof FlexItemGroup)) {
             itemGroup.add(this);
         }
 
