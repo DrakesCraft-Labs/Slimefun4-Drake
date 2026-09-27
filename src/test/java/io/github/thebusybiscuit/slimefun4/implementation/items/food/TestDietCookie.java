@@ -1,4 +1,4 @@
-package com.github.drakescraft_labs.slimefun4.implementation.items.food;
+package io.github.thebusybiscuit.slimefun4.implementation.items.food;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -9,12 +9,12 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.github.drakescraft_labs.slimefun4.api.items.SlimefunItemStack;
-import com.github.drakescraft_labs.slimefun4.api.recipes.RecipeType;
-import com.github.drakescraft_labs.slimefun4.core.services.sounds.SoundEffect;
-import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
-import com.github.drakescraft_labs.slimefun4.test.TestUtilities;
-import com.github.drakescraft_labs.slimefun4.test.presets.SlimefunItemTest;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+import io.github.thebusybiscuit.slimefun4.core.services.sounds.SoundEffect;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.test.TestUtilities;
+import io.github.thebusybiscuit.slimefun4.test.presets.SlimefunItemTest;
 
 import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockbukkit.mockbukkit.ServerMock;

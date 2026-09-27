@@ -1,15 +1,15 @@
-package com.github.drakescraft_labs.slimefun4.implementation.listeners;
+package io.github.thebusybiscuit.slimefun4.implementation.listeners;
 
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
-import com.github.drakescraft_labs.slimefun4.api.items.ItemGroup;
-import com.github.drakescraft_labs.slimefun4.api.items.SlimefunItemStack;
-import com.github.drakescraft_labs.slimefun4.api.recipes.RecipeType;
-import com.github.drakescraft_labs.slimefun4.core.attributes.ProtectionType;
-import com.github.drakescraft_labs.slimefun4.core.attributes.ProtectiveArmor;
-import com.github.drakescraft_labs.slimefun4.implementation.items.armor.SlimefunArmorPiece;
+import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+import io.github.thebusybiscuit.slimefun4.core.attributes.ProtectionType;
+import io.github.thebusybiscuit.slimefun4.core.attributes.ProtectiveArmor;
+import io.github.thebusybiscuit.slimefun4.implementation.items.armor.SlimefunArmorPiece;
 
 class MockBeeProtectionSuit extends SlimefunArmorPiece implements ProtectiveArmor {
 

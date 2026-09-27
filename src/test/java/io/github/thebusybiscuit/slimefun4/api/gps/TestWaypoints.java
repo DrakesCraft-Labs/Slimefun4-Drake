@@ -1,4 +1,4 @@
-package com.github.drakescraft_labs.slimefun4.api.gps;
+package io.github.thebusybiscuit.slimefun4.api.gps;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,11 +10,11 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.github.drakescraft_labs.slimefun4.api.events.WaypointCreateEvent;
-import com.github.drakescraft_labs.slimefun4.api.player.PlayerProfile;
-import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
-import com.github.drakescraft_labs.slimefun4.test.TestUtilities;
-import com.github.drakescraft_labs.slimefun4.utils.FileUtils;
+import io.github.thebusybiscuit.slimefun4.api.events.WaypointCreateEvent;
+import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.test.TestUtilities;
+import io.github.thebusybiscuit.slimefun4.utils.FileUtils;
 
 import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockbukkit.mockbukkit.ServerMock;

@@ -1,4 +1,4 @@
-package com.github.drakescraft_labs.slimefun4.implementation.tasks.armor;
+package io.github.thebusybiscuit.slimefun4.implementation.tasks.armor;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;

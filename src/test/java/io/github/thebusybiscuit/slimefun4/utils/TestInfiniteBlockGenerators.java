@@ -1,4 +1,4 @@
-package com.github.drakescraft_labs.slimefun4.utils;
+package io.github.thebusybiscuit.slimefun4.utils;
 
 import java.util.Arrays;
 import java.util.stream.Stream;
@@ -18,7 +18,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 
 import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockbukkit.mockbukkit.ServerMock;

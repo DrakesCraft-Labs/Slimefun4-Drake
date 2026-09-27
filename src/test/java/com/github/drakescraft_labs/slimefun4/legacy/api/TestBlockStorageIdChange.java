@@ -1,4 +1,4 @@
-package com.github.drakescraft_labs.slimefun4.legacy.api;
+package io.github.thebusybiscuit.slimefun4.legacy.api;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,8 +12,8 @@ import org.junit.jupiter.api.Test;
 
 import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockbukkit.mockbukkit.ServerMock;
-import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
-import com.github.drakescraft_labs.slimefun4.utils.FileUtils;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.utils.FileUtils;
 
 /**
  * Cada id de Slimefun persiste sus posiciones en su propio fichero "<id>.sfb". Cuando una

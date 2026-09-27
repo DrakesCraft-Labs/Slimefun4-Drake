@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.jupiter.api.Test;
 
-import com.github.drakescraft_labs.slimefun4.core.services.PersistenceDrain;
+import io.github.thebusybiscuit.slimefun4.core.services.PersistenceDrain;
 
 class TestPersistenceDrain {
 

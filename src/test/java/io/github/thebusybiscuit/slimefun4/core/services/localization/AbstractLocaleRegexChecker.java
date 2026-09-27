@@ -1,4 +1,4 @@
-package com.github.drakescraft_labs.slimefun4.core.services.localization;
+package io.github.thebusybiscuit.slimefun4.core.services.localization;
 
 import java.io.BufferedReader;
 import java.io.IOException;

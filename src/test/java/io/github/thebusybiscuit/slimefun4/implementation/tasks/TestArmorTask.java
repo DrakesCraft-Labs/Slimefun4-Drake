@@ -1,4 +1,4 @@
-package com.github.drakescraft_labs.slimefun4.implementation.tasks;
+package io.github.thebusybiscuit.slimefun4.implementation.tasks;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -18,15 +18,15 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import com.github.drakescraft_labs.slimefun4.api.items.ItemGroup;
-import com.github.drakescraft_labs.slimefun4.api.items.SlimefunItemStack;
-import com.github.drakescraft_labs.slimefun4.api.recipes.RecipeType;
-import com.github.drakescraft_labs.slimefun4.core.attributes.Radioactivity;
-import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
-import com.github.drakescraft_labs.slimefun4.implementation.items.RadioactiveItem;
-import com.github.drakescraft_labs.slimefun4.implementation.items.armor.SlimefunArmorPiece;
-import com.github.drakescraft_labs.slimefun4.test.TestUtilities;
-import com.github.drakescraft_labs.slimefun4.test.mocks.MockHazmatSuit;
+import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+import io.github.thebusybiscuit.slimefun4.core.attributes.Radioactivity;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.implementation.items.RadioactiveItem;
+import io.github.thebusybiscuit.slimefun4.implementation.items.armor.SlimefunArmorPiece;
+import io.github.thebusybiscuit.slimefun4.test.TestUtilities;
+import io.github.thebusybiscuit.slimefun4.test.mocks.MockHazmatSuit;
 
 import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockbukkit.mockbukkit.ServerMock;

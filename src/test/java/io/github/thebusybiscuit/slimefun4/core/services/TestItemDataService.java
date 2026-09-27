@@ -1,4 +1,4 @@
-package com.github.drakescraft_labs.slimefun4.core.services;
+package io.github.thebusybiscuit.slimefun4.core.services;
 
 import java.util.Optional;
 
@@ -12,7 +12,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 
 import org.mockbukkit.mockbukkit.MockBukkit;
 

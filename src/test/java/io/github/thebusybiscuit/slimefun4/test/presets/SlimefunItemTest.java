@@ -1,4 +1,4 @@
-package com.github.drakescraft_labs.slimefun4.test.presets;
+package io.github.thebusybiscuit.slimefun4.test.presets;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -10,11 +10,11 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import com.github.drakescraft_labs.slimefun4.api.events.PlayerRightClickEvent;
-import com.github.drakescraft_labs.slimefun4.api.items.SlimefunItem;
-import com.github.drakescraft_labs.slimefun4.core.handlers.ItemConsumptionHandler;
-import com.github.drakescraft_labs.slimefun4.core.handlers.ItemUseHandler;
-import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.api.events.PlayerRightClickEvent;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.core.handlers.ItemConsumptionHandler;
+import io.github.thebusybiscuit.slimefun4.core.handlers.ItemUseHandler;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 
 import org.mockbukkit.mockbukkit.block.BlockMock;
 

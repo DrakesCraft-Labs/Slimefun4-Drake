@@ -1,12 +1,12 @@
-package com.github.drakescraft_labs.slimefun4.api.events;
+package io.github.thebusybiscuit.slimefun4.api.events;
 
 import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockbukkit.mockbukkit.ServerMock;
-import com.github.drakescraft_labs.slimefun4.api.items.SlimefunItem;
-import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
-import com.github.drakescraft_labs.slimefun4.implementation.SlimefunItems;
-import com.github.drakescraft_labs.slimefun4.implementation.items.magical.talismans.Talisman;
-import com.github.drakescraft_labs.slimefun4.implementation.listeners.TalismanListener;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
+import io.github.thebusybiscuit.slimefun4.implementation.items.magical.talismans.Talisman;
+import io.github.thebusybiscuit.slimefun4.implementation.listeners.TalismanListener;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

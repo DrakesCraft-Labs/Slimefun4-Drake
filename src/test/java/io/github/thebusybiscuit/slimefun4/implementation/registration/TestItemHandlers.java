@@ -1,4 +1,4 @@
-package com.github.drakescraft_labs.slimefun4.implementation.registration;
+package io.github.thebusybiscuit.slimefun4.implementation.registration;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -11,13 +11,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import dev.drake.dough.items.CustomItemStack;
-import com.github.drakescraft_labs.slimefun4.api.exceptions.IncompatibleItemHandlerException;
-import com.github.drakescraft_labs.slimefun4.api.items.SlimefunItem;
-import com.github.drakescraft_labs.slimefun4.core.handlers.BowShootHandler;
-import com.github.drakescraft_labs.slimefun4.core.handlers.ItemUseHandler;
-import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
-import com.github.drakescraft_labs.slimefun4.test.TestUtilities;
-import com.github.drakescraft_labs.slimefun4.test.mocks.MockItemHandler;
+import io.github.thebusybiscuit.slimefun4.api.exceptions.IncompatibleItemHandlerException;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.core.handlers.BowShootHandler;
+import io.github.thebusybiscuit.slimefun4.core.handlers.ItemUseHandler;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.test.TestUtilities;
+import io.github.thebusybiscuit.slimefun4.test.mocks.MockItemHandler;
 
 import org.mockbukkit.mockbukkit.MockBukkit;
 

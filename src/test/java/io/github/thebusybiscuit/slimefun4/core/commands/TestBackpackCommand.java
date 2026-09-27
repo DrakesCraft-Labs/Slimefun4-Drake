@@ -1,4 +1,4 @@
-package com.github.drakescraft_labs.slimefun4.core.commands;
+package io.github.thebusybiscuit.slimefun4.core.commands;
 
 import java.util.List;
 
@@ -14,12 +14,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import dev.drake.dough.common.CommonPatterns;
-import com.github.drakescraft_labs.slimefun4.api.player.PlayerBackpack;
-import com.github.drakescraft_labs.slimefun4.api.player.PlayerProfile;
-import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
-import com.github.drakescraft_labs.slimefun4.implementation.SlimefunItems;
-import com.github.drakescraft_labs.slimefun4.test.TestUtilities;
-import com.github.drakescraft_labs.slimefun4.utils.SlimefunUtils;
+import io.github.thebusybiscuit.slimefun4.api.player.PlayerBackpack;
+import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
+import io.github.thebusybiscuit.slimefun4.test.TestUtilities;
+import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 
 import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockbukkit.mockbukkit.ServerMock;

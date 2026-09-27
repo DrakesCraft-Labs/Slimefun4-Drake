@@ -1,4 +1,4 @@
-package com.github.drakescraft_labs.slimefun4.core.commands;
+package io.github.thebusybiscuit.slimefun4.core.commands;
 
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -9,10 +9,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import com.github.drakescraft_labs.slimefun4.core.guide.SlimefunGuide;
-import com.github.drakescraft_labs.slimefun4.core.guide.SlimefunGuideMode;
-import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
-import com.github.drakescraft_labs.slimefun4.utils.SlimefunUtils;
+import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuide;
+import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 
 import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockbukkit.mockbukkit.ServerMock;

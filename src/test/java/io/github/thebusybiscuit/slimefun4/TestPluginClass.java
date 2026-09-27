@@ -1,4 +1,4 @@
-package com.github.drakescraft_labs.slimefun4;
+package io.github.thebusybiscuit.slimefun4;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -6,8 +6,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.github.drakescraft_labs.slimefun4.api.MinecraftVersion;
-import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.api.MinecraftVersion;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 
 import org.mockbukkit.mockbukkit.MockBukkit;
 

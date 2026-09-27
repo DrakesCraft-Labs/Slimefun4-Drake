@@ -1,4 +1,4 @@
-package com.github.drakescraft_labs.slimefun4.test.mocks;
+package io.github.thebusybiscuit.slimefun4.test.mocks;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -7,8 +7,8 @@ import javax.annotation.Nonnull;
 
 import org.bukkit.OfflinePlayer;
 
-import com.github.drakescraft_labs.slimefun4.api.player.PlayerProfile;
-import com.github.drakescraft_labs.slimefun4.storage.data.PlayerData;
+import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
+import io.github.thebusybiscuit.slimefun4.storage.data.PlayerData;
 
 public class MockProfile extends PlayerProfile {
 

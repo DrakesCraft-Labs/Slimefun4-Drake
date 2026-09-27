@@ -1,4 +1,4 @@
-package com.github.drakescraft_labs.slimefun4.legacy.api.inventory;
+package io.github.thebusybiscuit.slimefun4.legacy.api.inventory;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,9 +19,9 @@ import org.mockbukkit.mockbukkit.ServerMock;
 
 import dev.drake.dough.config.Config;
 
-import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
-import com.github.drakescraft_labs.slimefun4.legacy.api.item_transport.ItemTransportFlow;
-import com.github.drakescraft_labs.slimefun4.utils.FileUtils;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.legacy.api.item_transport.ItemTransportFlow;
+import io.github.thebusybiscuit.slimefun4.utils.FileUtils;
 
 /**
  * BlockMenu ya no escribe los ".sfi" a traves de dough Config: su constructor creaba un

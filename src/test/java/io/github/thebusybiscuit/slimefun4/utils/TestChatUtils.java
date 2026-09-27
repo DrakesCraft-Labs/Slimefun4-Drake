@@ -1,4 +1,4 @@
-package com.github.drakescraft_labs.slimefun4.utils;
+package io.github.thebusybiscuit.slimefun4.utils;
 
 import org.bukkit.ChatColor;
 import org.junit.jupiter.api.Assertions;

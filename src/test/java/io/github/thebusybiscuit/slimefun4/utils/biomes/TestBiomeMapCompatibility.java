@@ -1,4 +1,4 @@
-package com.github.drakescraft_labs.slimefun4.utils.biomes;
+package io.github.thebusybiscuit.slimefun4.utils.biomes;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,9 +25,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
-import com.github.drakescraft_labs.slimefun4.api.MinecraftVersion;
-import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
-import com.github.drakescraft_labs.slimefun4.utils.JsonUtils;
+import io.github.thebusybiscuit.slimefun4.api.MinecraftVersion;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.utils.JsonUtils;
 
 import org.mockbukkit.mockbukkit.MockBukkit;
 

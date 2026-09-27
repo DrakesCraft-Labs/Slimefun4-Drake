@@ -1,4 +1,4 @@
-package com.github.drakescraft_labs.slimefun4.implementation.listeners;
+package io.github.thebusybiscuit.slimefun4.implementation.listeners;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -14,9 +14,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.github.drakescraft_labs.slimefun4.api.network.Network;
-import com.github.drakescraft_labs.slimefun4.core.networks.NetworkManager;
-import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.api.network.Network;
+import io.github.thebusybiscuit.slimefun4.core.networks.NetworkManager;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 
 import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockbukkit.mockbukkit.ServerMock;

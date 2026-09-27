@@ -1,0 +1,13 @@
+package io.github.thebusybiscuit.slimefun4.implementation.items.androids;
+
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+
+import io.github.thebusybiscuit.slimefun4.legacy.api.inventory.BlockMenu;
+
+@FunctionalInterface
+interface AndroidAction {
+
+    void perform(ProgrammableAndroid android, Block b, BlockMenu inventory, BlockFace face);
+
+}

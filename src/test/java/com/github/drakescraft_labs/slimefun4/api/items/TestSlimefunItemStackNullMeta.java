@@ -1,4 +1,4 @@
-package com.github.drakescraft_labs.slimefun4.api.items;
+package io.github.thebusybiscuit.slimefun4.api.items;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockbukkit.mockbukkit.ServerMock;
-import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 
 /**
  * Bukkit admite {@link org.bukkit.inventory.ItemStack#setItemMeta(ItemMeta)} con {@code null}

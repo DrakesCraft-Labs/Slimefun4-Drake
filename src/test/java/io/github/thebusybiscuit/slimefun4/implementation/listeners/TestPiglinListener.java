@@ -1,4 +1,4 @@
-package com.github.drakescraft_labs.slimefun4.implementation.listeners;
+package io.github.thebusybiscuit.slimefun4.implementation.listeners;
 
 import java.util.UUID;
 
@@ -20,10 +20,10 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mockito;
 
 import dev.drake.dough.items.CustomItemStack;
-import com.github.drakescraft_labs.slimefun4.api.items.SlimefunItem;
-import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
-import com.github.drakescraft_labs.slimefun4.implementation.listeners.entity.PiglinListener;
-import com.github.drakescraft_labs.slimefun4.test.TestUtilities;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.implementation.listeners.entity.PiglinListener;
+import io.github.thebusybiscuit.slimefun4.test.TestUtilities;
 
 import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockbukkit.mockbukkit.ServerMock;

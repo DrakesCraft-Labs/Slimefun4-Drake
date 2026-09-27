@@ -1,4 +1,4 @@
-package com.github.drakescraft_labs.slimefun4.implementation.guide;
+package io.github.thebusybiscuit.slimefun4.implementation.guide;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

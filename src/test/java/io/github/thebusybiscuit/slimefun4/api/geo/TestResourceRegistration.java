@@ -1,4 +1,4 @@
-package com.github.drakescraft_labs.slimefun4.api.geo;
+package io.github.thebusybiscuit.slimefun4.api.geo;
 
 import java.util.Optional;
 
@@ -18,10 +18,10 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
-import com.github.drakescraft_labs.slimefun4.implementation.Slimefun;
-import com.github.drakescraft_labs.slimefun4.implementation.SlimefunItems;
-import com.github.drakescraft_labs.slimefun4.implementation.resources.GEOResourcesSetup;
-import com.github.drakescraft_labs.slimefun4.utils.SlimefunUtils;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
+import io.github.thebusybiscuit.slimefun4.implementation.resources.GEOResourcesSetup;
+import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 
 import org.mockbukkit.mockbukkit.MockBukkit;
 

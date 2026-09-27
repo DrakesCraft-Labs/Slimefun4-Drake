@@ -1,4 +1,4 @@
-package com.github.drakescraft_labs.slimefun4.implementation.items.electric.machines.accelerators;
+package io.github.thebusybiscuit.slimefun4.implementation.items.electric.machines.accelerators;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

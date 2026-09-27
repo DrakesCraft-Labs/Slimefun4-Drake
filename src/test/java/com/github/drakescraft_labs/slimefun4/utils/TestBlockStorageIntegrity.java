@@ -1,4 +1,4 @@
-package com.github.drakescraft_labs.slimefun4.utils;
+package io.github.thebusybiscuit.slimefun4.utils;
 
 import org.bukkit.Material;
 import org.junit.jupiter.api.Test;
