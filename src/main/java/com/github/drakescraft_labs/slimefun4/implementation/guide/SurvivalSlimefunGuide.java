@@ -136,6 +136,7 @@ public class SurvivalSlimefunGuide implements SlimefunGuideImplementation {
             }
         }
 
+        groups.sort(ItemGroup.GUIDE_COMPARATOR);
         return groups;
     }
 
