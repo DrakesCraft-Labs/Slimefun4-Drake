@@ -10,8 +10,8 @@ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 
-import io.github.thebusybiscuit.slimefun4.legacy.Objects.SlimefunItem.abstractItems.AGenerator;
-import io.github.thebusybiscuit.slimefun4.legacy.Objects.SlimefunItem.abstractItems.MachineFuel;
+import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AGenerator;
+import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineFuel;
 
 public class MagnesiumGenerator extends AGenerator {
 

@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 
 import io.github.thebusybiscuit.slimefun4.implementation.items.electric.machines.enchanting.AutoEnchanter;
 
-import io.github.thebusybiscuit.slimefun4.legacy.api.inventory.BlockMenu;
+import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 
 /**
  * An {@link Event} that is called whenever an {@link AutoEnchanter} is

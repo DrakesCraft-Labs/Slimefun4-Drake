@@ -10,7 +10,7 @@ import io.github.thebusybiscuit.slimefun4.implementation.items.electric.Abstract
 import io.github.thebusybiscuit.slimefun4.implementation.items.electric.reactors.Reactor;
 
 import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
-import io.github.thebusybiscuit.slimefun4.legacy.Objects.SlimefunItem.abstractItems.AGenerator;
+import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AGenerator;
 
 /**
  * An {@link EnergyNetProvider} is an extension of {@link EnergyNetComponent} which provides

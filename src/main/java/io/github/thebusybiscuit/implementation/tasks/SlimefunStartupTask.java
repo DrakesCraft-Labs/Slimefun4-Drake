@@ -13,7 +13,7 @@ import io.github.thebusybiscuit.slimefun4.implementation.listeners.TeleporterLis
 import io.github.thebusybiscuit.slimefun4.implementation.listeners.WorldListener;
 import io.github.thebusybiscuit.slimefun4.implementation.setup.PostSetup;
 
-import io.github.thebusybiscuit.slimefun4.legacy.api.BlockStorage;
+import me.mrCookieSlime.Slimefun.api.BlockStorage;
 
 /**
  * This Task initializes all items, some listeners and various other stuff.

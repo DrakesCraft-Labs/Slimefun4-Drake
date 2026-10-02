@@ -21,8 +21,8 @@ import io.github.thebusybiscuit.slimefun4.utils.PaperLibUtils;
 import io.papermc.lib.features.blockstatesnapshot.BlockStateSnapshotResult;
 
 import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
-import io.github.thebusybiscuit.slimefun4.legacy.Objects.handlers.BlockTicker;
-import io.github.thebusybiscuit.slimefun4.legacy.api.BlockStorage;
+import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
+import me.mrCookieSlime.Slimefun.api.BlockStorage;
 
 /**
  * The {@link EnhancedFurnace} is an upgraded version of a {@link Furnace}.

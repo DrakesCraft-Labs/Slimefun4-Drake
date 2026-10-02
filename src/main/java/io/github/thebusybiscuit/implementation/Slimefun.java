@@ -133,8 +133,8 @@ import io.papermc.lib.PaperLib;
 import io.github.thebusybiscuit.slimefun4.api.services.NativeAccelerationService;
 import io.github.thebusybiscuit.slimefun4.core.services.nativeengine.RustNativeEngine;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.MenuListener;
-import io.github.thebusybiscuit.slimefun4.legacy.api.BlockStorage;
-import io.github.thebusybiscuit.slimefun4.legacy.api.inventory.UniversalBlockMenu;
+import me.mrCookieSlime.Slimefun.api.BlockStorage;
+import me.mrCookieSlime.Slimefun.api.inventory.UniversalBlockMenu;
 
 /**
  * This is the main class of Slimefun.

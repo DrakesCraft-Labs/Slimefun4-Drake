@@ -20,7 +20,7 @@ import io.github.thebusybiscuit.slimefun4.implementation.items.blocks.RainbowBlo
 import io.github.thebusybiscuit.slimefun4.utils.ColoredMaterial;
 
 import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
-import io.github.thebusybiscuit.slimefun4.legacy.Objects.handlers.BlockTicker;
+import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
 
 /**
  * This is a {@link BlockTicker} that is exclusively used for Rainbow blocks.

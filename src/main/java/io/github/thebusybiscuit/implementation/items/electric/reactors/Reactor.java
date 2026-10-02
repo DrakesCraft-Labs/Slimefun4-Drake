@@ -40,12 +40,12 @@ import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import io.github.thebusybiscuit.slimefun4.utils.itemstack.ItemStackWrapper;
 
 import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
-import io.github.thebusybiscuit.slimefun4.legacy.Objects.SlimefunItem.abstractItems.AGenerator;
-import io.github.thebusybiscuit.slimefun4.legacy.Objects.SlimefunItem.abstractItems.MachineFuel;
-import io.github.thebusybiscuit.slimefun4.legacy.api.BlockStorage;
-import io.github.thebusybiscuit.slimefun4.legacy.api.inventory.BlockMenu;
-import io.github.thebusybiscuit.slimefun4.legacy.api.inventory.BlockMenuPreset;
-import io.github.thebusybiscuit.slimefun4.legacy.api.item_transport.ItemTransportFlow;
+import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AGenerator;
+import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineFuel;
+import me.mrCookieSlime.Slimefun.api.BlockStorage;
+import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
+import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
+import me.mrCookieSlime.Slimefun.api.item_transport.ItemTransportFlow;
 
 /**
  * The abstract {@link Reactor} class is very similar to {@link AGenerator} but is

@@ -21,8 +21,8 @@ import io.github.thebusybiscuit.slimefun4.api.network.Network;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 
-import io.github.thebusybiscuit.slimefun4.legacy.api.inventory.DirtyChestMenu;
-import io.github.thebusybiscuit.slimefun4.legacy.api.item_transport.ItemTransportFlow;
+import me.mrCookieSlime.Slimefun.api.inventory.DirtyChestMenu;
+import me.mrCookieSlime.Slimefun.api.item_transport.ItemTransportFlow;
 
 /**
  * An abstract super class of {@link CargoNet} that handles

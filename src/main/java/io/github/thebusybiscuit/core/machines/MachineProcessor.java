@@ -18,7 +18,7 @@ import io.github.thebusybiscuit.slimefun4.api.events.AsyncMachineOperationFinish
 import io.github.thebusybiscuit.slimefun4.core.attributes.MachineProcessHolder;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 
-import io.github.thebusybiscuit.slimefun4.legacy.api.inventory.BlockMenu;
+import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 
 /**
  * A {@link MachineProcessor} manages different {@link MachineOperation}s and handles

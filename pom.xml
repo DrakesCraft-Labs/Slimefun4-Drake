@@ -87,6 +87,11 @@
             <id>codemc-repo</id>
             <url>https://repo.codemc.io/repository/maven-public/</url>
         </repository>
+        <repository>
+            <!-- commons-lang-drake-patched, dough-core -->
+            <id>drakescraft-maven</id>
+            <url>https://maven.drakescraft.cl</url>
+        </repository>
     </repositories>
 
     <build>

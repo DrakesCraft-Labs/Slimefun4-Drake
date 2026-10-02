@@ -40,10 +40,10 @@ import io.github.thebusybiscuit.slimefun4.implementation.guide.CheatSheetSlimefu
 import io.github.thebusybiscuit.slimefun4.implementation.guide.GuideBookmarks;
 import io.github.thebusybiscuit.slimefun4.implementation.guide.SurvivalSlimefunGuide;
 
-import io.github.thebusybiscuit.slimefun4.legacy.api.BlockInfoConfig;
-import io.github.thebusybiscuit.slimefun4.legacy.api.BlockStorage;
-import io.github.thebusybiscuit.slimefun4.legacy.api.inventory.BlockMenuPreset;
-import io.github.thebusybiscuit.slimefun4.legacy.api.inventory.UniversalBlockMenu;
+import me.mrCookieSlime.Slimefun.api.BlockInfoConfig;
+import me.mrCookieSlime.Slimefun.api.BlockStorage;
+import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
+import me.mrCookieSlime.Slimefun.api.inventory.UniversalBlockMenu;
 
 /**
  * This class houses a lot of instances of {@link Map} and {@link List} that hold

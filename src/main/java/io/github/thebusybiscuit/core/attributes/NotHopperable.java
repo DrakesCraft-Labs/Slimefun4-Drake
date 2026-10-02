@@ -1,6 +1,6 @@
 package io.github.thebusybiscuit.slimefun4.core.attributes;
 
-import io.github.thebusybiscuit.slimefun4.legacy.Objects.SlimefunItem.abstractItems.AContainer;
+import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
 
 /**
  * Implement this interface for any {@link AContainer} to prevent

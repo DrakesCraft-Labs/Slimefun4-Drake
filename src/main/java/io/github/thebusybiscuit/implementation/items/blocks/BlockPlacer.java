@@ -39,7 +39,7 @@ import io.papermc.lib.PaperLib;
 import io.github.thebusybiscuit.slimefun4.utils.PaperLibUtils;
 import io.papermc.lib.features.blockstatesnapshot.BlockStateSnapshotResult;
 
-import io.github.thebusybiscuit.slimefun4.legacy.api.BlockStorage;
+import me.mrCookieSlime.Slimefun.api.BlockStorage;
 
 /**
  * The {@link BlockPlacer} is a machine which can place {@link Block Blocks}, as the name

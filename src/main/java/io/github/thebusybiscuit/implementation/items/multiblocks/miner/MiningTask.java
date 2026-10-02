@@ -33,7 +33,7 @@ import io.github.thebusybiscuit.slimefun4.utils.compatibility.VersionedParticle;
 import io.papermc.lib.PaperLib;
 import io.github.thebusybiscuit.slimefun4.utils.PaperLibUtils;
 
-import io.github.thebusybiscuit.slimefun4.legacy.Objects.SlimefunItem.abstractItems.MachineFuel;
+import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineFuel;
 
 /**
  * This represents a running instance of an {@link IndustrialMiner}.

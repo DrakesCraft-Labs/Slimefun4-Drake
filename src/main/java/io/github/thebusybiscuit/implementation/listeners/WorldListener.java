@@ -11,7 +11,7 @@ import org.bukkit.event.world.WorldUnloadEvent;
 
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 
-import io.github.thebusybiscuit.slimefun4.legacy.api.BlockStorage;
+import me.mrCookieSlime.Slimefun.api.BlockStorage;
 
 public class WorldListener implements Listener {
 

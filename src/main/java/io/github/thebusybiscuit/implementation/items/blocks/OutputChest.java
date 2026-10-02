@@ -24,7 +24,7 @@ import io.github.thebusybiscuit.slimefun4.implementation.handlers.VanillaInvento
 import io.papermc.lib.PaperLib;
 import io.github.thebusybiscuit.slimefun4.utils.PaperLibUtils;
 
-import io.github.thebusybiscuit.slimefun4.legacy.api.BlockStorage;
+import me.mrCookieSlime.Slimefun.api.BlockStorage;
 
 /**
  * The {@link OutputChest} can be used to capture the output items from a {@link MultiBlockMachine}.
