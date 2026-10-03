@@ -12,7 +12,8 @@
     </parent>
 
     <artifactId>slimefun-core</artifactId>
-    <version>11.0-Drake-1.21.11-SNAPSHOT</version>
+    <!-- Keep the universal ABI build isolated from the Dallas 1.21.11 core in ~/.m2. -->
+    <version>11.0-Universal-26.x-SNAPSHOT</version>
     <name>Slimefun-1.2.DEV</name>
     <description>The core of the DrakesCraft experience. A modernized, Java 21-powered version of Slimefun 4 with integrated fixes and optimizations for the 1.21.11 environment.</description>
     <inceptionYear>2013</inceptionYear>
