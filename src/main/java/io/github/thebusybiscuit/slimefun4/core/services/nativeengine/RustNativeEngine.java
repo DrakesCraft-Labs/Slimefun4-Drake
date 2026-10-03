@@ -54,7 +54,10 @@ public final class RustNativeEngine implements NativeAccelerationService {
                 throw new IllegalArgumentException("La biblioteca nativa debe vivir dentro de plugins/Slimefun");
             }
             if (!Files.isRegularFile(library)) {
-                throw new IllegalStateException("No existe " + library);
+                plugin.getLogger().info(
+                    "[Slimefun-Rust] Biblioteca nativa opcional no instalada; EnergyNet usará fallback Java."
+                );
+                return;
             }
 
             System.load(library.toString());
